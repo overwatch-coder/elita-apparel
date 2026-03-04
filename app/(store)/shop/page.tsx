@@ -4,6 +4,15 @@ import { ProductCard } from "@/components/store/product-card";
 import { ProductFilters } from "@/components/store/product-filters";
 import { ShopSidebar } from "@/components/store/shop-sidebar";
 import { WhatsAppButton } from "@/components/store/whatsapp-button";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -170,35 +179,131 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
 
               {/* Pagination */}
               {totalPages > 1 && (
-                <div className="flex items-center justify-center gap-2 mt-12">
-                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(
-                    (pageNum) => {
-                      const params2 = new URLSearchParams();
-                      if (params.category)
-                        params2.set("category", params.category);
-                      if (params.collection)
-                        params2.set("collection", params.collection);
-                      if (params.sort) params2.set("sort", params.sort);
-                      if (params.q) params2.set("q", params.q);
-                      if (params.view && params.view !== "grid")
-                        params2.set("view", params.view);
-                      if (pageNum > 1) params2.set("page", String(pageNum));
+                <div className="mt-12 flex justify-center">
+                  <Pagination>
+                    <PaginationContent>
+                      <PaginationItem>
+                        <PaginationPrevious
+                          href={
+                            page > 1
+                              ? `/shop?${(() => {
+                                  const p = new URLSearchParams();
+                                  if (params.category)
+                                    p.set("category", params.category);
+                                  if (params.collection)
+                                    p.set("collection", params.collection);
+                                  if (params.sort) p.set("sort", params.sort);
+                                  if (params.q) p.set("q", params.q);
+                                  if (params.view && params.view !== "grid")
+                                    p.set("view", params.view);
+                                  if (page - 1 > 1)
+                                    p.set("page", String(page - 1));
+                                  return p.toString();
+                                })()}`
+                              : "#"
+                          }
+                          className={
+                            page <= 1 ? "pointer-events-none opacity-50" : ""
+                          }
+                        />
+                      </PaginationItem>
 
-                      return (
-                        <a
-                          key={pageNum}
-                          href={`/shop?${params2.toString()}`}
-                          className={`h-10 w-10 rounded-md flex items-center justify-center text-sm font-medium transition-colors ${
-                            pageNum === page
-                              ? "bg-gold text-white"
-                              : "bg-secondary hover:bg-gold/10 text-foreground"
-                          }`}
-                        >
-                          {pageNum}
-                        </a>
-                      );
-                    },
-                  )}
+                      {/* Pagination logic with ellipsis */}
+                      {(() => {
+                        const items = [];
+                        const maxVisible = 5;
+
+                        if (totalPages <= maxVisible) {
+                          for (let i = 1; i <= totalPages; i++) items.push(i);
+                        } else {
+                          // Always show first and last
+                          // show 1, ..., page-1, page, page+1, ..., totalPages
+                          if (page <= 3) {
+                            items.push(1, 2, 3, 4, "ellipsis", totalPages);
+                          } else if (page >= totalPages - 2) {
+                            items.push(
+                              1,
+                              "ellipsis",
+                              totalPages - 3,
+                              totalPages - 2,
+                              totalPages - 1,
+                              totalPages,
+                            );
+                          } else {
+                            items.push(
+                              1,
+                              "ellipsis",
+                              page - 1,
+                              page,
+                              page + 1,
+                              "ellipsis",
+                              totalPages,
+                            );
+                          }
+                        }
+
+                        return items.map((item, idx) => {
+                          if (item === "ellipsis") {
+                            return (
+                              <PaginationItem key={`ellipsis-${idx}`}>
+                                <PaginationEllipsis />
+                              </PaginationItem>
+                            );
+                          }
+
+                          const pageNum = item as number;
+                          const p = new URLSearchParams();
+                          if (params.category)
+                            p.set("category", params.category);
+                          if (params.collection)
+                            p.set("collection", params.collection);
+                          if (params.sort) p.set("sort", params.sort);
+                          if (params.q) p.set("q", params.q);
+                          if (params.view && params.view !== "grid")
+                            p.set("view", params.view);
+                          if (pageNum > 1) p.set("page", String(pageNum));
+
+                          return (
+                            <PaginationItem key={pageNum}>
+                              <PaginationLink
+                                href={`/shop?${p.toString()}`}
+                                isActive={pageNum === page}
+                              >
+                                {pageNum}
+                              </PaginationLink>
+                            </PaginationItem>
+                          );
+                        });
+                      })()}
+
+                      <PaginationItem>
+                        <PaginationNext
+                          href={
+                            page < totalPages
+                              ? `/shop?${(() => {
+                                  const p = new URLSearchParams();
+                                  if (params.category)
+                                    p.set("category", params.category);
+                                  if (params.collection)
+                                    p.set("collection", params.collection);
+                                  if (params.sort) p.set("sort", params.sort);
+                                  if (params.q) p.set("q", params.q);
+                                  if (params.view && params.view !== "grid")
+                                    p.set("view", params.view);
+                                  p.set("page", String(page + 1));
+                                  return p.toString();
+                                })()}`
+                              : "#"
+                          }
+                          className={
+                            page >= totalPages
+                              ? "pointer-events-none opacity-50"
+                              : ""
+                          }
+                        />
+                      </PaginationItem>
+                    </PaginationContent>
+                  </Pagination>
                 </div>
               )}
             </div>

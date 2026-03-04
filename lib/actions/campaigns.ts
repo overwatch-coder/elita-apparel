@@ -2,8 +2,8 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
-import { resend } from "@/lib/resend";
 import { BRAND } from "@/lib/constants";
+import nodemailer from "nodemailer";
 
 export async function getCampaigns() {
   const supabase = await createClient();
@@ -128,28 +128,55 @@ export async function sendCampaign(campaignId: string) {
 
   const emails = subscribers.map((s) => s.email);
 
+  const transporter = nodemailer.createTransport({
+    host: process.env.SMTP_HOST,
+    port: parseInt(process.env.SMTP_PORT || "587"),
+    secure: process.env.SMTP_SECURE === "true",
+    auth: {
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASS,
+    },
+  });
+
   try {
-    // 3. Send using Resend (Individualized for personalization like unsubscribe link)
-    const sendPromises = subscribers.map(async (sub) => {
-      // Replace personalization tags
-      const personalizedHtml = campaign.content_html.replace(
-        /{{EMAIL}}/g,
-        encodeURIComponent(sub.email),
-      );
+    // 3. Send using Nodemailer (Individualized for personalization like unsubscribe link)
+    // We process in small batches to avoid timeouts if many subscribers
+    const batchSize = 10;
+    let sentCount = 0;
+    let failureCount = 0;
 
-      return resend.emails.send({
-        from: `${BRAND.name} <${process.env.RESEND_FROM_EMAIL || "marketing@elitaapparel.com"}>`,
-        to: sub.email,
-        subject: campaign.subject_line,
-        html: personalizedHtml,
+    for (let i = 0; i < subscribers.length; i += batchSize) {
+      const batch = subscribers.slice(i, i + batchSize);
+
+      const sendPromises = batch.map(async (sub) => {
+        const personalizedHtml = campaign.content_html.replace(
+          /{{EMAIL}}/g,
+          encodeURIComponent(sub.email),
+        );
+
+        try {
+          await transporter.sendMail({
+            from:
+              process.env.SMTP_FROM ||
+              `"${BRAND.name}" <${process.env.SMTP_USER}>`,
+            to: sub.email,
+            subject: campaign.subject_line,
+            html: personalizedHtml,
+          });
+          return { success: true };
+        } catch (err) {
+          console.error(`Failed to send email to ${sub.email}:`, err);
+          return { success: false, error: err };
+        }
       });
-    });
 
-    const results = await Promise.all(sendPromises);
-    const errors = results.filter((r) => r.error);
+      const results = await Promise.all(sendPromises);
+      sentCount += results.filter((r) => r.success).length;
+      failureCount += results.filter((r) => !r.success).length;
+    }
 
-    if (errors.length > 0) {
-      console.warn("Some emails failed to send:", errors);
+    if (failureCount > 0) {
+      console.warn(`Campaign sent with ${failureCount} failures.`);
     }
 
     // 4. Update Campaign Status
@@ -162,9 +189,9 @@ export async function sendCampaign(campaignId: string) {
       .eq("id", campaignId);
 
     revalidatePath("/admin/campaigns");
-    return { success: true, count: emails.length };
+    return { success: true, count: sentCount, failures: failureCount };
   } catch (error: any) {
     console.error("Error sending campaign:", error);
-    return { error: error.message || "Failed to send emails via Resend" };
+    return { error: error.message || "Failed to send emails via Nodemailer" };
   }
 }

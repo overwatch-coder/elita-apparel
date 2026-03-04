@@ -231,7 +231,7 @@ export default function CampaignDetailPage({
                     Success!
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    Emails were dispatched via Resend API.
+                    Emails were dispatched via Nodemailer/SMTP.
                   </p>
                 </div>
               </CardContent>

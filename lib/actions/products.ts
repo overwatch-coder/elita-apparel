@@ -112,3 +112,20 @@ export async function toggleProductPublished(id: string, isPublished: boolean) {
   revalidatePath("/");
   return { success: true };
 }
+
+export async function getProducts() {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("products")
+    .select("*, product_images(*)")
+    .eq("is_published", true)
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error("Error fetching products:", error);
+    return { error: error.message };
+  }
+
+  return { products: data };
+}

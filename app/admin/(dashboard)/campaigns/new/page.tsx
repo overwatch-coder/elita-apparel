@@ -30,19 +30,44 @@ import {
   type EmailBlock,
 } from "@/lib/marketing/templates";
 import { createCampaign } from "@/lib/actions/campaigns";
+import { getProducts } from "@/lib/actions/products";
 import { toast } from "sonner";
 import Link from "next/link";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import { Check, ChevronsUpDown } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export default function NewCampaignPage() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [previewHtml, setPreviewHtml] = useState("");
+  const [availableProducts, setAvailableProducts] = useState<any[]>([]);
 
   const [settings, setSettings] = useState({
     name: "",
     subject_line: "",
     preview_text: "",
   });
+
+  useEffect(() => {
+    async function fetchProducts() {
+      const { products } = await getProducts();
+      if (products) setAvailableProducts(products);
+    }
+    fetchProducts();
+  }, []);
 
   const [blocks, setBlocks] = useState<EmailBlock[]>([
     { type: "header" },
@@ -88,6 +113,9 @@ export default function NewCampaignPage() {
         break;
       case "socials":
         setBlocks([...blocks, { type: "socials" }]);
+        break;
+      case "product_grid":
+        setBlocks([...blocks, { type: "product_grid", productIds: [] }]);
         break;
     }
   };
@@ -255,6 +283,15 @@ export default function NewCampaignPage() {
                 >
                   <Minus className="h-4 w-4 text-foreground" />
                 </Button>
+                <Button
+                  size="icon"
+                  variant="outline"
+                  className="h-8 w-8 border-border"
+                  onClick={() => addBlock("product_grid")}
+                  title="Add Product Grid"
+                >
+                  <Layout className="h-4 w-4 text-foreground" />
+                </Button>
               </div>
             </div>
 
@@ -352,6 +389,134 @@ export default function NewCampaignPage() {
                     {block.type === "divider" && (
                       <div className="py-2">
                         <hr className="border-border border-t" />
+                      </div>
+                    )}
+
+                    {block.type === "product_grid" && (
+                      <div className="space-y-3">
+                        <Label>Select Products (Max 4)</Label>
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <Button
+                              variant="outline"
+                              role="combobox"
+                              className="w-full justify-between border-border bg-background"
+                            >
+                              Add a product...
+                              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent
+                            className="w-[300px] p-0 shadow-lg border-border"
+                            align="start"
+                          >
+                            <Command>
+                              <CommandInput placeholder="Search products..." />
+                              <CommandList>
+                                <CommandEmpty>No product found.</CommandEmpty>
+                                <CommandGroup>
+                                  {availableProducts.map((product) => (
+                                    <CommandItem
+                                      key={product.id}
+                                      value={product.name}
+                                      onSelect={() => {
+                                        if (block.productIds.length >= 4) {
+                                          toast.error(
+                                            "Max 4 products allowed in a grid.",
+                                          );
+                                          return;
+                                        }
+                                        if (
+                                          block.productIds.includes(product.id)
+                                        ) {
+                                          toast.error("Product already added.");
+                                          return;
+                                        }
+
+                                        const newIds = [
+                                          ...block.productIds,
+                                          product.id,
+                                        ];
+                                        const hydratedProducts =
+                                          availableProducts
+                                            .filter((p) =>
+                                              newIds.includes(p.id),
+                                            )
+                                            .map((p) => ({
+                                              id: p.id,
+                                              name: p.name,
+                                              price: p.price,
+                                              imageUrl:
+                                                p.product_images?.[0]
+                                                  ?.image_url || "",
+                                              slug: p.slug,
+                                            }));
+
+                                        updateBlock(idx, {
+                                          productIds: newIds,
+                                          products: hydratedProducts,
+                                        });
+                                      }}
+                                    >
+                                      <Check
+                                        className={cn(
+                                          "mr-2 h-4 w-4",
+                                          block.productIds.includes(product.id)
+                                            ? "opacity-100"
+                                            : "opacity-0",
+                                        )}
+                                      />
+                                      {product.name}
+                                    </CommandItem>
+                                  ))}
+                                </CommandGroup>
+                              </CommandList>
+                            </Command>
+                          </PopoverContent>
+                        </Popover>
+
+                        {block.productIds.length > 0 && (
+                          <div className="flex flex-wrap gap-2 mt-2">
+                            {block.productIds.map((pid) => {
+                              const p = availableProducts.find(
+                                (prod) => prod.id === pid,
+                              );
+                              return (
+                                <div
+                                  key={pid}
+                                  className="flex items-center gap-1 bg-accent/10 border border-border px-2 py-1 rounded text-xs"
+                                >
+                                  <span>{p?.name}</span>
+                                  <button
+                                    onClick={() => {
+                                      const newIds = block.productIds.filter(
+                                        (id) => id !== pid,
+                                      );
+                                      const hydratedProducts = availableProducts
+                                        .filter((p) => newIds.includes(p.id))
+                                        .map((p) => ({
+                                          id: p.id,
+                                          name: p.name,
+                                          price: p.price,
+                                          imageUrl:
+                                            p.product_images?.[0]?.image_url ||
+                                            "",
+                                          slug: p.slug,
+                                        }));
+                                      updateBlock(idx, {
+                                        productIds: newIds,
+                                        products: hydratedProducts,
+                                      });
+                                    }}
+                                    className="hover:text-destructive"
+                                  >
+                                    <Trash2 className="h-3 w-3" />
+                                  </button>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        )}
                       </div>
                     )}
 

@@ -1,5 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
-import { resend } from "@/lib/resend";
+import { transporter } from "@/lib/mail";
 import { BRAND } from "@/lib/constants";
 
 export type TriggerEvent = "signup" | "order_placed" | "abandoned_cart";
@@ -13,6 +13,7 @@ interface TriggerData {
 
 /**
  * Triggers a marketing automation flow based on an event.
+ * Coordinates immediate dispatch and queues delayed emails.
  */
 export async function triggerMarketingAutomation(
   event: TriggerEvent,
@@ -53,14 +54,26 @@ export async function triggerMarketingAutomation(
         html = html.replace(/{{EMAIL}}/g, encodeURIComponent(data.email));
         if (data.order_id) html = html.replace(/{{ORDER_ID}}/g, data.order_id);
 
-        const { error: sendError } = await resend.emails.send({
-          from: `${BRAND.name} <${process.env.RESEND_FROM_EMAIL || "marketing@elitaapparel.com"}>`,
-          to: data.email,
-          subject: emailFlow.subject_line,
-          html: html,
-        });
+        try {
+          await transporter.sendMail({
+            from:
+              process.env.SMTP_FROM ||
+              `"${BRAND.name}" <${process.env.SMTP_USER}>`,
+            to: data.email,
+            subject: emailFlow.subject_line,
+            html: html,
+          });
 
-        if (sendError) {
+          // Log success
+          await supabase.from("automation_logs").insert({
+            automation_id: automation.id,
+            email_id: emailFlow.id,
+            subscriber_email: data.email,
+            status: "sent",
+            sent_at: new Date().toISOString(),
+            scheduled_at: new Date().toISOString(),
+          });
+        } catch (sendError) {
           console.error(
             `[Automation] Failed to send immediate email to ${data.email}:`,
             sendError,
@@ -73,20 +86,9 @@ export async function triggerMarketingAutomation(
             status: "failed",
             scheduled_at: new Date().toISOString(),
           });
-        } else {
-          // Log success
-          await supabase.from("automation_logs").insert({
-            automation_id: automation.id,
-            email_id: emailFlow.id,
-            subscriber_email: data.email,
-            status: "sent",
-            sent_at: new Date().toISOString(),
-            scheduled_at: new Date().toISOString(),
-          });
         }
       } else {
-        // Delayed Send - In a real app we'd queue this for a worker.
-        // For MVP, we insert it into logs as 'pending' for a potential cron to pick up.
+        // Queue for delayed sending
         console.log(
           `[Automation] Queuing delayed email (${emailFlow.delay_minutes}min) for ${data.email}`,
         );
@@ -114,7 +116,7 @@ export async function triggerMarketingAutomation(
 
 /**
  * Utility to process any pending automated emails whose scheduled_at time has passed.
- * This can be called by an Edge Function cron job.
+ * Designed for production use via cron jobs or edge function triggers.
  */
 export async function processPendingAutomations() {
   const supabase = await createClient();
@@ -135,21 +137,23 @@ export async function processPendingAutomations() {
     if (!log.automation_emails) continue;
 
     try {
-      // Personalize (Basic)
+      // Personalize content
       let html = log.automation_emails.content_html;
       html = html.replace(
         /{{EMAIL}}/g,
         encodeURIComponent(log.subscriber_email),
       );
 
-      const { error: sendError } = await resend.emails.send({
-        from: `${BRAND.name} <${process.env.RESEND_FROM_EMAIL || "marketing@elitaapparel.com"}>`,
-        to: log.subscriber_email,
-        subject: log.automation_emails.subject_line,
-        html: html,
-      });
+      try {
+        await transporter.sendMail({
+          from:
+            process.env.SMTP_FROM ||
+            `"${BRAND.name}" <${process.env.SMTP_USER}>`,
+          to: log.subscriber_email,
+          subject: log.automation_emails.subject_line,
+          html: html,
+        });
 
-      if (!sendError) {
         await supabase
           .from("automation_logs")
           .update({
@@ -158,7 +162,11 @@ export async function processPendingAutomations() {
           })
           .eq("id", log.id);
         sentCount++;
-      } else {
+      } catch (sendError) {
+        console.error(
+          `[Automation] Delayed send failed for ${log.id}:`,
+          sendError,
+        );
         await supabase
           .from("automation_logs")
           .update({
