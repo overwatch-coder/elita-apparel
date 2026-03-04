@@ -1,12 +1,6 @@
 import { getPopups } from "@/lib/actions/marketing-popups";
 import { Button } from "@/components/ui/button";
-import {
-  Plus,
-  MousePointer2,
-  MoreHorizontal,
-  Edit,
-  Trash2,
-} from "lucide-react";
+import { Plus, MousePointer2 } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -16,14 +10,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import Link from "next/link";
-import { formatDistanceToNow } from "date-fns";
+import { PopupActions } from "@/components/admin/marketing/popup-actions";
 
 export default async function PopupsPage() {
   const { popups, error } = (await getPopups()) as any;
@@ -53,11 +41,8 @@ export default async function PopupsPage() {
             <TableRow>
               <TableHead className="font-medium py-4 px-6">Name</TableHead>
               <TableHead className="font-medium py-4 px-6">Type</TableHead>
-              <TableHead className="font-medium py-4 px-6">Status</TableHead>
-              <TableHead className="font-medium py-4 px-6">Delay</TableHead>
-              <TableHead className="font-medium py-4 px-6">Created</TableHead>
               <TableHead className="text-right font-medium py-4 px-6">
-                Actions
+                Status & Actions
               </TableHead>
             </TableRow>
           </TableHeader>
@@ -80,56 +65,7 @@ export default async function PopupsPage() {
                     </Badge>
                   </TableCell>
                   <TableCell className="py-4 px-6">
-                    {popup.is_active ? (
-                      <Badge className="bg-ghana-green/10 text-ghana-green border-none text-[10px] py-0.5">
-                        Active
-                      </Badge>
-                    ) : (
-                      <Badge
-                        variant="secondary"
-                        className="bg-muted text-muted-foreground border-none text-[10px] py-0.5"
-                      >
-                        Inactive
-                      </Badge>
-                    )}
-                  </TableCell>
-                  <TableCell className="text-muted-foreground py-4 px-6 text-sm">
-                    {popup.type === "timed"
-                      ? `${popup.delay_seconds}s`
-                      : "Instantly"}
-                  </TableCell>
-                  <TableCell className="text-muted-foreground text-[10px] py-4 px-6">
-                    {formatDistanceToNow(new Date(popup.created_at), {
-                      addSuffix: true,
-                    })}
-                  </TableCell>
-                  <TableCell className="text-right py-4 px-6">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-8 w-8 hover:bg-gold/10 hover:text-gold transition-all duration-300"
-                        >
-                          <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" className="w-48 p-1">
-                        <DropdownMenuItem asChild>
-                          <Link
-                            href={`/admin/marketing/popups/${popup.id}`}
-                            className="cursor-pointer"
-                          >
-                            <Edit className="h-4 w-4 mr-3 opacity-70" />
-                            Edit Configuration
-                          </Link>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem className="text-destructive focus:text-destructive cursor-pointer">
-                          <Trash2 className="h-4 w-4 mr-3 opacity-70" />
-                          Delete Popup
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
+                    <PopupActions popup={popup} />
                   </TableCell>
                 </TableRow>
               ))

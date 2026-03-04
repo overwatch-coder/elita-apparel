@@ -24,7 +24,7 @@ export function FeaturedSection({
   if (products.length === 0) return null;
 
   return (
-    <section className="py-20 lg:py-28">
+    <section className="pt-20 lg:pt-28 pb-6 lg:pb-10">
       <div className="container mx-auto px-4 lg:px-8">
         {/* Section header */}
         <div className="text-center mb-14">

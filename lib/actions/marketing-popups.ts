@@ -19,6 +19,23 @@ export async function getPopups() {
   return { popups: data };
 }
 
+export async function getPopupById(id: string) {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("marketing_popups")
+    .select("*")
+    .eq("id", id)
+    .single();
+
+  if (error) {
+    console.error("Error fetching popup:", error);
+    return { error: error.message };
+  }
+
+  return { popup: data };
+}
+
 export async function getActivePopups() {
   const supabase = await createClient();
 

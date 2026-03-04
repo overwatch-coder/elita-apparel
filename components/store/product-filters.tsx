@@ -24,6 +24,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import type { Category } from "@/lib/types/database";
+import { ShopSidebar } from "./shop-sidebar";
 
 interface ProductFiltersProps {
   categories: Category[];
@@ -48,7 +49,17 @@ export function ProductFilters({ categories }: ProductFiltersProps) {
     }
   }, [currentSearch]);
 
+  // Debounced search
   useEffect(() => {
+    // If searchValue cleared, update URL immediately instead of waiting for debounce
+    if (searchValue === "" && currentSearch !== "") {
+      const params = new URLSearchParams(searchParams.toString());
+      params.delete("q");
+      params.delete("page");
+      router.push(`/shop?${params.toString()}`);
+      return;
+    }
+
     const timer = setTimeout(() => {
       const params = new URLSearchParams(searchParams.toString());
 
@@ -132,7 +143,6 @@ export function ProductFilters({ categories }: ProductFiltersProps) {
               <SelectItem value="name">Name: A-Z</SelectItem>
             </SelectContent>
           </Select>
-
           <div className="hidden sm:flex items-center bg-muted/50 rounded-lg p-1 border border-border/50 shrink-0">
             <button
               onClick={() => updateFilter("view", "grid")}
@@ -177,21 +187,10 @@ export function ProductFilters({ categories }: ProductFiltersProps) {
               </Button>
             </SheetTrigger>
             <SheetContent side="right" className="w-full sm:max-w-sm">
-              <SheetHeader>
+              <SheetHeader className="mb-6">
                 <SheetTitle className="font-serif text-xl">Filters</SheetTitle>
               </SheetHeader>
-              <div className="py-6 space-y-6">
-                <div>
-                  <h4 className="text-sm font-medium mb-3 tracking-wider uppercase text-muted-foreground">
-                    Filters coming soon
-                  </h4>
-                  <div className="flex flex-col gap-1">
-                    <p className="text-sm text-muted-foreground">
-                      Additional filters will appear here.
-                    </p>
-                  </div>
-                </div>
-              </div>
+              <ShopSidebar categories={categories} />
             </SheetContent>
           </Sheet>
         </div>

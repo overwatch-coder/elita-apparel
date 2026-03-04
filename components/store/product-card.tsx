@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { QuickViewModal } from "@/components/store/quick-view-modal";
 import { WishlistButton } from "@/components/store/wishlist-button";
 import { useCart } from "@/components/cart/cart-provider";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { formatPrice, calculateDiscountedPrice } from "@/lib/constants";
 import type { Product, ProductImage } from "@/lib/types/database";
@@ -108,91 +109,168 @@ export function ProductCard({ product, view = "grid" }: ProductCardProps) {
             <WishlistButton productId={product.id} />
           </div>
 
-          {/* Add to Cart / Quantity button */}
-          <div className="absolute bottom-0 left-0 right-0 p-4">
-            {totalInCart > 0 ? (
-              <div
-                className="w-full bg-background/95 backdrop-blur-sm rounded-md py-1.5 px-3 flex items-center justify-between shadow-lg border border-border/50"
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                }}
-              >
-                <button
-                  onClick={() => {
-                    const item = cartItems[0];
-                    updateQuantity(
-                      item.product_id,
-                      item.size,
-                      item.quantity - 1,
-                    );
+          {/* Add to Cart / Quantity button - Moved for LIst View */}
+          {view === "grid" && (
+            <div className="absolute bottom-0 left-0 right-0 p-4">
+              {totalInCart > 0 ? (
+                <div
+                  className="w-full bg-background/95 backdrop-blur-sm rounded-md py-1.5 px-3 flex items-center justify-between shadow-lg border border-border/50"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
                   }}
-                  className="h-8 w-8 flex items-center justify-center rounded-sm hover:bg-muted text-foreground transition-colors"
                 >
-                  <Minus className="h-4 w-4" />
-                </button>
-                <span className="font-medium text-foreground text-sm">
-                  {totalInCart}
-                </span>
+                  <button
+                    onClick={() => {
+                      const item = cartItems[0];
+                      updateQuantity(
+                        item.product_id,
+                        item.size,
+                        item.quantity - 1,
+                      );
+                    }}
+                    className="h-8 w-8 flex items-center justify-center rounded-sm hover:bg-muted text-foreground transition-colors"
+                  >
+                    <Minus className="h-4 w-4" />
+                  </button>
+                  <span className="font-medium text-foreground text-sm">
+                    {totalInCart}
+                  </span>
+                  <button
+                    onClick={() => {
+                      const item = cartItems[0];
+                      updateQuantity(
+                        item.product_id,
+                        item.size,
+                        item.quantity + 1,
+                      );
+                    }}
+                    className="h-8 w-8 flex items-center justify-center rounded-sm hover:bg-muted text-foreground transition-colors"
+                  >
+                    <Plus className="h-4 w-4" />
+                  </button>
+                </div>
+              ) : (
                 <button
-                  onClick={() => {
-                    const item = cartItems[0];
-                    updateQuantity(
-                      item.product_id,
-                      item.size,
-                      item.quantity + 1,
-                    );
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setQuickViewOpen(true);
                   }}
-                  className="h-8 w-8 flex items-center justify-center rounded-sm hover:bg-muted text-foreground transition-colors"
+                  className="w-full bg-background/95 backdrop-blur-sm rounded-md py-2.5 text-center flex items-center justify-center gap-2 hover:bg-background transition-colors text-foreground shadow-lg border border-border/50"
                 >
-                  <Plus className="h-4 w-4" />
+                  <ShoppingBag className="h-3.5 w-3.5" />
+                  <span className="text-xs tracking-widest uppercase font-medium">
+                    Add to Cart
+                  </span>
                 </button>
-              </div>
-            ) : (
-              <button
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  setQuickViewOpen(true);
-                }}
-                className="w-full bg-background/95 backdrop-blur-sm rounded-md py-2.5 text-center flex items-center justify-center gap-2 hover:bg-background transition-colors text-foreground shadow-lg border border-border/50"
-              >
-                <ShoppingBag className="h-3.5 w-3.5" />
-                <span className="text-xs tracking-widest uppercase font-medium">
-                  Add to Cart
-                </span>
-              </button>
-            )}
-          </div>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Product info */}
         <div
           className={cn(
-            "space-y-1.5",
+            "space-y-4",
             view === "list"
-              ? "p-6 sm:p-8 flex flex-col justify-center flex-1"
-              : "",
+              ? "p-6 sm:p-10 flex flex-col justify-center flex-1"
+              : "mt-4",
           )}
         >
-          {product.fabric_type && (
-            <p className="text-[10px] tracking-[0.2em] uppercase text-muted-foreground">
-              {product.fabric_type}
-            </p>
-          )}
-          <h3 className="font-serif text-base sm:text-lg text-foreground group-hover:text-gold transition-colors duration-300 leading-tight">
-            {product.name}
-          </h3>
-          <div className="flex items-center gap-2">
-            <span className="font-medium text-gold">
-              {formatPrice(discountedPrice)}
-            </span>
-            {hasDiscount && (
-              <span className="text-sm text-muted-foreground line-through">
-                {formatPrice(product.price)}
+          <div className="space-y-1.5">
+            {product.fabric_type && (
+              <p className="text-[10px] tracking-[0.2em] uppercase text-gold">
+                {product.fabric_type}
+              </p>
+            )}
+            <h3 className="font-serif text-lg sm:text-xl text-foreground group-hover:text-gold transition-colors duration-300 leading-tight">
+              {product.name}
+            </h3>
+            <div className="flex items-center gap-2">
+              <span className="font-medium text-foreground text-lg">
+                {formatPrice(discountedPrice)}
               </span>
+              {hasDiscount && (
+                <span className="text-sm text-muted-foreground line-through">
+                  {formatPrice(product.price)}
+                </span>
+              )}
+            </div>
+            {view === "list" && product.description && (
+              <p className="text-sm text-muted-foreground line-clamp-2 mt-4 max-w-xl">
+                {product.description}
+              </p>
             )}
           </div>
+
+          {view === "list" && (
+            <div className="flex flex-wrap items-center gap-4 mt-6">
+              {totalInCart > 0 ? (
+                <div
+                  className="w-40 bg-accent/20 rounded-md py-2 px-4 flex items-center justify-between border border-border/50"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                  }}
+                >
+                  <button
+                    onClick={() => {
+                      const item = cartItems[0];
+                      updateQuantity(
+                        item.product_id,
+                        item.size,
+                        item.quantity - 1,
+                      );
+                    }}
+                    className="h-8 w-8 flex items-center justify-center rounded-sm hover:bg-accent/40 text-foreground transition-colors"
+                  >
+                    <Minus className="h-4 w-4" />
+                  </button>
+                  <span className="font-medium text-foreground">
+                    {totalInCart}
+                  </span>
+                  <button
+                    onClick={() => {
+                      const item = cartItems[0];
+                      updateQuantity(
+                        item.product_id,
+                        item.size,
+                        item.quantity + 1,
+                      );
+                    }}
+                    className="h-8 w-8 flex items-center justify-center rounded-sm hover:bg-accent/40 text-foreground transition-colors"
+                  >
+                    <Plus className="h-4 w-4" />
+                  </button>
+                </div>
+              ) : (
+                <Button
+                  onClick={(e: React.MouseEvent) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setQuickViewOpen(true);
+                  }}
+                  className="bg-gold hover:bg-gold-dark text-white px-8"
+                >
+                  <ShoppingBag className="h-4 w-4 mr-2" />
+                  Add to Cart
+                </Button>
+              )}
+              <Button
+                variant="outline"
+                onClick={(e: React.MouseEvent) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setQuickViewOpen(true);
+                }}
+                className="border-gold/30 text-gold hover:bg-gold/10"
+              >
+                <Eye className="h-4 w-4 mr-2" />
+                Quick View
+              </Button>
+            </div>
+          )}
         </div>
       </Link>
 
