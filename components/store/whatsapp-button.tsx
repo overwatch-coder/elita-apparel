@@ -3,13 +3,10 @@
 import Link from "next/link";
 import { MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { BRAND } from "@/lib/constants";
+import { SOCIALS } from "@/lib/constants";
 
 export function WhatsAppButton() {
-  const whatsappUrl = `https://wa.me/${BRAND.whatsappNumber.replace(
-    /\+/g,
-    "",
-  )}?text=${encodeURIComponent(
+  const whatsappUrl = `${SOCIALS.whatsapp.url}?text=${encodeURIComponent(
     "Hi! I'd like to inquire about your products.",
   )}`;
 

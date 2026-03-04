@@ -4,6 +4,9 @@ import { ProductGallery } from "@/components/store/product-gallery";
 import { ProductInfo } from "@/components/store/product-info";
 import { FeaturedSection } from "@/components/store/featured-section";
 import { WhatsAppButton } from "@/components/store/whatsapp-button";
+import { StickyCartBar } from "@/components/store/sticky-cart-bar";
+import { ProductJsonLd } from "@/components/seo/product-jsonld";
+import { BreadcrumbJsonLd } from "@/components/seo/breadcrumb-jsonld";
 import type { Metadata } from "next";
 
 interface ProductPageProps {
@@ -18,7 +21,9 @@ export async function generateMetadata({
 
   const { data: product } = await supabase
     .from("products")
-    .select("name, seo_title, seo_description, description")
+    .select(
+      "name, seo_title, seo_description, description, product_images(image_url, is_primary)",
+    )
     .eq("slug", slug)
     .eq("is_published", true)
     .single();
@@ -26,6 +31,12 @@ export async function generateMetadata({
   if (!product) {
     return { title: "Product Not Found" };
   }
+
+  const primaryImg = product.product_images?.find(
+    (img: { is_primary: boolean }) => img.is_primary,
+  );
+  const ogImage =
+    primaryImg?.image_url || product.product_images?.[0]?.image_url;
 
   return {
     title: product.seo_title || product.name,
@@ -39,6 +50,14 @@ export async function generateMetadata({
         product.seo_description ||
         product.description?.slice(0, 160) ||
         undefined,
+      images: ogImage
+        ? [{ url: ogImage, width: 800, height: 1067 }]
+        : undefined,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: product.seo_title || product.name,
+      images: ogImage ? [ogImage] : undefined,
     },
   };
 }
@@ -72,6 +91,17 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
   return (
     <>
+      <ProductJsonLd
+        product={product}
+        url={`${process.env.NEXT_PUBLIC_SITE_URL || "https://elitaapparel.com"}/shop/${slug}`}
+      />
+      <BreadcrumbJsonLd
+        items={[
+          { name: "Home", href: "/" },
+          { name: "Shop", href: "/shop" },
+          { name: product.name, href: `/shop/${slug}` },
+        ]}
+      />
       <div className="pt-28 pb-20">
         <div className="container mx-auto px-4 lg:px-8">
           {/* Breadcrumbs */}
@@ -116,6 +146,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
         />
       )}
 
+      <StickyCartBar product={product} />
       <WhatsAppButton />
     </>
   );

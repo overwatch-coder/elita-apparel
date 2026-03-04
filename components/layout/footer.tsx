@@ -2,7 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Instagram, Mail, MapPin, Phone } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
-import { NAV_LINKS, BRAND } from "@/lib/constants";
+import { NAV_LINKS, BRAND, SOCIALS } from "@/lib/constants";
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
@@ -28,10 +28,7 @@ export function Footer() {
             </p>
             <div className="flex items-center gap-4">
               <Link
-                href={`https://instagram.com/${BRAND.instagramHandle.replace(
-                  "@",
-                  "",
-                )}`}
+                href={SOCIALS.instagram.url}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="h-10 w-10 rounded-full border border-cream/20 flex items-center justify-center hover:bg-gold hover:border-gold transition-all duration-300"
@@ -40,10 +37,7 @@ export function Footer() {
                 <Instagram className="h-4 w-4" />
               </Link>
               <Link
-                href={`https://wa.me/${BRAND.whatsappNumber.replace(
-                  /\+/g,
-                  "",
-                )}`}
+                href={SOCIALS.whatsapp.url}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="h-10 w-10 rounded-full border border-cream/20 flex items-center justify-center hover:bg-gold hover:border-gold transition-all duration-300"
@@ -52,7 +46,7 @@ export function Footer() {
                 <Phone className="h-4 w-4" />
               </Link>
               <Link
-                href={`mailto:${BRAND.email}`}
+                href={`mailto:${SOCIALS.email}`}
                 className="h-10 w-10 rounded-full border border-cream/20 flex items-center justify-center hover:bg-gold hover:border-gold transition-all duration-300"
                 aria-label="Email"
               >
@@ -98,10 +92,7 @@ export function Footer() {
                 My Cart
               </Link>
               <Link
-                href={`https://wa.me/${BRAND.whatsappNumber.replace(
-                  /\+/g,
-                  "",
-                )}?text=Hi, I would like to make an inquiry about your products.`}
+                href={`${SOCIALS.whatsapp.url}?text=Hi, I would like to make an inquiry about your products.`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-sm text-cream/60 hover:text-gold transition-colors duration-300"
@@ -124,24 +115,21 @@ export function Footer() {
               <div className="flex items-start gap-3">
                 <Mail className="h-4 w-4 text-gold mt-0.5 shrink-0" />
                 <Link
-                  href={`mailto:${BRAND.email}`}
+                  href={`mailto:${SOCIALS.email}`}
                   className="text-sm text-cream/60 hover:text-gold transition-colors"
                 >
-                  {BRAND.email}
+                  {SOCIALS.email}
                 </Link>
               </div>
               <div className="flex items-start gap-3">
                 <Instagram className="h-4 w-4 text-gold mt-0.5 shrink-0" />
                 <Link
-                  href={`https://instagram.com/${BRAND.instagramHandle.replace(
-                    "@",
-                    "",
-                  )}`}
+                  href={SOCIALS.instagram.url}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-sm text-cream/60 hover:text-gold transition-colors"
                 >
-                  {BRAND.instagramHandle}
+                  {SOCIALS.instagram.handle}
                 </Link>
               </div>
             </div>

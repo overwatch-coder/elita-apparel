@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { NAV_LINKS, BRAND } from "@/lib/constants";
+import { NAV_LINKS, BRAND, SOCIALS } from "@/lib/constants";
 
 interface MobileNavProps {
   open: boolean;
@@ -71,10 +71,7 @@ export function MobileNav({ open, onOpenChange }: MobileNavProps) {
                 size="lg"
               >
                 <Link
-                  href={`https://wa.me/${BRAND.whatsappNumber.replace(
-                    /\+/g,
-                    "",
-                  )}`}
+                  href={SOCIALS.whatsapp.url}
                   target="_blank"
                   rel="noopener noreferrer"
                 >

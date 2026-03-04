@@ -2,11 +2,11 @@ import { createClient } from "@/lib/supabase/server";
 import { HeroSection } from "@/components/store/hero-section";
 import { BrandStory } from "@/components/store/brand-story";
 import { EarlyBirdBanner } from "@/components/store/early-bird-banner";
-import { ProductCard } from "@/components/store/product-card";
-import { CollectionCard } from "@/components/store/collection-card";
 import { WhatsAppButton } from "@/components/store/whatsapp-button";
 import { CollectionsSection } from "@/components/store/collections-section";
 import { FeaturedSection } from "@/components/store/featured-section";
+import { InstagramSection } from "@/components/store/instagram-section";
+import { OrganizationJsonLd } from "@/components/seo/organization-jsonld";
 
 export default async function HomePage() {
   const supabase = await createClient();
@@ -39,6 +39,7 @@ export default async function HomePage() {
 
   return (
     <>
+      <OrganizationJsonLd />
       <HeroSection />
 
       {/* Collections Section */}
@@ -65,6 +66,9 @@ export default async function HomePage() {
         showViewAll
         viewAllHref="/shop?sort=newest"
       />
+
+      {/* Instagram Section */}
+      <InstagramSection />
 
       {/* WhatsApp Button */}
       <WhatsAppButton />

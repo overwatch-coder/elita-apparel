@@ -14,9 +14,31 @@ export const BRAND = {
   tagline: "Intrigue. Elegance. You.",
   motto: "Wrapped in Culture. Wrapped in Elita.",
   location: "Accra, Ghana",
-  whatsappNumber: "+233000000000", // Replace with actual
-  instagramHandle: "@elitaapparel",
+  siteUrl: "https://elitaapparel.com", // Replace with actual
+} as const;
+
+// ── Social & Contact ────────────────────────────────────────────────
+// Update these with your actual accounts — used across the entire app.
+
+export const SOCIALS = {
+  instagram: {
+    handle: "@elitaapparel",
+    url: "https://instagram.com/elitaapparel",
+  },
+  tiktok: {
+    handle: "@elitaapparel",
+    url: "https://tiktok.com/@elitaapparel",
+  },
+  twitter: {
+    handle: "@elitaapparel",
+    url: "https://x.com/elitaapparel",
+  },
+  whatsapp: {
+    number: "+233000000000", // Replace with actual
+    url: "https://wa.me/233000000000",
+  },
   email: "info@elitaapparel.com",
+  phone: "+233000000000", // Replace with actual
 } as const;
 
 export const BRAND_MESSAGES = [

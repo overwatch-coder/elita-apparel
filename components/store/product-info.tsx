@@ -8,7 +8,11 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { SizeSelector } from "@/components/store/size-selector";
 import { useCart } from "@/components/cart/cart-provider";
-import { formatPrice, calculateDiscountedPrice, BRAND } from "@/lib/constants";
+import {
+  formatPrice,
+  calculateDiscountedPrice,
+  SOCIALS,
+} from "@/lib/constants";
 import type { ProductWithImages } from "@/lib/types/database";
 
 interface ProductInfoProps {
@@ -48,10 +52,7 @@ export function ProductInfo({ product }: ProductInfoProps) {
     });
   };
 
-  const whatsappUrl = `https://wa.me/${BRAND.whatsappNumber.replace(
-    /\+/g,
-    "",
-  )}?text=${encodeURIComponent(
+  const whatsappUrl = `${SOCIALS.whatsapp.url}?text=${encodeURIComponent(
     `Hi! I'm interested in the ${product.name}. Can you provide more details?`,
   )}`;
 

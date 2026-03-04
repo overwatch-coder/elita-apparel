@@ -1,9 +1,12 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "motion/react";
+import { Eye } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { QuickViewModal } from "@/components/store/quick-view-modal";
 import { formatPrice, calculateDiscountedPrice } from "@/lib/constants";
 import type { Product, ProductImage } from "@/lib/types/database";
 
@@ -12,6 +15,8 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product }: ProductCardProps) {
+  const [quickViewOpen, setQuickViewOpen] = useState(false);
+
   const primaryImage = product.product_images.find((img) => img.is_primary);
   const imageUrl =
     primaryImage?.image_url || product.product_images[0]?.image_url;
@@ -63,13 +68,21 @@ export function ProductCard({ product }: ProductCardProps) {
             )}
           </div>
 
-          {/* Quick view hint */}
+          {/* Quick view button */}
           <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-500">
-            <div className="bg-white/95 backdrop-blur-sm rounded-md py-2.5 text-center">
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setQuickViewOpen(true);
+              }}
+              className="w-full bg-white/95 backdrop-blur-sm rounded-md py-2.5 text-center flex items-center justify-center gap-2 hover:bg-white transition-colors"
+            >
+              <Eye className="h-3.5 w-3.5 text-royal-black" />
               <span className="text-xs tracking-widest uppercase text-royal-black font-medium">
                 Quick View
               </span>
-            </div>
+            </button>
           </div>
         </div>
 
@@ -95,6 +108,13 @@ export function ProductCard({ product }: ProductCardProps) {
           </div>
         </div>
       </Link>
+
+      {/* Quick View Modal */}
+      <QuickViewModal
+        product={product}
+        open={quickViewOpen}
+        onOpenChange={setQuickViewOpen}
+      />
     </motion.div>
   );
 }
