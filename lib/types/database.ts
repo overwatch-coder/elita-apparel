@@ -826,6 +826,62 @@ export interface Database {
           },
         ];
       };
+      marketing_popups: {
+        Row: {
+          id: string;
+          name: string;
+          type: string;
+          title: string;
+          content: string | null;
+          image_url: string | null;
+          cta_label: string | null;
+          cta_url: string | null;
+          discount_code: string | null;
+          delay_seconds: number;
+          is_active: boolean;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          name: string;
+          type: string;
+          title: string;
+          content?: string | null;
+          image_url?: string | null;
+          cta_label?: string | null;
+          cta_url?: string | null;
+          discount_code?: string | null;
+          delay_seconds?: number;
+          is_active?: boolean;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          name?: string;
+          type?: string;
+          title?: string;
+          content?: string | null;
+          image_url?: string | null;
+          cta_label?: string | null;
+          cta_url?: string | null;
+          discount_code?: string | null;
+          delay_seconds?: number;
+          is_active?: boolean;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "marketing_popups_discount_code_fkey";
+            columns: ["discount_code"];
+            isOneToOne: false;
+            referencedRelation: "discount_codes";
+            referencedColumns: ["code"];
+          },
+        ];
+      };
       automation_logs: {
         Row: {
           id: string;

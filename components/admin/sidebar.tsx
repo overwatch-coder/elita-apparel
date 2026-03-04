@@ -18,6 +18,8 @@ import {
   Users,
   Megaphone,
   Zap,
+  MousePointer2,
+  PieChart,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -43,6 +45,12 @@ const NAV_ITEMS = [
   { label: "Audience", href: "/admin/audience", icon: Users },
   { label: "Campaigns", href: "/admin/campaigns", icon: Megaphone },
   { label: "Automations", href: "/admin/automations", icon: Zap },
+  { label: "Popups", href: "/admin/marketing/popups", icon: MousePointer2 },
+  {
+    label: "Marketing Stats",
+    href: "/admin/marketing/analytics",
+    icon: PieChart,
+  },
 ];
 
 export function AdminSidebar() {

@@ -42,23 +42,30 @@ export function ProductFilters({ categories }: ProductFiltersProps) {
 
   // Debounced search
   useEffect(() => {
+    // Sync with URL if changed externally
+    if (currentSearch !== searchValue && searchValue === "") {
+      setSearchValue(currentSearch);
+    }
+  }, [currentSearch]);
+
+  useEffect(() => {
     const timer = setTimeout(() => {
       const params = new URLSearchParams(searchParams.toString());
+
+      if (searchValue === currentSearch) return;
+
       if (searchValue) {
         params.set("q", searchValue);
       } else {
         params.delete("q");
       }
       params.delete("page");
-      // preserve view when searching
-      if (currentView !== "grid") {
-        params.set("view", currentView);
-      }
+
       router.push(`/shop?${params.toString()}`);
-    }, 400);
+    }, 500);
 
     return () => clearTimeout(timer);
-  }, [searchValue]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [searchValue, router, searchParams, currentSearch]);
 
   const updateFilter = useCallback(
     (key: string, value: string) => {
@@ -153,15 +160,15 @@ export function ProductFilters({ categories }: ProductFiltersProps) {
             </button>
           </div>
 
-          {/* Filter button */}
+          {/* Filter button - Mobile Only */}
           <Sheet>
             <SheetTrigger asChild>
               <Button
                 variant="outline"
-                className="h-11 border-border/50 shrink-0 px-4"
+                className="h-11 border-border/50 shrink-0 px-4 lg:hidden"
               >
-                <SlidersHorizontal className="h-4 w-4 sm:mr-2" />
-                <span className="hidden sm:inline">Categories</span>
+                <SlidersHorizontal className="h-4 w-4 mr-2" />
+                Categories
                 {hasActiveFilters && (
                   <span className="ml-2 h-5 w-5 rounded-full bg-gold text-white text-[10px] flex items-center justify-center">
                     !

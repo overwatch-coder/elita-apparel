@@ -10,6 +10,8 @@ import {
 } from "react";
 import type { CartItem } from "@/lib/types/database";
 import { toast } from "sonner";
+import { useSearchParams } from "next/navigation";
+import { validateDiscountCode } from "@/lib/actions/discounts";
 
 interface CartContextType {
   items: CartItem[];
@@ -60,6 +62,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }
     setIsHydrated(true);
   }, []);
+
+  const searchParams = useSearchParams();
 
   // Persist cart to localStorage
   useEffect(() => {
@@ -154,6 +158,34 @@ export function CartProvider({ children }: { children: ReactNode }) {
     setDiscountCode(code);
     setDiscountPercentage(percentage);
   }, []);
+
+  // Auto-apply discount from URL
+  useEffect(() => {
+    if (!isHydrated) return;
+
+    const codeFromUrl =
+      searchParams?.get("coupon") || searchParams?.get("discount");
+
+    if (codeFromUrl && codeFromUrl.toUpperCase() !== discountCode) {
+      const applyUrlCode = async () => {
+        try {
+          const result = await validateDiscountCode(codeFromUrl);
+          if (result.percentage) {
+            setDiscount(codeFromUrl.toUpperCase(), result.percentage);
+            toast.success(
+              `Coupon "${codeFromUrl.toUpperCase()}" applied from link!`,
+            );
+          } else if (result.error) {
+            console.warn("Invalid coupon in URL:", result.error);
+          }
+        } catch (err) {
+          console.error("Failed to validate link coupon:", err);
+        }
+      };
+
+      applyUrlCode();
+    }
+  }, [searchParams, isHydrated, discountCode, setDiscount]);
 
   return (
     <CartContext.Provider

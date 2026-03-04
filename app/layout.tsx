@@ -4,7 +4,9 @@ import { Toaster } from "@/components/ui/sonner";
 import { CartProvider } from "@/components/cart/cart-provider";
 import { WishlistProvider } from "@/components/wishlist/wishlist-provider";
 import { WhatsAppButton } from "@/components/store/whatsapp-button";
+import { PopupManager } from "@/components/marketing/popup-manager";
 import { ThemeProvider } from "@/components/theme-provider";
+import { Suspense } from "react";
 import "./globals.css";
 
 const playfairDisplay = Playfair_Display({
@@ -76,13 +78,16 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <CartProvider>
-            <WishlistProvider>
-              {children}
-              <Toaster position="bottom-right" />
-              <WhatsAppButton />
-            </WishlistProvider>
-          </CartProvider>
+          <Suspense fallback={null}>
+            <CartProvider>
+              <WishlistProvider>
+                {children}
+                <Toaster position="bottom-right" />
+                <WhatsAppButton />
+                <PopupManager />
+              </WishlistProvider>
+            </CartProvider>
+          </Suspense>
         </ThemeProvider>
       </body>
     </html>
