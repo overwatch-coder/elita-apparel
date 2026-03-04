@@ -4,9 +4,10 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { formatPrice } from "@/lib/constants";
 import { OrderStatusSelect } from "@/components/admin/order-status-select";
-import { PaymentStatusSelect } from "@/components/admin/payment-status-select";
-import { TrackingNoteForm } from "@/components/admin/tracking-note-form";
+import { CODToggle } from "@/components/admin/cod-toggle";
 import type { Metadata } from "next";
+import { TrackingNoteForm } from "@/components/admin/tracking-note-form";
+import { PaymentStatusSelect } from "@/components/admin/payment-status-select";
 
 export const metadata: Metadata = { title: "Order Details | Admin" };
 
@@ -97,6 +98,41 @@ export default async function AdminOrderDetailPage({
               <div className="pt-4 mt-4 border-t border-border/50 flex justify-between font-medium text-base">
                 <span>Total</span>
                 <span>{formatPrice(order.total_amount)}</span>
+              </div>
+
+              {/* Payment Method Details */}
+              <div className="pt-4 mt-4 border-t border-border/50 space-y-3">
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-muted-foreground">Method</span>
+                  <span className="uppercase text-xs font-medium tracking-wider bg-secondary/50 px-2 py-1 rounded">
+                    {order.payment_method || "N/A"}
+                  </span>
+                </div>
+
+                {order.paystack_reference && (
+                  <div className="flex justify-between items-center text-sm">
+                    <span className="text-muted-foreground">Reference</span>
+                    <span className="font-mono text-xs text-muted-foreground">
+                      {order.paystack_reference}
+                    </span>
+                  </div>
+                )}
+
+                {order.paid_at && (
+                  <div className="flex justify-between items-center text-sm">
+                    <span className="text-muted-foreground">Paid On</span>
+                    <span className="text-xs text-muted-foreground">
+                      {new Date(order.paid_at).toLocaleString()}
+                    </span>
+                  </div>
+                )}
+
+                {order.payment_method === "cod" && (
+                  <CODToggle
+                    orderId={order.id}
+                    initialCollected={order.delivery_payment_collected}
+                  />
+                )}
               </div>
             </div>
           </div>

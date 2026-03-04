@@ -99,6 +99,29 @@ export async function deleteCategory(id: string) {
 export async function updateOrderStatus(id: string, status: string) {
   const supabase = await createClient();
 
+  // Fetch current order to validate payment rules
+  const { data: order } = await supabase
+    .from("orders")
+    .select("payment_method, payment_status")
+    .eq("id", id)
+    .single();
+
+  if (order) {
+    const isDigitalPayment =
+      order.payment_method === "card" || order.payment_method === "momo";
+    const isAdvancing =
+      status === "processing" ||
+      status === "shipped" ||
+      status === "out for delivery" ||
+      status === "delivered";
+
+    if (isDigitalPayment && isAdvancing && order.payment_status !== "paid") {
+      return {
+        error: "Digital orders (Card/MoMo) cannot be processed until paid.",
+      };
+    }
+  }
+
   // Supabase enum expects out_for_delivery format
   const dbStatus = status === "out for delivery" ? "out_for_delivery" : status;
 
@@ -249,5 +272,32 @@ export async function updateBulkStock(ids: string[], quantity: number) {
 
   revalidatePath("/admin/inventory");
   revalidatePath("/admin/products");
+  return { success: true };
+}
+
+export async function markCODCollected(orderId: string, collected: boolean) {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user || user.user_metadata.role !== "admin") {
+    return { error: "Unauthorized" };
+  }
+
+  const { error } = await supabase
+    .from("orders")
+    .update({ delivery_payment_collected: collected })
+    .eq("id", orderId);
+
+  if (error) {
+    console.error("Error updating COD collected status:", error);
+    return { error: "Failed to update collected status" };
+  }
+
+  revalidatePath("/admin/orders");
+  revalidatePath(`/admin/orders/${orderId}`);
+
   return { success: true };
 }

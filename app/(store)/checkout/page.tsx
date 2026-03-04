@@ -12,6 +12,11 @@ import { Separator } from "@/components/ui/separator";
 import { useCart } from "@/components/cart/cart-provider";
 import { createClient } from "@/lib/supabase/client";
 import { formatPrice, calculateDiscountedPrice } from "@/lib/constants";
+import {
+  PaymentMethodSelector,
+  type PaymentMethod,
+} from "@/components/checkout/payment-method-selector";
+import { PaymentProcessingModal } from "@/components/checkout/payment-processing-modal";
 import { toast } from "sonner";
 import type { User } from "@supabase/supabase-js";
 import type { Address } from "@/lib/types/database";
@@ -22,6 +27,11 @@ export default function CheckoutPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
   const [orderId, setOrderId] = useState<string | null>(null);
+
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("cod");
+  const [processingStatus, setProcessingStatus] = useState<
+    "idle" | "processing" | "success" | "error"
+  >("idle");
 
   const [user, setUser] = useState<User | null>(null);
   const [isDataLoaded, setIsDataLoaded] = useState(false);
@@ -86,6 +96,7 @@ export default function CheckoutPage() {
     if (items.length === 0) return;
 
     setIsSubmitting(true);
+    setProcessingStatus("processing");
 
     try {
       const supabase = createClient();
@@ -104,10 +115,10 @@ export default function CheckoutPage() {
           shipping_zip: form.zip || null,
           shipping_country: form.country,
           total_amount: totalPrice,
-          discount_code: null,
           discount_amount: 0,
           status: "pending" as const,
           payment_status: "pending" as const,
+          payment_method: paymentMethod,
           notes: form.notes || null,
         })
         .select("id")
@@ -136,13 +147,43 @@ export default function CheckoutPage() {
       }
 
       setOrderId(orderData.id);
-      setIsComplete(true);
-      clearCart();
-      toast.success("Order placed successfully!");
+
+      if (paymentMethod === "cod") {
+        setProcessingStatus("success");
+        clearCart();
+
+        // Allow animation to play before transitioning
+        setTimeout(() => {
+          setIsComplete(true);
+          setProcessingStatus("idle");
+          setIsSubmitting(false);
+        }, 2500);
+      } else {
+        // Handle Card or MoMo via Paystack
+        const response = await fetch("/api/payments/initialize", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email: form.email,
+            amount: totalPrice,
+            orderId: orderData.id,
+            name: form.name,
+          }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || "Payment initialization failed");
+        }
+
+        // Redirect to Paystack
+        window.location.href = data.authorization_url;
+      }
     } catch (error) {
       console.error("Checkout error:", error);
       toast.error("Failed to place order. Please try again.");
-    } finally {
+      setProcessingStatus("error");
       setIsSubmitting(false);
     }
   };
@@ -219,7 +260,12 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div className="pt-28 pb-20 bg-royal-black text-cream min-h-screen">
+    <div className="pt-28 pb-20 bg-royal-black text-cream min-h-screen relative">
+      <PaymentProcessingModal
+        isOpen={processingStatus !== "idle"}
+        status={processingStatus}
+      />
+
       <div className="container mx-auto px-4 lg:px-8">
         {/* Page header */}
         <div className="text-center mb-12">
@@ -370,6 +416,14 @@ export default function CheckoutPage() {
                     />
                   </div>
                 </div>
+              </div>
+
+              {/* Payment Method Selector */}
+              <div className="bg-white/5 p-6 sm:p-8 rounded-xl border border-cream/10">
+                <PaymentMethodSelector
+                  value={paymentMethod}
+                  onChange={setPaymentMethod}
+                />
               </div>
             </div>
 

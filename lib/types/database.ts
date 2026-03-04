@@ -218,6 +218,11 @@ export interface Database {
           estimated_delivery: string | null;
           notes: string | null;
           user_id: string | null;
+          payment_method: "cod" | "card" | "momo" | null;
+          paystack_reference: string | null;
+          paid_at: string | null;
+          payment_verified: boolean;
+          delivery_payment_collected: boolean;
           created_at: string;
           updated_at: string;
         };
@@ -247,6 +252,11 @@ export interface Database {
           estimated_delivery?: string | null;
           notes?: string | null;
           user_id?: string | null;
+          payment_method?: "cod" | "card" | "momo" | null;
+          paystack_reference?: string | null;
+          paid_at?: string | null;
+          payment_verified?: boolean;
+          delivery_payment_collected?: boolean;
           created_at?: string;
           updated_at?: string;
         };
@@ -276,6 +286,11 @@ export interface Database {
           estimated_delivery?: string | null;
           notes?: string | null;
           user_id?: string | null;
+          payment_method?: "cod" | "card" | "momo" | null;
+          paystack_reference?: string | null;
+          paid_at?: string | null;
+          payment_verified?: boolean;
+          delivery_payment_collected?: boolean;
           created_at?: string;
           updated_at?: string;
         };
