@@ -9,6 +9,7 @@ import { CartSheet } from "@/components/cart/cart-sheet";
 import { NAV_LINKS } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import { MobileNav } from "./mobile-nav";
+import { ModeToggle } from "./mode-toggle";
 
 export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -28,7 +29,7 @@ export function Navbar() {
         "fixed top-0 left-0 right-0 z-50 transition-all duration-500",
         isScrolled
           ? "bg-background/95 backdrop-blur-md shadow-sm border-b border-border/50"
-          : "bg-transparent",
+          : "bg-royal-black/20 backdrop-blur-[2px] border-b border-white/5",
       )}
     >
       <nav className="container mx-auto flex h-20 items-center justify-between px-4 lg:px-8">
@@ -48,7 +49,7 @@ export function Navbar() {
         </Link>
 
         {/* Desktop nav links + cart — right side */}
-        <div className="hidden lg:flex items-center gap-8">
+        <div className="hidden lg:flex items-center gap-6">
           {NAV_LINKS.map((link) => (
             <Link
               key={link.href}
@@ -58,12 +59,16 @@ export function Navbar() {
               {link.label}
             </Link>
           ))}
-          <div className="w-px h-5 bg-border/60" />
-          <CartSheet />
+          <div className="w-px h-5 bg-border/60 mx-1" />
+          <div className="flex items-center gap-4">
+            <ModeToggle />
+            <CartSheet />
+          </div>
         </div>
 
         {/* Mobile: cart + hamburger — right side */}
         <div className="flex items-center gap-2 lg:hidden">
+          <ModeToggle />
           <CartSheet />
           <Button
             variant="ghost"

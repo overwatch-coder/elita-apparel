@@ -9,12 +9,12 @@ import { BRAND } from "@/lib/constants";
 const VALUE_PROPS = [
   { icon: Sparkles, label: "Handcrafted Quality" },
   { icon: Shield, label: "Authentic Fabrics" },
-  { icon: Truck, label: "Worldwide Delivery" },
+  // { icon: Truck, label: "Worldwide Delivery" },
 ] as const;
 
 export function HeroSection() {
   return (
-    <section className="relative min-h-screen flex items-center overflow-hidden bg-royal-black">
+    <section className="relative min-h-screen flex items-center overflow-hidden bg-royal-black pt-20">
       {/* Subtle geometric pattern */}
       <div
         className="absolute inset-0 opacity-[0.03]"
@@ -45,7 +45,7 @@ export function HeroSection() {
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.7, delay: 0.2 }}
-              className="flex items-center gap-3 mb-8"
+              className="flex items-center gap-3 my-4"
             >
               <div className="w-10 h-px bg-gold" />
               <p className="text-gold tracking-[0.4em] uppercase text-xs">
@@ -84,7 +84,7 @@ export function HeroSection() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 1 }}
-              className="flex flex-col sm:flex-row gap-4 mb-16"
+              className="flex flex-col sm:flex-row gap-4 mb-10"
             >
               <Button
                 asChild
@@ -111,7 +111,7 @@ export function HeroSection() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 1, delay: 1.3 }}
-              className="flex flex-wrap gap-8"
+              className="flex flex-wrap gap-5 pb-4"
             >
               {VALUE_PROPS.map(({ icon: Icon, label }) => (
                 <div key={label} className="flex items-center gap-2.5">
@@ -142,7 +142,7 @@ export function HeroSection() {
               <div className="absolute inset-0 flex items-center justify-center">
                 <div className="text-center">
                   <p className="text-gold/60 tracking-[0.5em] uppercase text-[10px] mb-3">
-                    Est. 2024
+                    Est. 2025
                   </p>
                   <p className="font-serif text-cream/20 text-5xl leading-none mb-3">
                     EA
@@ -157,7 +157,7 @@ export function HeroSection() {
               <motion.div
                 animate={{ rotate: 360 }}
                 transition={{
-                  duration: 60,
+                  duration: 30,
                   repeat: Infinity,
                   ease: "linear",
                 }}

@@ -69,87 +69,87 @@
   --radius: 0.5rem;
 
   /* ── Brand palette ── */
-  --gold: #C6A75E;
-  --gold-light: #D4BA7A;
-  --gold-dark: #A68B3E;
-  --cream: #FAF7F2;
-  --cream-dark: #F0EBE1;
-  --earth: #5C4A32;
-  --earth-light: #7A6548;
-  --ghana-red: #CE1126;
-  --ghana-green: #006B3F;
-  --royal-black: #1A1A1A;
+  --gold: #d4b46e;
+  --gold-light: #d4ba7a;
+  --gold-dark: #a68b3e;
+  --cream: #faf7f2;
+  --cream-dark: #f0ebe1;
+  --earth: #5c4a32;
+  --earth-light: #7a6548;
+  --ghana-red: #ce1126;
+  --ghana-green: #006b3f;
+  --royal-black: #1a1a1a;
 
   /* ── Light theme (cream-based luxury) ── */
-  --background: #FAF7F2;
-  --foreground: #1A1A1A;
-  --card: #FFFFFF;
-  --card-foreground: #1A1A1A;
-  --popover: #FFFFFF;
-  --popover-foreground: #1A1A1A;
-  --primary: #C6A75E;
-  --primary-foreground: #FFFFFF;
-  --secondary: #F0EBE1;
-  --secondary-foreground: #1A1A1A;
-  --muted: #F0EBE1;
-  --muted-foreground: #7A6548;
-  --accent: #F0EBE1;
-  --accent-foreground: #1A1A1A;
-  --destructive: #CE1126;
-  --border: #E5DFD3;
-  --input: #E5DFD3;
-  --ring: #C6A75E;
+  --background: #faf7f2;
+  --foreground: #1a1a1a;
+  --card: #ffffff;
+  --card-foreground: #1a1a1a;
+  --popover: #ffffff;
+  --popover-foreground: #1a1a1a;
+  --primary: #c6a75e;
+  --primary-foreground: #ffffff;
+  --secondary: #f0ebe1;
+  --secondary-foreground: #1a1a1a;
+  --muted: #f0ebe1;
+  --muted-foreground: #7a6548;
+  --accent: #f0ebe1;
+  --accent-foreground: #1a1a1a;
+  --destructive: #ce1126;
+  --border: #e5dfd3;
+  --input: #e5dfd3;
+  --ring: #c6a75e;
 
-  --chart-1: #C6A75E;
-  --chart-2: #006B3F;
-  --chart-3: #5C4A32;
-  --chart-4: #CE1126;
-  --chart-5: #D4BA7A;
+  --chart-1: #c6a75e;
+  --chart-2: #006b3f;
+  --chart-3: #5c4a32;
+  --chart-4: #ce1126;
+  --chart-5: #d4ba7a;
 
-  --sidebar: #FFFFFF;
-  --sidebar-foreground: #1A1A1A;
-  --sidebar-primary: #C6A75E;
-  --sidebar-primary-foreground: #FFFFFF;
-  --sidebar-accent: #F0EBE1;
-  --sidebar-accent-foreground: #1A1A1A;
-  --sidebar-border: #E5DFD3;
-  --sidebar-ring: #C6A75E;
+  --sidebar: #ffffff;
+  --sidebar-foreground: #1a1a1a;
+  --sidebar-primary: #c6a75e;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #f0ebe1;
+  --sidebar-accent-foreground: #1a1a1a;
+  --sidebar-border: #e5dfd3;
+  --sidebar-ring: #c6a75e;
 }
 
 .dark {
-  --background: #0F0F0F;
-  --foreground: #FAF7F2;
-  --card: #1A1A1A;
-  --card-foreground: #FAF7F2;
-  --popover: #1A1A1A;
-  --popover-foreground: #FAF7F2;
-  --primary: #C6A75E;
-  --primary-foreground: #0F0F0F;
-  --secondary: #2A2520;
-  --secondary-foreground: #FAF7F2;
-  --muted: #2A2520;
-  --muted-foreground: #A89880;
-  --accent: #2A2520;
-  --accent-foreground: #FAF7F2;
-  --destructive: #CE1126;
+  --background: #0f0f0f;
+  --foreground: #faf7f2;
+  --card: #1a1a1a;
+  --card-foreground: #faf7f2;
+  --popover: #1a1a1a;
+  --popover-foreground: #faf7f2;
+  --primary: #c6a75e;
+  --primary-foreground: #0f0f0f;
+  --secondary: #2a2520;
+  --secondary-foreground: #faf7f2;
+  --muted: #2a2520;
+  --muted-foreground: #a89880;
+  --accent: #2a2520;
+  --accent-foreground: #faf7f2;
+  --destructive: #ce1126;
   --border: rgba(198, 167, 94, 0.15);
   --input: rgba(198, 167, 94, 0.2);
-  --ring: #C6A75E;
+  --ring: #c6a75e;
 
-  --chart-1: #D4BA7A;
-  --chart-2: #2ECC71;
-  --chart-3: #A89880;
-  --chart-4: #E74C3C;
-  --chart-5: #C6A75E;
+  --chart-1: #d4ba7a;
+  --chart-2: #2ecc71;
+  --chart-3: #a89880;
+  --chart-4: #e74c3c;
+  --chart-5: #c6a75e;
 
-  --sidebar: #1A1A1A;
-  --sidebar-foreground: #FAF7F2;
-  --sidebar-primary: #C6A75E;
-  --sidebar-primary-foreground: #0F0F0F;
-  --sidebar-accent: #2A2520;
-  --sidebar-accent-foreground: #FAF7F2;
+  --sidebar: #1a1a1a;
+  --sidebar-foreground: #faf7f2;
+  --sidebar-primary: #c6a75e;
+  --sidebar-primary-foreground: #0f0f0f;
+  --sidebar-accent: #2a2520;
+  --sidebar-accent-foreground: #faf7f2;
   --sidebar-border: rgba(198, 167, 94, 0.15);
-  --sidebar-ring: #C6A75E;
+  --sidebar-ring: #c6a75e;
 }
 
 @layer base {
@@ -159,7 +159,12 @@
   body {
     @apply bg-background text-foreground font-sans;
   }
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     @apply font-serif;
   }
 
@@ -217,6 +222,9 @@ html {
   background-clip: text;
   -webkit-text-fill-color: transparent;
   animation: shimmer 3s linear infinite;
+}
+.text-glow-gold {
+  text-shadow: 0 0 15px rgba(212, 180, 110, 0.4);
 }
 
 @keyframes shimmer {

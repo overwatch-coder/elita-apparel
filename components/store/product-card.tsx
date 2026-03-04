@@ -37,7 +37,7 @@ export function ProductCard({ product }: ProductCardProps) {
       <Link href={`/shop/${product.slug}`} className="group block">
         {/* Image container */}
         <div className="relative aspect-3/4 overflow-hidden rounded-lg bg-cream-dark mb-4">
-          {imageUrl && (
+          {imageUrl ? (
             <Image
               src={imageUrl}
               alt={product.name}
@@ -45,6 +45,19 @@ export function ProductCard({ product }: ProductCardProps) {
               className="object-cover transition-transform duration-700 group-hover:scale-105"
               sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
             />
+          ) : (
+            <div className="absolute inset-0 flex items-center justify-center bg-cream-dark/50">
+              <div className="text-center space-y-2">
+                <div className="w-12 h-12 rounded-full bg-gold/10 flex items-center justify-center mx-auto">
+                  <span className="font-serif text-gold text-xl italic">
+                    EA
+                  </span>
+                </div>
+                <p className="text-[10px] tracking-widest uppercase text-gold/40">
+                  Coming Soon
+                </p>
+              </div>
+            </div>
           )}
 
           {/* Hover overlay */}

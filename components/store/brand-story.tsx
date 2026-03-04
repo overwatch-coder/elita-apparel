@@ -5,7 +5,7 @@ import { BRAND_MESSAGES } from "@/lib/constants";
 
 export function BrandStory() {
   return (
-    <section className="py-24 lg:py-32 bg-royal-black text-cream relative overflow-hidden">
+    <section className="pt-24 lg:pt-32 pb-16 bg-royal-black text-cream relative overflow-hidden">
       {/* Decorative gold lines */}
       <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-gold/30 to-transparent" />
       <div className="absolute bottom-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-gold/30 to-transparent" />

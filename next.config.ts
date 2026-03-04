@@ -1,7 +1,24 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  images: {
+    dangerouslyAllowSVG: true,
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "placehold.co",
+      },
+      {
+        protocol: "https",
+        hostname: "ldcptpvzxzseupkyqbmn.supabase.co",
+      },
+    ],
+  },
+  allowedDevOrigins: [
+    "http://localhost:3000",
+    "http://localhost:3001",
+    "https://delta-awhirl-unvibrantly.ngrok-free.dev",
+  ],
 };
 
 export default nextConfig;

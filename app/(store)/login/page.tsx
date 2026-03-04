@@ -33,7 +33,7 @@ export default function LoginPage() {
       <div className="absolute top-0 left-0 w-32 h-32 border-t border-l border-gold/20" />
       <div className="absolute bottom-0 right-0 w-32 h-32 border-b border-r border-gold/20" />
 
-      <div className="w-full max-w-sm space-y-8 relative z-10">
+      <div className="w-full max-w-sm space-y-8 relative z-10 pt-10">
         {/* Logo */}
         <div className="text-center">
           <Link href="/">

@@ -5,6 +5,8 @@ export const NAV_LINKS = [
   { label: "Shop", href: "/shop" },
   { label: "Collections", href: "/collections" },
   { label: "About", href: "/about" },
+  { label: "Contact", href: "/contact" },
+  { label: "Account", href: "/account" },
 ] as const;
 
 // ── Brand messaging ─────────────────────────────────────────────────
@@ -32,6 +34,10 @@ export const SOCIALS = {
   twitter: {
     handle: "@elitaapparel",
     url: "https://x.com/elitaapparel",
+  },
+  facebook: {
+    handle: "Elita Apparel",
+    url: "https://facebook.com/elitaapparel",
   },
   whatsapp: {
     number: "+233553663183", // Replace with actual

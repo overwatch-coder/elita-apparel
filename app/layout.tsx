@@ -4,6 +4,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { CartProvider } from "@/components/cart/cart-provider";
 import { WishlistProvider } from "@/components/wishlist/wishlist-provider";
 import { WhatsAppButton } from "@/components/store/whatsapp-button";
+import { ThemeProvider } from "@/components/theme-provider";
 import "./globals.css";
 
 const playfairDisplay = Playfair_Display({
@@ -66,15 +67,23 @@ export default function RootLayout({
     <html
       lang="en"
       className={`${playfairDisplay.variable} ${dmSans.variable}`}
+      suppressHydrationWarning
     >
-      <body className="font-sans antialiased bg-royal-black text-cream selection:bg-gold/30 selection:text-white">
-        <CartProvider>
-          <WishlistProvider>
-            {children}
-            <Toaster position="bottom-right" />
-            <WhatsAppButton />
-          </WishlistProvider>
-        </CartProvider>
+      <body className="font-sans antialiased bg-background text-foreground selection:bg-gold/30 selection:text-white transition-colors duration-300">
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <CartProvider>
+            <WishlistProvider>
+              {children}
+              <Toaster position="bottom-right" />
+              <WhatsAppButton />
+            </WishlistProvider>
+          </CartProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

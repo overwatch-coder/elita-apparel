@@ -130,7 +130,7 @@ export default function ContactPage() {
           </div>
 
           {/* Form */}
-          <div className="bg-white/5 border border-cream/10 p-8 sm:p-10 rounded-2xl shadow-xl">
+          <div className="bg-white/5 border border-cream/10 p-8 sm:p-10 rounded-2xl shadow-xl backdrop-blur-sm">
             <h2 className="font-serif text-2xl text-cream mb-6">
               Send us a Message
             </h2>
