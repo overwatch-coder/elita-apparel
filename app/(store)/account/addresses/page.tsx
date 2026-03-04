@@ -3,6 +3,8 @@ import { redirect } from "next/navigation";
 import { AddressFormDialog } from "./address-form-dialog";
 import { AddressList } from "./address-list";
 
+export const dynamic = "force-dynamic";
+
 export default async function AddressesPage() {
   const supabase = await createClient();
 

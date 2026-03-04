@@ -1,13 +1,18 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { ShoppingBag } from "lucide-react";
+import { ShoppingBag, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SizeSelector } from "@/components/store/size-selector";
 import { useCart } from "@/components/cart/cart-provider";
-import { formatPrice, calculateDiscountedPrice } from "@/lib/constants";
+import { formatPrice, calculateDiscountedPrice, BRAND } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import type { ProductWithImages } from "@/lib/types/database";
+import {
+  generateSingleProductMessage,
+  encodeWhatsAppUrl,
+  generateOrderRef,
+} from "@/lib/whatsapp";
 
 interface StickyCartBarProps {
   product: ProductWithImages;
@@ -60,6 +65,25 @@ export function StickyCartBar({ product }: StickyCartBarProps) {
     setShowSizes(false);
   };
 
+  const handleWhatsAppOrder = () => {
+    if (!selectedSize) {
+      setShowSizes(true);
+      return;
+    }
+
+    const message = generateSingleProductMessage({
+      productName: product.name,
+      price: discountedPrice,
+      size: selectedSize,
+      url: `${BRAND.siteUrl}/product/${product.slug}`,
+      orderRef: generateOrderRef(),
+    });
+
+    const url = encodeWhatsAppUrl(message);
+    window.open(url, "_blank", "noopener,noreferrer");
+    setShowSizes(false);
+  };
+
   return (
     <div
       className={cn(
@@ -97,18 +121,28 @@ export function StickyCartBar({ product }: StickyCartBarProps) {
           </div>
         </div>
 
-        <Button
-          onClick={handleAddToCart}
-          disabled={!isInStock}
-          className="bg-gold hover:bg-gold-dark text-white font-medium tracking-wider uppercase shrink-0"
-        >
-          <ShoppingBag className="mr-2 h-4 w-4" />
-          {!isInStock
-            ? "Sold Out"
-            : selectedSize
-              ? "Add to Cart"
-              : "Select Size"}
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            onClick={handleWhatsAppOrder}
+            disabled={!isInStock}
+            size="icon"
+            className="bg-[#25D366] hover:bg-[#1DA851] text-white shrink-0 shadow-sm"
+          >
+            <MessageCircle className="h-5 w-5 fill-current" />
+          </Button>
+          <Button
+            onClick={handleAddToCart}
+            disabled={!isInStock}
+            className="bg-gold hover:bg-gold-dark text-white font-medium tracking-wider uppercase shrink-0"
+          >
+            <ShoppingBag className="mr-2 h-4 w-4" />
+            {!isInStock
+              ? "Sold Out"
+              : selectedSize
+                ? "Add to Cart"
+                : "Select Size"}
+          </Button>
+        </div>
       </div>
     </div>
   );

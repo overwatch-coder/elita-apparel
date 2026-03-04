@@ -2,18 +2,33 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { MessageCircle, Minus, Plus, ShoppingBag, Truck } from "lucide-react";
+import {
+  MessageCircle,
+  Minus,
+  Plus,
+  ShoppingBag,
+  Truck,
+  Heart,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { SizeSelector } from "@/components/store/size-selector";
+import { SizeGuideModal } from "@/components/store/size-guide-modal";
+import { WishlistButton } from "@/components/store/wishlist-button";
 import { useCart } from "@/components/cart/cart-provider";
 import {
   formatPrice,
   calculateDiscountedPrice,
   SOCIALS,
+  BRAND,
 } from "@/lib/constants";
 import type { ProductWithImages } from "@/lib/types/database";
+import {
+  generateSingleProductMessage,
+  encodeWhatsAppUrl,
+  generateOrderRef,
+} from "@/lib/whatsapp";
 
 interface ProductInfoProps {
   product: ProductWithImages;
@@ -52,6 +67,21 @@ export function ProductInfo({ product }: ProductInfoProps) {
     });
   };
 
+  const handleWhatsAppOrder = () => {
+    if (!selectedSize) return;
+
+    const message = generateSingleProductMessage({
+      productName: product.name,
+      price: discountedPrice,
+      size: selectedSize,
+      url: `${BRAND.siteUrl}/product/${product.slug}`,
+      orderRef: generateOrderRef(),
+    });
+
+    const url = encodeWhatsAppUrl(message);
+    window.open(url, "_blank", "noopener,noreferrer");
+  };
+
   const whatsappUrl = `${SOCIALS.whatsapp.url}?text=${encodeURIComponent(
     `Hi! I'm interested in the ${product.name}. Can you provide more details?`,
   )}`;
@@ -88,6 +118,11 @@ export function ProductInfo({ product }: ProductInfoProps) {
         <h1 className="font-serif text-2xl sm:text-3xl lg:text-4xl leading-tight">
           {product.name}
         </h1>
+        <WishlistButton
+          productId={product.id}
+          variant="full"
+          className="mt-2"
+        />
       </div>
 
       {/* Price */}
@@ -117,6 +152,11 @@ export function ProductInfo({ product }: ProductInfoProps) {
         selectedSize={selectedSize}
         onSelect={setSelectedSize}
       />
+
+      {/* Size guide link */}
+      {(product as any).size_guide_id && (
+        <SizeGuideModal sizeGuideId={(product as any).size_guide_id} />
+      )}
 
       {/* Quantity */}
       <div className="space-y-3">
@@ -159,27 +199,39 @@ export function ProductInfo({ product }: ProductInfoProps) {
         )}
       </div>
 
-      {/* Add to cart button */}
-      <div className="flex flex-col sm:flex-row gap-3">
+      {/* Add to cart / Order via WhatsApp buttons */}
+      <div className="flex flex-col gap-3">
+        <div className="flex flex-col sm:flex-row gap-3">
+          <Button
+            onClick={handleAddToCart}
+            disabled={!selectedSize || !isInStock}
+            className="flex-1 bg-gold hover:bg-gold-dark text-white font-medium tracking-wider uppercase h-14 text-base"
+            size="lg"
+          >
+            <ShoppingBag className="mr-2 h-5 w-5" />
+            {!selectedSize ? "Select a Size" : "Add to Cart"}
+          </Button>
+          <Button
+            asChild
+            variant="outline"
+            size="lg"
+            className="border-gold/30 hover:border-gold hover:bg-gold/5 h-14"
+          >
+            <Link href={whatsappUrl} target="_blank" rel="noopener noreferrer">
+              <MessageCircle className="mr-2 h-5 w-5" />
+              Inquire
+            </Link>
+          </Button>
+        </div>
+
         <Button
-          onClick={handleAddToCart}
+          onClick={handleWhatsAppOrder}
           disabled={!selectedSize || !isInStock}
-          className="flex-1 bg-gold hover:bg-gold-dark text-white font-medium tracking-wider uppercase h-14 text-base"
+          className="w-full bg-[#25D366] hover:bg-[#1DA851] text-white font-medium tracking-wider uppercase h-14 text-base shadow-sm"
           size="lg"
         >
-          <ShoppingBag className="mr-2 h-5 w-5" />
-          {!selectedSize ? "Select a Size" : "Add to Cart"}
-        </Button>
-        <Button
-          asChild
-          variant="outline"
-          size="lg"
-          className="border-gold/30 hover:border-gold hover:bg-gold/5 h-14"
-        >
-          <Link href={whatsappUrl} target="_blank" rel="noopener noreferrer">
-            <MessageCircle className="mr-2 h-5 w-5" />
-            Inquire
-          </Link>
+          <MessageCircle className="mr-2 h-5 w-5 fill-current" />
+          {!selectedSize ? "Select a Size" : "Order via WhatsApp"}
         </Button>
       </div>
 

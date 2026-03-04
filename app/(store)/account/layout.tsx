@@ -4,6 +4,8 @@ import { AccountSidebar } from "@/components/account/sidebar";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 
+export const dynamic = "force-dynamic";
+
 export default async function AccountLayout({
   children,
 }: {

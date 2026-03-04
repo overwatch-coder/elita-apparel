@@ -7,6 +7,7 @@ import { motion } from "motion/react";
 import { Eye } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { QuickViewModal } from "@/components/store/quick-view-modal";
+import { WishlistButton } from "@/components/store/wishlist-button";
 import { formatPrice, calculateDiscountedPrice } from "@/lib/constants";
 import type { Product, ProductImage } from "@/lib/types/database";
 
@@ -66,6 +67,11 @@ export function ProductCard({ product }: ProductCardProps) {
                 Early Bird
               </Badge>
             )}
+          </div>
+
+          {/* Wishlist button */}
+          <div className="absolute top-3 right-3 z-10">
+            <WishlistButton productId={product.id} />
           </div>
 
           {/* Quick view button */}

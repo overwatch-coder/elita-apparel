@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Playfair_Display, DM_Sans } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
 import { CartProvider } from "@/components/cart/cart-provider";
+import { WishlistProvider } from "@/components/wishlist/wishlist-provider";
 import { WhatsAppButton } from "@/components/store/whatsapp-button";
 import "./globals.css";
 
@@ -62,14 +63,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body
-        className={`${playfairDisplay.variable} ${dmSans.variable} antialiased`}
-      >
+    <html
+      lang="en"
+      className={`${playfairDisplay.variable} ${dmSans.variable}`}
+    >
+      <body className="font-sans antialiased bg-royal-black text-cream selection:bg-gold/30 selection:text-white">
         <CartProvider>
-          {children}
-          <Toaster position="top-right" richColors />
-          <WhatsAppButton />
+          <WishlistProvider>
+            {children}
+            <Toaster position="bottom-right" />
+            <WhatsAppButton />
+          </WishlistProvider>
         </CartProvider>
       </body>
     </html>

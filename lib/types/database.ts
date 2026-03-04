@@ -95,6 +95,7 @@ export interface Database {
           is_published: boolean;
           seo_title: string | null;
           seo_description: string | null;
+          size_guide_id: string | null;
           created_at: string;
           updated_at: string;
         };
@@ -117,6 +118,7 @@ export interface Database {
           is_published?: boolean;
           seo_title?: string | null;
           seo_description?: string | null;
+          size_guide_id?: string | null;
           created_at?: string;
           updated_at?: string;
         };
@@ -139,6 +141,7 @@ export interface Database {
           is_published?: boolean;
           seo_title?: string | null;
           seo_description?: string | null;
+          size_guide_id?: string | null;
           created_at?: string;
           updated_at?: string;
         };
@@ -516,6 +519,161 @@ export interface Database {
         };
         Relationships: [];
       };
+      whatsapp_orders: {
+        Row: {
+          id: string;
+          user_id: string | null;
+          guest_name: string | null;
+          guest_email: string | null;
+          guest_phone: string | null;
+          cart_snapshot: Json;
+          total_amount: number;
+          order_ref: string;
+          status: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id?: string | null;
+          guest_name?: string | null;
+          guest_email?: string | null;
+          guest_phone?: string | null;
+          cart_snapshot: Json;
+          total_amount: number;
+          order_ref: string;
+          status?: string;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string | null;
+          guest_name?: string | null;
+          guest_email?: string | null;
+          guest_phone?: string | null;
+          cart_snapshot?: Json;
+          total_amount?: number;
+          order_ref?: string;
+          status?: string;
+          created_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "whatsapp_orders_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      wishlists: {
+        Row: {
+          id: string;
+          user_id: string;
+          product_id: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          product_id: string;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          product_id?: string;
+          created_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "wishlists_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "wishlists_product_id_fkey";
+            columns: ["product_id"];
+            isOneToOne: false;
+            referencedRelation: "products";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      reviews: {
+        Row: {
+          id: string;
+          product_id: string;
+          user_id: string;
+          rating: number;
+          comment: string | null;
+          image_url: string | null;
+          is_approved: boolean;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          product_id: string;
+          user_id: string;
+          rating: number;
+          comment?: string | null;
+          image_url?: string | null;
+          is_approved?: boolean;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          product_id?: string;
+          user_id?: string;
+          rating?: number;
+          comment?: string | null;
+          image_url?: string | null;
+          is_approved?: boolean;
+          created_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "reviews_product_id_fkey";
+            columns: ["product_id"];
+            isOneToOne: false;
+            referencedRelation: "products";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "reviews_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      size_guides: {
+        Row: {
+          id: string;
+          title: string;
+          content_html: string;
+          category: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          title: string;
+          content_html: string;
+          category?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          title?: string;
+          content_html?: string;
+          category?: string | null;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
     };
     Views: {
       [_ in never]: never;
@@ -547,7 +705,7 @@ export type AdminUser = Tables["admin_users"]["Row"];
 export type Profile = Tables["profiles"]["Row"];
 export type Address = Tables["addresses"]["Row"];
 export type ContactMessage = Tables["contact_messages"]["Row"];
-
+export type WhatsAppOrder = Tables["whatsapp_orders"]["Row"];
 // ── Composite types (with joins) ────────────────────────────────────
 
 export interface ProductWithImages extends Product {

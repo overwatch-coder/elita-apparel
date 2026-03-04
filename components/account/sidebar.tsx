@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { User, ShoppingBag, MapPin, LogOut } from "lucide-react";
+import { User, ShoppingBag, MapPin, LogOut, Heart } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { logoutAction } from "@/lib/actions/auth";
 
@@ -21,6 +21,11 @@ const navItems = [
     title: "Addresses",
     href: "/account/addresses",
     icon: MapPin,
+  },
+  {
+    title: "Wishlist",
+    href: "/account/wishlist",
+    icon: Heart,
   },
   {
     title: "Profile Settings",

@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { ProductGallery } from "@/components/store/product-gallery";
 import { ProductInfo } from "@/components/store/product-info";
+import { ProductReviews } from "@/components/store/product-reviews";
 import { FeaturedSection } from "@/components/store/featured-section";
 import { WhatsAppButton } from "@/components/store/whatsapp-button";
 import { StickyCartBar } from "@/components/store/sticky-cart-bar";
@@ -133,6 +134,11 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
             {/* Info */}
             <ProductInfo product={product} />
+          </div>
+
+          {/* Reviews */}
+          <div className="mt-16">
+            <ProductReviews productId={product.id} />
           </div>
         </div>
       </div>

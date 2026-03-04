@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import crypto from "crypto";
 import { createClient } from "@supabase/supabase-js";
+import { sendOrderConfirmation } from "@/lib/mail";
 
 const PAYSTACK_SECRET_KEY = process.env.PAYSTACK_SECRET_KEY || "";
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
@@ -64,6 +65,24 @@ export async function POST(req: Request) {
           { error: "Database update failed" },
           { status: 500 },
         );
+      }
+
+      // Fetch order and items to send confirmation email
+      const { data: fullOrder } = await supabaseAdmin
+        .from("orders")
+        .select("*, order_items(*)")
+        .eq("id", orderId)
+        .single();
+
+      if (fullOrder) {
+        try {
+          await sendOrderConfirmation(fullOrder, fullOrder.order_items);
+        } catch (emailError) {
+          console.error(
+            "Failed to send digital payment confirmation email:",
+            emailError,
+          );
+        }
       }
 
       console.log(`Successfully verified and updated order ${orderId}`);

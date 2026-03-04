@@ -34,11 +34,11 @@ export const SOCIALS = {
     url: "https://x.com/elitaapparel",
   },
   whatsapp: {
-    number: "+233000000000", // Replace with actual
-    url: "https://wa.me/233000000000",
+    number: "+233553663183", // Replace with actual
+    url: "https://wa.me/233553663183",
   },
   email: "info@elitaapparel.com",
-  phone: "+233000000000", // Replace with actual
+  phone: "+233553663183", // Replace with actual
 } as const;
 
 export const BRAND_MESSAGES = [

@@ -17,6 +17,9 @@ import {
   type PaymentMethod,
 } from "@/components/checkout/payment-method-selector";
 import { PaymentProcessingModal } from "@/components/checkout/payment-processing-modal";
+import { TrustBadges } from "@/components/checkout/trust-badges";
+import { GuestAccountPrompt } from "@/components/checkout/guest-account-prompt";
+import { createOrder } from "@/lib/actions/orders";
 import { toast } from "sonner";
 import type { User } from "@supabase/supabase-js";
 import type { Address } from "@/lib/types/database";
@@ -91,7 +94,7 @@ export default function CheckoutPage() {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.SubmitEvent) => {
     e.preventDefault();
     if (items.length === 0) return;
 
@@ -99,54 +102,21 @@ export default function CheckoutPage() {
     setProcessingStatus("processing");
 
     try {
-      const supabase = createClient();
+      const result = await createOrder(
+        {
+          ...form,
+          totalAmount: totalPrice,
+        },
+        items,
+        user?.id || null,
+        paymentMethod,
+      );
 
-      // Create order
-      const { data: orderData, error: orderError } = await supabase
-        .from("orders")
-        .insert({
-          user_id: user?.id || null, // Link to user if logged in!
-          customer_name: form.name,
-          customer_email: form.email,
-          customer_phone: form.phone || null,
-          shipping_address: form.address,
-          shipping_city: form.city,
-          shipping_state: form.state || null,
-          shipping_zip: form.zip || null,
-          shipping_country: form.country,
-          total_amount: totalPrice,
-          discount_amount: 0,
-          status: "pending" as const,
-          payment_status: "pending" as const,
-          payment_method: paymentMethod,
-          notes: form.notes || null,
-        })
-        .select("id")
-        .single();
-
-      if (orderError || !orderData) {
-        throw new Error(orderError?.message || "Failed to create order");
+      if (result.error) {
+        throw new Error(result.error);
       }
 
-      // Create order items
-      const orderItems = items.map((item) => ({
-        order_id: orderData.id,
-        product_id: item.product_id,
-        product_name: item.name,
-        quantity: item.quantity,
-        size: item.size,
-        price: calculateDiscountedPrice(item.price, item.discount_percentage),
-      }));
-
-      const { error: itemsError } = await supabase
-        .from("order_items")
-        .insert(orderItems);
-
-      if (itemsError) {
-        throw new Error(itemsError.message);
-      }
-
-      setOrderId(orderData.id);
+      setOrderId(result.orderId!);
 
       if (paymentMethod === "cod") {
         setProcessingStatus("success");
@@ -166,7 +136,7 @@ export default function CheckoutPage() {
           body: JSON.stringify({
             email: form.email,
             amount: totalPrice,
-            orderId: orderData.id,
+            orderId: result.orderId,
             name: form.name,
           }),
         });
@@ -232,6 +202,11 @@ export default function CheckoutPage() {
                 </Button>
               )}
             </div>
+
+            {/* Guest account prompt */}
+            {!user && (
+              <GuestAccountPrompt email={form.email} name={form.name} />
+            )}
           </div>
         </div>
       </div>
@@ -497,6 +472,8 @@ export default function CheckoutPage() {
                     "Place Order"
                   )}
                 </Button>
+
+                <TrustBadges />
 
                 <p className="text-xs text-cream/40 text-center lh-relaxed">
                   By placing your order, you agree to our terms of service and

@@ -15,10 +15,18 @@ import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { useCart } from "@/components/cart/cart-provider";
 import { formatPrice, calculateDiscountedPrice } from "@/lib/constants";
-import { useState } from "react";
-import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
 import type { Metadata } from "next";
+import { useState, useEffect } from "react";
+import { createClient } from "@/lib/supabase/client";
+import { MessageCircle } from "lucide-react";
+import { GuestInfoModal } from "@/components/whatsapp/guest-info-modal";
+import { createWhatsAppOrder } from "@/app/actions/whatsapp-orders";
+import {
+  generateCartMessage,
+  encodeWhatsAppUrl,
+  generateOrderRef,
+} from "@/lib/whatsapp";
 
 export default function CartPage() {
   const {
@@ -32,6 +40,63 @@ export default function CartPage() {
   const [discountCode, setDiscountCode] = useState("");
   const [discountPercentage, setDiscountPercentage] = useState(0);
   const [isApplyingCode, setIsApplyingCode] = useState(false);
+
+  const [user, setUser] = useState<any>(null);
+  const [isWhatsAppModalOpen, setIsWhatsAppModalOpen] = useState(false);
+  const [isProcessingWhatsApp, setIsProcessingWhatsApp] = useState(false);
+
+  useEffect(() => {
+    const supabase = createClient();
+    supabase.auth.getUser().then(({ data }) => setUser(data.user));
+  }, []);
+
+  const handleWhatsAppCheckout = async (
+    guestName?: string,
+    guestPhone?: string,
+    guestEmail?: string,
+  ) => {
+    setIsProcessingWhatsApp(true);
+    try {
+      const orderRef = generateOrderRef();
+      const cartSnapshot = { items };
+
+      const { success, error } = await createWhatsAppOrder({
+        guest_name: guestName || user?.user_metadata?.full_name,
+        guest_email: guestEmail || user?.email,
+        guest_phone: guestPhone || user?.user_metadata?.phone,
+        cart_snapshot: cartSnapshot,
+        total_amount: finalTotal,
+        order_ref: orderRef,
+      });
+
+      if (!success) throw new Error(error);
+
+      const message = generateCartMessage({
+        items,
+        totalAmount: finalTotal,
+        orderRef,
+        customerName: guestName || user?.user_metadata?.full_name,
+        customerPhone: guestPhone || user?.user_metadata?.phone,
+      });
+
+      const url = encodeWhatsAppUrl(message);
+      clearCart();
+      window.open(url, "_blank", "noopener,noreferrer");
+    } catch (e: any) {
+      toast.error("Failed to process WhatsApp order: " + e.message);
+    } finally {
+      setIsProcessingWhatsApp(false);
+      setIsWhatsAppModalOpen(false);
+    }
+  };
+
+  const onWhatsAppCheckoutClick = () => {
+    if (user) {
+      handleWhatsAppCheckout();
+    } else {
+      setIsWhatsAppModalOpen(true);
+    }
+  };
 
   const handleApplyDiscount = async () => {
     if (!discountCode.trim()) return;
@@ -302,7 +367,7 @@ export default function CartPage() {
 
               <Button
                 asChild
-                className="w-full bg-gold hover:bg-gold-dark text-white font-medium tracking-wider uppercase h-14 text-base"
+                className="w-full bg-gold hover:bg-gold-dark text-white font-medium tracking-wider uppercase h-14 text-base mt-2"
                 size="lg"
               >
                 <Link href="/checkout">
@@ -310,10 +375,27 @@ export default function CartPage() {
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
+              <Button
+                onClick={onWhatsAppCheckoutClick}
+                disabled={isProcessingWhatsApp}
+                className="w-full bg-[#25D366] hover:bg-[#1DA851] text-white font-medium tracking-wider uppercase h-14 text-base shadow-sm mt-3"
+                size="lg"
+              >
+                <MessageCircle className="mr-2 h-5 w-5 fill-current" />
+                {isProcessingWhatsApp
+                  ? "Processing..."
+                  : "Checkout via WhatsApp"}
+              </Button>
             </div>
           </div>
         </div>
       </div>
+
+      <GuestInfoModal
+        isOpen={isWhatsAppModalOpen}
+        onOpenChange={setIsWhatsAppModalOpen}
+        onSubmit={handleWhatsAppCheckout}
+      />
     </div>
   );
 }

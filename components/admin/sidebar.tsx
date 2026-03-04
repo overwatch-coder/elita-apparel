@@ -12,6 +12,9 @@ import {
   Percent,
   BarChart3,
   LogOut,
+  MessageCircle,
+  Star,
+  Ruler,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -25,7 +28,14 @@ const NAV_ITEMS = [
   { label: "Collections", href: "/admin/collections", icon: FolderOpen },
   { label: "Categories", href: "/admin/categories", icon: Tags },
   { label: "Orders", href: "/admin/orders", icon: ShoppingCart },
+  {
+    label: "WhatsApp Orders",
+    href: "/admin/whatsapp-orders",
+    icon: MessageCircle,
+  },
   { label: "Discounts", href: "/admin/discounts", icon: Percent },
+  { label: "Reviews", href: "/admin/reviews", icon: Star },
+  { label: "Size Guides", href: "/admin/size-guides", icon: Ruler },
   { label: "Inventory", href: "/admin/inventory", icon: BarChart3 },
 ];
 
@@ -90,12 +100,7 @@ export function AdminSidebar() {
               View Store →
             </Link>
           </Button>
-          <form
-            action={async () => {
-              "use server";
-              await logoutAction();
-            }}
-          >
+          <form action={() => logoutAction()}>
             <Button
               type="submit"
               variant="ghost"
