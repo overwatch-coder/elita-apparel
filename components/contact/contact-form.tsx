@@ -42,15 +42,15 @@ export function ContactForm() {
         <div className="h-16 w-16 bg-gold/10 text-gold rounded-full flex items-center justify-center mb-4">
           <Send className="h-8 w-8" />
         </div>
-        <h3 className="font-serif text-2xl text-cream">Thank You!</h3>
-        <p className="text-cream/70 max-w-sm">
+        <h3 className="font-serif text-2xl text-foreground">Thank You!</h3>
+        <p className="text-muted-foreground max-w-sm">
           Your message has been received. Our team will get back to you within
           24 hours.
         </p>
         <Button
           variant="outline"
           onClick={() => setIsSuccess(false)}
-          className="mt-6 border-cream/20 text-cream hover:bg-white/5 uppercase tracking-wider"
+          className="mt-6 border-border text-foreground hover:bg-accent uppercase tracking-wider"
         >
           Send Another Message
         </Button>
@@ -62,7 +62,7 @@ export function ContactForm() {
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
         <div className="space-y-2">
-          <Label htmlFor="name" className="text-cream/70">
+          <Label htmlFor="name" className="text-muted-foreground">
             Full Name *
           </Label>
           <Input
@@ -70,11 +70,11 @@ export function ContactForm() {
             id="name"
             name="name"
             placeholder="Ama Mensah"
-            className="bg-black/20 border-cream/10 text-cream focus-visible:ring-gold/50 h-12"
+            className="bg-background border-border text-foreground placeholder:text-muted-foreground"
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="email" className="text-cream/70">
+          <Label htmlFor="email" className="text-muted-foreground">
             Email Address *
           </Label>
           <Input
@@ -83,13 +83,13 @@ export function ContactForm() {
             id="email"
             name="email"
             placeholder="ama@example.com"
-            className="bg-black/20 border-cream/10 text-cream focus-visible:ring-gold/50 h-12"
+            className="bg-background border-border text-foreground placeholder:text-muted-foreground"
           />
         </div>
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="phone" className="text-cream/70">
+        <Label htmlFor="phone" className="text-muted-foreground">
           Phone Number (Optional)
         </Label>
         <Input
@@ -97,43 +97,43 @@ export function ContactForm() {
           id="phone"
           name="phone"
           placeholder="+233 XX XXX XXXX"
-          className="bg-black/20 border-cream/10 text-cream focus-visible:ring-gold/50 h-12"
+          className="bg-background border-border text-foreground placeholder:text-muted-foreground"
         />
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="subject" className="text-cream/70">
+        <Label htmlFor="subject" className="text-muted-foreground">
           Subject *
         </Label>
         <select
           required
           id="subject"
           name="subject"
-          className="flex h-12 w-full rounded-md border border-cream/10 bg-black/20 px-3 py-2 text-sm text-cream ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/50 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+          className="flex h-12 w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/50 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
         >
           <option value="" disabled selected hidden>
             Select a topic
           </option>
-          <option value="Customer Support" className="bg-royal-black">
+          <option value="Customer Support" className="bg-background">
             Customer Support / Order Help
           </option>
-          <option value="Custom Tailoring" className="bg-royal-black">
+          <option value="Custom Tailoring" className="bg-background">
             Custom Tailoring Inquiry
           </option>
-          <option value="Wholesale" className="bg-royal-black">
+          <option value="Wholesale" className="bg-background">
             Wholesale / Partnership
           </option>
-          <option value="Press" className="bg-royal-black">
+          <option value="Press" className="bg-background">
             Press / Media
           </option>
-          <option value="Other" className="bg-royal-black">
+          <option value="Other" className="bg-background">
             Other Inquiries
           </option>
         </select>
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="message" className="text-cream/70">
+        <Label htmlFor="message" className="text-muted-foreground">
           Your Message *
         </Label>
         <Textarea
@@ -141,7 +141,7 @@ export function ContactForm() {
           id="message"
           name="message"
           placeholder="How can we help you today?"
-          className="min-h-[150px] bg-black/20 border-cream/10 text-cream focus-visible:ring-gold/50 resize-y"
+          className="min-h-[150px] bg-background border-border text-foreground placeholder:text-muted-foreground focus-visible:ring-gold/50 resize-y"
         />
       </div>
 

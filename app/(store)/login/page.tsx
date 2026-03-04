@@ -28,7 +28,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-royal-black p-4 py-20 relative overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center bg-background p-4 py-20 relative overflow-hidden">
       {/* Decorative corners */}
       <div className="absolute top-0 left-0 w-32 h-32 border-t border-l border-gold/20" />
       <div className="absolute bottom-0 right-0 w-32 h-32 border-b border-r border-gold/20" />
@@ -46,14 +46,16 @@ export default function LoginPage() {
               priority
             />
           </Link>
-          <h1 className="font-serif text-3xl text-cream">Welcome Back</h1>
-          <p className="text-sm text-cream/70 mt-2">Sign in to your account</p>
+          <h1 className="font-serif text-3xl text-foreground">Welcome Back</h1>
+          <p className="text-sm text-muted-foreground mt-2">
+            Sign in to your account
+          </p>
         </div>
 
         {/* Login form */}
         <form onSubmit={handleSubmit} className="space-y-5">
           <div className="space-y-2">
-            <Label htmlFor="email" className="text-cream/70 text-sm">
+            <Label htmlFor="email" className="text-muted-foreground text-sm">
               Email Address
             </Label>
             <Input
@@ -63,13 +65,16 @@ export default function LoginPage() {
               required
               autoComplete="email"
               placeholder="Enter your email"
-              className="h-12 bg-white/5 border-cream/10 text-cream placeholder:text-cream/30 focus-visible:ring-gold/50"
+              className="h-12 bg-card border-border text-foreground placeholder:text-muted-foreground focus-visible:ring-gold/50"
             />
           </div>
 
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <Label htmlFor="password" className="text-cream/70 text-sm">
+              <Label
+                htmlFor="password"
+                className="text-muted-foreground text-sm"
+              >
                 Password
               </Label>
               <Link
@@ -88,13 +93,13 @@ export default function LoginPage() {
                 required
                 autoComplete="current-password"
                 placeholder="••••••••"
-                className="h-12 bg-white/5 border-cream/10 text-cream placeholder:text-cream/30 focus-visible:ring-gold/50 pr-12"
+                className="h-12 bg-card border-border text-foreground placeholder:text-muted-foreground focus-visible:ring-gold/50 pr-12"
               />
               <Button
                 type="button"
                 variant="ghost"
                 size="icon"
-                className="absolute right-1 top-1/2 -translate-y-1/2 text-cream/50 hover:text-cream hover:bg-transparent"
+                className="absolute right-1 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground hover:bg-transparent"
                 onClick={() => setShowPassword(!showPassword)}
               >
                 {showPassword ? (
@@ -121,7 +126,7 @@ export default function LoginPage() {
             )}
           </Button>
 
-          <p className="text-center text-sm text-cream/70 mt-6">
+          <p className="text-center text-sm text-muted-foreground mt-6">
             Don't have an account?{" "}
             <Link
               href="/signup"

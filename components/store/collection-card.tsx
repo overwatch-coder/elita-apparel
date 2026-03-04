@@ -20,10 +20,10 @@ export function CollectionCard({ collection, index }: CollectionCardProps) {
     >
       <Link
         href={`/shop?collection=${collection.slug}`}
-        className="group block relative overflow-hidden rounded-lg aspect-4/5 bg-royal-black"
+        className="group block relative overflow-hidden rounded-lg aspect-4/5 bg-muted"
       >
         {/* Background gradient */}
-        <div className="absolute inset-0 bg-linear-to-t from-royal-black via-royal-black/60 to-royal-black/20 z-10" />
+        <div className="absolute inset-0 bg-linear-to-t from-background via-background/60 to-background/20 z-10" />
 
         {/* Decorative border */}
         <div className="absolute inset-3 border border-gold/20 rounded-md z-20 group-hover:border-gold/40 transition-colors duration-500" />
@@ -33,11 +33,11 @@ export function CollectionCard({ collection, index }: CollectionCardProps) {
           <p className="text-gold tracking-[0.3em] uppercase text-[10px] mb-3">
             Collection
           </p>
-          <h3 className="font-serif text-2xl sm:text-3xl text-cream mb-3 leading-tight">
+          <h3 className="font-serif text-2xl sm:text-3xl text-foreground mb-3 leading-tight">
             {collection.name}
           </h3>
           {collection.description && (
-            <p className="text-cream/50 text-sm leading-relaxed mb-4 line-clamp-2">
+            <p className="text-foreground/50 text-sm leading-relaxed mb-4 line-clamp-2">
               {collection.description}
             </p>
           )}

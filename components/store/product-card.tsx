@@ -61,12 +61,12 @@ export function ProductCard({ product }: ProductCardProps) {
           )}
 
           {/* Hover overlay */}
-          <div className="absolute inset-0 bg-royal-black/0 group-hover:bg-royal-black/20 transition-all duration-500" />
+          <div className="absolute inset-0 bg-foreground/0 group-hover:bg-foreground/10 transition-all duration-500" />
 
           {/* Badges */}
           <div className="absolute top-3 left-3 flex flex-col gap-1.5">
             {product.is_new && (
-              <Badge className="bg-royal-black text-cream text-[10px] tracking-wider uppercase px-2.5 py-1">
+              <Badge className="bg-foreground text-background text-[10px] tracking-wider uppercase px-2.5 py-1">
                 New
               </Badge>
             )}
@@ -97,8 +97,8 @@ export function ProductCard({ product }: ProductCardProps) {
               }}
               className="w-full bg-white/95 backdrop-blur-sm rounded-md py-2.5 text-center flex items-center justify-center gap-2 hover:bg-white transition-colors"
             >
-              <Eye className="h-3.5 w-3.5 text-royal-black" />
-              <span className="text-xs tracking-widest uppercase text-royal-black font-medium">
+              <Eye className="h-3.5 w-3.5 text-foreground" />
+              <span className="text-xs tracking-widest uppercase text-foreground font-medium">
                 Quick View
               </span>
             </button>

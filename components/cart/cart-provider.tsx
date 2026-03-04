@@ -19,6 +19,9 @@ interface CartContextType {
   removeItem: (productId: string, size: string) => void;
   updateQuantity: (productId: string, size: string, quantity: number) => void;
   clearCart: () => void;
+  discountCode: string;
+  discountPercentage: number;
+  setDiscount: (code: string, percentage: number) => void;
   isOpen: boolean;
   setIsOpen: (open: boolean) => void;
 }
@@ -29,6 +32,8 @@ const CART_STORAGE_KEY = "elita-cart";
 
 export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
+  const [discountCode, setDiscountCode] = useState("");
+  const [discountPercentage, setDiscountPercentage] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
   const [isHydrated, setIsHydrated] = useState(false);
 
@@ -37,10 +42,21 @@ export function CartProvider({ children }: { children: ReactNode }) {
     try {
       const stored = localStorage.getItem(CART_STORAGE_KEY);
       if (stored) {
-        setItems(JSON.parse(stored));
+        const {
+          items: storedItems,
+          discountCode: storedCode,
+          discountPercentage: storedPercent,
+        } = JSON.parse(stored);
+        if (storedItems) setItems(storedItems);
+        if (storedCode) setDiscountCode(storedCode);
+        if (storedPercent) setDiscountPercentage(storedPercent);
       }
     } catch {
-      // Ignore errors
+      // Handle legacy format or errors
+      try {
+        const stored = localStorage.getItem(CART_STORAGE_KEY);
+        if (stored) setItems(JSON.parse(stored));
+      } catch {}
     }
     setIsHydrated(true);
   }, []);
@@ -48,9 +64,12 @@ export function CartProvider({ children }: { children: ReactNode }) {
   // Persist cart to localStorage
   useEffect(() => {
     if (isHydrated) {
-      localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items));
+      localStorage.setItem(
+        CART_STORAGE_KEY,
+        JSON.stringify({ items, discountCode, discountPercentage }),
+      );
     }
-  }, [items, isHydrated]);
+  }, [items, isHydrated, discountCode, discountPercentage]);
 
   const addItem = useCallback((newItem: CartItem) => {
     setItems((prev) => {
@@ -119,6 +138,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const clearCart = useCallback(() => {
     setItems([]);
+    setDiscountCode("");
+    setDiscountPercentage(0);
     toast.info("Cart cleared");
   }, []);
 
@@ -129,12 +150,20 @@ export function CartProvider({ children }: { children: ReactNode }) {
     return sum + discounted * item.quantity;
   }, 0);
 
+  const setDiscount = useCallback((code: string, percentage: number) => {
+    setDiscountCode(code);
+    setDiscountPercentage(percentage);
+  }, []);
+
   return (
     <CartContext.Provider
       value={{
         items,
         totalItems,
         totalPrice,
+        discountCode,
+        discountPercentage,
+        setDiscount,
         addItem,
         removeItem,
         updateQuantity,

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import Image from "next/image";
 import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -14,6 +15,7 @@ import { ModeToggle } from "./mode-toggle";
 export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -29,7 +31,7 @@ export function Navbar() {
         "fixed top-0 left-0 right-0 z-50 transition-all duration-500",
         isScrolled
           ? "bg-background/95 backdrop-blur-md shadow-sm border-b border-border/50"
-          : "bg-royal-black/20 backdrop-blur-[2px] border-b border-white/5",
+          : "bg-background/20 backdrop-blur-[2px] border-b border-foreground/5",
       )}
     >
       <nav className="container mx-auto flex h-20 items-center justify-between px-4 lg:px-8">
@@ -40,7 +42,7 @@ export function Navbar() {
             alt="Elita Apparel"
             width={44}
             height={44}
-            className="h-11 w-auto object-contain invert dark:invert-0"
+            className="h-11 w-auto object-contain dark:invert-0"
             priority
           />
           <span className="hidden sm:inline font-serif text-lg tracking-wide text-foreground">
@@ -50,15 +52,21 @@ export function Navbar() {
 
         {/* Desktop nav links + cart — right side */}
         <div className="hidden lg:flex items-center gap-6">
-          {NAV_LINKS.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="text-sm font-medium tracking-widest uppercase text-foreground/80 hover:text-gold transition-colors duration-300"
-            >
-              {link.label}
-            </Link>
-          ))}
+          {NAV_LINKS.map((link) => {
+            const isActive = pathname === link.href;
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={cn(
+                  "text-sm font-medium tracking-widest uppercase transition-colors duration-300",
+                  isActive ? "text-gold" : "text-foreground/80 hover:text-gold",
+                )}
+              >
+                {link.label}
+              </Link>
+            );
+          })}
           <div className="w-px h-5 bg-border/60 mx-1" />
           <div className="flex items-center gap-4">
             <ModeToggle />

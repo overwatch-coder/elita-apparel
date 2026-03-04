@@ -22,15 +22,15 @@ export default async function CollectionsPage() {
   return (
     <div className="min-h-screen">
       {/* Header */}
-      <section className="bg-royal-black pt-24 lg:pt-32 pb-16">
+      <section className="bg-background pt-24 lg:pt-32 pb-16 border-b border-border/50">
         <div className="container mx-auto px-4 lg:px-8 text-center">
           <p className="text-gold tracking-[0.4em] uppercase text-xs mb-4">
             Curated for You
           </p>
-          <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl text-cream mb-6">
+          <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl text-foreground mb-6">
             Our Collections
           </h1>
-          <p className="text-cream/50 max-w-xl mx-auto">
+          <p className="text-muted-foreground max-w-xl mx-auto">
             Each collection tells a story of African heritage, premium fabrics,
             and skilled craftsmanship.
           </p>
@@ -80,11 +80,11 @@ export default async function CollectionsPage() {
                         <p className="text-gold/80 tracking-[0.3em] uppercase text-[10px] mb-2">
                           {productCount} piece{productCount !== 1 ? "s" : ""}
                         </p>
-                        <h2 className="font-serif text-2xl text-cream mb-1">
+                        <h2 className="font-serif text-2xl text-white mb-1">
                           {collection.name}
                         </h2>
                         {collection.description && (
-                          <p className="text-cream/50 text-sm line-clamp-2">
+                          <p className="text-white/70 text-sm line-clamp-2">
                             {collection.description}
                           </p>
                         )}

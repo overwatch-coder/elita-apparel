@@ -26,7 +26,8 @@ import type { Address } from "@/lib/types/database";
 
 export default function CheckoutPage() {
   const router = useRouter();
-  const { items, totalPrice, clearCart } = useCart();
+  const { items, totalPrice, discountCode, discountPercentage, clearCart } =
+    useCart();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
   const [orderId, setOrderId] = useState<string | null>(null);
@@ -50,6 +51,9 @@ export default function CheckoutPage() {
     country: "Ghana",
     notes: "",
   });
+
+  const discountAmount = totalPrice * (discountPercentage / 100);
+  const finalTotal = totalPrice - discountAmount;
 
   // Load user data and pre-fill default address
   useEffect(() => {
@@ -105,7 +109,9 @@ export default function CheckoutPage() {
       const result = await createOrder(
         {
           ...form,
-          totalAmount: totalPrice,
+          totalAmount: finalTotal,
+          discountAmount,
+          discountCode,
         },
         items,
         user?.id || null,
@@ -135,7 +141,7 @@ export default function CheckoutPage() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             email: form.email,
-            amount: totalPrice,
+            amount: finalTotal,
             orderId: result.orderId,
             name: form.name,
           }),
@@ -170,16 +176,16 @@ export default function CheckoutPage() {
     return (
       <div className="pt-28 pb-20 min-h-[80vh] flex items-center justify-center">
         <div className="container mx-auto px-4 lg:px-8 max-w-2xl">
-          <div className="text-center py-16 bg-white/5 border border-cream/10 rounded-xl p-8 shadow-2xl">
+          <div className="text-center py-16 bg-card border border-border rounded-xl p-8 shadow-sm">
             <CheckCircle className="h-20 w-20 text-ghana-green mx-auto mb-6" />
-            <h1 className="font-serif text-3xl sm:text-4xl mb-4 text-cream">
+            <h1 className="font-serif text-3xl sm:text-4xl mb-4 text-foreground">
               Order Confirmed!
             </h1>
-            <p className="text-cream/70 mb-2">
+            <p className="text-muted-foreground mb-2">
               Thank you for your order. We'll be in touch shortly via
               WhatsApp/Email to coordinate delivery and payment.
             </p>
-            <p className="text-sm text-cream/50 mb-8">
+            <p className="text-sm text-muted-foreground mb-8">
               Order ID:{" "}
               <span className="font-mono text-gold font-medium">
                 {orderId.slice(0, 8).toUpperCase()}
@@ -196,7 +202,7 @@ export default function CheckoutPage() {
                 <Button
                   asChild
                   variant="outline"
-                  className="border-cream/20 text-cream hover:bg-white/5 tracking-wider uppercase"
+                  className="border-border text-foreground hover:bg-accent tracking-wider uppercase"
                 >
                   <Link href={`/account/orders/${orderId}`}>Track Order</Link>
                 </Button>
@@ -217,10 +223,10 @@ export default function CheckoutPage() {
     return (
       <div className="pt-28 pb-20 min-h-[60vh] flex items-center justify-center">
         <div className="container mx-auto px-4 lg:px-8 max-w-2xl text-center">
-          <h1 className="font-serif text-3xl mb-4 text-cream">
+          <h1 className="font-serif text-3xl mb-4 text-foreground">
             No Items to Checkout
           </h1>
-          <p className="text-cream/70 mb-8">
+          <p className="text-muted-foreground mb-8">
             Add some items to your cart first.
           </p>
           <Button
@@ -235,7 +241,7 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div className="pt-28 pb-20 bg-royal-black text-cream min-h-screen relative">
+    <div className="pt-28 pb-20 bg-background text-foreground min-h-screen relative">
       <PaymentProcessingModal
         isOpen={processingStatus !== "idle"}
         status={processingStatus}
@@ -252,7 +258,7 @@ export default function CheckoutPage() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
             {/* Shipping form */}
             <div className="lg:col-span-2 space-y-8">
-              <div className="bg-white/5 p-6 sm:p-8 rounded-xl border border-cream/10">
+              <div className="bg-card p-6 sm:p-8 rounded-xl border border-border">
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="font-serif text-xl">Shipping Information</h2>
                   {!user && (
@@ -267,7 +273,7 @@ export default function CheckoutPage() {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                   <div className="sm:col-span-2">
-                    <Label htmlFor="name" className="text-cream/70">
+                    <Label htmlFor="name" className="text-muted-foreground">
                       Full Name *
                     </Label>
                     <Input
@@ -276,12 +282,12 @@ export default function CheckoutPage() {
                       value={form.name}
                       onChange={handleChange}
                       required
-                      className="mt-1.5 bg-black/20 border-cream/10 text-cream focus-visible:ring-gold/50 h-12"
+                      className="mt-1.5 bg-background border-border text-foreground focus-visible:ring-gold/50 h-12"
                       placeholder="Kwame Mensah"
                     />
                   </div>
                   <div>
-                    <Label htmlFor="email" className="text-cream/70">
+                    <Label htmlFor="email" className="text-muted-foreground">
                       Email Address *
                     </Label>
                     <Input
@@ -291,12 +297,12 @@ export default function CheckoutPage() {
                       value={form.email}
                       onChange={handleChange}
                       required
-                      className="mt-1.5 bg-black/20 border-cream/10 text-cream focus-visible:ring-gold/50 h-12"
+                      className="mt-1.5 bg-background border-border text-foreground focus-visible:ring-gold/50 h-12"
                       placeholder="kwame@example.com"
                     />
                   </div>
                   <div>
-                    <Label htmlFor="phone" className="text-cream/70">
+                    <Label htmlFor="phone" className="text-muted-foreground">
                       Phone Number *
                     </Label>
                     <Input
@@ -306,12 +312,12 @@ export default function CheckoutPage() {
                       value={form.phone}
                       onChange={handleChange}
                       required
-                      className="mt-1.5 bg-black/20 border-cream/10 text-cream focus-visible:ring-gold/50 h-12"
+                      className="mt-1.5 bg-background border-border text-foreground focus-visible:ring-gold/50 h-12"
                       placeholder="+233 XX XXX XXXX"
                     />
                   </div>
                   <div className="sm:col-span-2">
-                    <Label htmlFor="address" className="text-cream/70">
+                    <Label htmlFor="address" className="text-muted-foreground">
                       Street Address *
                     </Label>
                     <Input
@@ -320,12 +326,12 @@ export default function CheckoutPage() {
                       value={form.address}
                       onChange={handleChange}
                       required
-                      className="mt-1.5 bg-black/20 border-cream/10 text-cream focus-visible:ring-gold/50 h-12"
+                      className="mt-1.5 bg-background border-border text-foreground focus-visible:ring-gold/50 h-12"
                       placeholder="12 Independence Avenue"
                     />
                   </div>
                   <div>
-                    <Label htmlFor="city" className="text-cream/70">
+                    <Label htmlFor="city" className="text-muted-foreground">
                       City *
                     </Label>
                     <Input
@@ -334,12 +340,12 @@ export default function CheckoutPage() {
                       value={form.city}
                       onChange={handleChange}
                       required
-                      className="mt-1.5 bg-black/20 border-cream/10 text-cream focus-visible:ring-gold/50 h-12"
+                      className="mt-1.5 bg-background border-border text-foreground focus-visible:ring-gold/50 h-12"
                       placeholder="Accra"
                     />
                   </div>
                   <div>
-                    <Label htmlFor="state" className="text-cream/70">
+                    <Label htmlFor="state" className="text-muted-foreground">
                       Region/State
                     </Label>
                     <Input
@@ -347,12 +353,12 @@ export default function CheckoutPage() {
                       name="state"
                       value={form.state}
                       onChange={handleChange}
-                      className="mt-1.5 bg-black/20 border-cream/10 text-cream focus-visible:ring-gold/50 h-12"
+                      className="mt-1.5 bg-background border-border text-foreground focus-visible:ring-gold/50 h-12"
                       placeholder="Greater Accra"
                     />
                   </div>
                   <div>
-                    <Label htmlFor="zip" className="text-cream/70">
+                    <Label htmlFor="zip" className="text-muted-foreground">
                       Postal Code
                     </Label>
                     <Input
@@ -360,12 +366,12 @@ export default function CheckoutPage() {
                       name="zip"
                       value={form.zip}
                       onChange={handleChange}
-                      className="mt-1.5 bg-black/20 border-cream/10 text-cream focus-visible:ring-gold/50 h-12"
+                      className="mt-1.5 bg-background border-border text-foreground focus-visible:ring-gold/50 h-12"
                       placeholder="GA-XXX-XXXX"
                     />
                   </div>
                   <div>
-                    <Label htmlFor="country" className="text-cream/70">
+                    <Label htmlFor="country" className="text-muted-foreground">
                       Country *
                     </Label>
                     <Input
@@ -374,11 +380,11 @@ export default function CheckoutPage() {
                       value={form.country}
                       onChange={handleChange}
                       required
-                      className="mt-1.5 bg-black/20 border-cream/10 text-cream focus-visible:ring-gold/50 h-12"
+                      className="mt-1.5 bg-background border-border text-foreground focus-visible:ring-gold/50 h-12"
                     />
                   </div>
                   <div className="sm:col-span-2">
-                    <Label htmlFor="notes" className="text-cream/70">
+                    <Label htmlFor="notes" className="text-muted-foreground">
                       Order Notes (Optional)
                     </Label>
                     <Textarea
@@ -386,7 +392,7 @@ export default function CheckoutPage() {
                       name="notes"
                       value={form.notes}
                       onChange={handleChange}
-                      className="mt-1.5 bg-black/20 border-cream/10 text-cream focus-visible:ring-gold/50 min-h-[100px]"
+                      className="mt-1.5 bg-background border-border text-foreground focus-visible:ring-gold/50 min-h-[100px]"
                       placeholder="Any special instructions for delivery..."
                     />
                   </div>
@@ -394,7 +400,7 @@ export default function CheckoutPage() {
               </div>
 
               {/* Payment Method Selector */}
-              <div className="bg-white/5 p-6 sm:p-8 rounded-xl border border-cream/10">
+              <div className="bg-card p-6 sm:p-8 rounded-xl border border-border">
                 <PaymentMethodSelector
                   value={paymentMethod}
                   onChange={setPaymentMethod}
@@ -404,10 +410,10 @@ export default function CheckoutPage() {
 
             {/* Order summary */}
             <div className="lg:col-span-1">
-              <div className="sticky top-28 space-y-6 p-6 sm:p-8 rounded-xl bg-white/5 border border-cream/10">
+              <div className="sticky top-28 space-y-6 p-6 sm:p-8 rounded-xl bg-card border border-border">
                 <h2 className="font-serif text-xl">Order Summary</h2>
 
-                <Separator className="bg-cream/10" />
+                <Separator className="bg-border/20" />
 
                 <div className="space-y-4">
                   {items.map((item) => {
@@ -421,12 +427,14 @@ export default function CheckoutPage() {
                         className="flex justify-between text-sm"
                       >
                         <div>
-                          <p className="font-medium text-cream">{item.name}</p>
-                          <p className="text-xs text-cream/60">
+                          <p className="font-medium text-foreground">
+                            {item.name}
+                          </p>
+                          <p className="text-xs text-foreground/60">
                             Size: {item.size} × {item.quantity}
                           </p>
                         </div>
-                        <span className="text-cream">
+                        <span className="text-foreground">
                           {formatPrice(discountedPrice * item.quantity)}
                         </span>
                       </div>
@@ -434,27 +442,39 @@ export default function CheckoutPage() {
                   })}
                 </div>
 
-                <Separator className="bg-cream/10" />
+                <Separator className="bg-border/20" />
 
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
-                    <span className="text-cream/60">Subtotal</span>
-                    <span className="text-cream">
+                    <span className="text-foreground/60">Subtotal</span>
+                    <span className="text-foreground">
                       {formatPrice(totalPrice)}
                     </span>
                   </div>
+                  {discountPercentage > 0 && (
+                    <div className="flex justify-between text-sm">
+                      <span className="text-ghana-green">
+                        Discount ({discountCode})
+                      </span>
+                      <span className="text-ghana-green">
+                        -{formatPrice(discountAmount)}
+                      </span>
+                    </div>
+                  )}
                   <div className="flex justify-between text-sm">
-                    <span className="text-cream/60">Shipping</span>
-                    <span className="text-cream/60">Calculated later</span>
+                    <span className="text-foreground/60">Shipping</span>
+                    <span className="text-foreground/60">Calculated later</span>
                   </div>
                 </div>
 
-                <Separator className="bg-cream/10" />
+                <Separator className="bg-border/20" />
 
                 <div className="flex justify-between">
-                  <span className="text-lg font-medium text-cream">Total</span>
+                  <span className="text-lg font-medium text-foreground">
+                    Total
+                  </span>
                   <span className="text-xl font-bold text-gold">
-                    {formatPrice(totalPrice)}
+                    {formatPrice(finalTotal)}
                   </span>
                 </div>
 
@@ -475,7 +495,7 @@ export default function CheckoutPage() {
 
                 <TrustBadges />
 
-                <p className="text-xs text-cream/40 text-center lh-relaxed">
+                <p className="text-xs text-foreground/40 text-center lh-relaxed">
                   By placing your order, you agree to our terms of service and
                   policies. A representative will contact you shortly to confirm
                   arrangements.

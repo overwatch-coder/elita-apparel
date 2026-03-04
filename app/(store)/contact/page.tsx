@@ -12,11 +12,11 @@ export default function ContactPage() {
     <div className="pt-28 pb-20">
       <div className="container mx-auto px-4 lg:px-8 max-w-6xl">
         <div className="text-center mb-16">
-          <h1 className="font-serif text-4xl sm:text-5xl mb-4 text-cream">
+          <h1 className="font-serif text-4xl sm:text-5xl mb-4 text-foreground">
             Contact Us
           </h1>
           <div className="w-16 h-px bg-gold mx-auto mb-6" />
-          <p className="text-cream/70 max-w-2xl mx-auto text-lg leading-relaxed">
+          <p className="text-muted-foreground max-w-2xl mx-auto text-lg leading-relaxed">
             We'd love to hear from you. Whether you have a question about our
             collections, need help with an order, or want to discuss a custom
             piece, our team is ready to assist.
@@ -27,7 +27,9 @@ export default function ContactPage() {
           {/* Contact Information */}
           <div className="space-y-12">
             <div className="space-y-8">
-              <h2 className="font-serif text-2xl text-cream">Get in Touch</h2>
+              <h2 className="font-serif text-2xl text-foreground">
+                Get in Touch
+              </h2>
 
               <div className="space-y-6">
                 <div className="flex items-start gap-4">
@@ -35,11 +37,11 @@ export default function ContactPage() {
                     <MapPin className="h-5 w-5" />
                   </div>
                   <div>
-                    <h3 className="font-medium text-cream mb-1 text-lg">
+                    <h3 className="font-medium text-foreground mb-1 text-lg">
                       Our Location
                     </h3>
-                    <p className="text-cream/70">{BRAND.location}</p>
-                    <p className="text-cream/50 text-sm mt-1">
+                    <p className="text-foreground/70">{BRAND.location}</p>
+                    <p className="text-foreground/50 text-sm mt-1">
                       Available for in-person consultations by appointment only.
                     </p>
                   </div>
@@ -50,10 +52,10 @@ export default function ContactPage() {
                     <Phone className="h-5 w-5" />
                   </div>
                   <div>
-                    <h3 className="font-medium text-cream mb-1 text-lg">
+                    <h3 className="font-medium text-foreground mb-1 text-lg">
                       Phone
                     </h3>
-                    <p className="text-cream/70">
+                    <p className="text-foreground/70">
                       <a
                         href={`tel:${SOCIALS.phone}`}
                         className="hover:text-gold transition-colors"
@@ -61,7 +63,7 @@ export default function ContactPage() {
                         {SOCIALS.phone}
                       </a>
                     </p>
-                    <p className="text-cream/50 text-sm mt-1">
+                    <p className="text-foreground/50 text-sm mt-1">
                       Mon-Fri from 9am to 6pm GMT
                     </p>
                   </div>
@@ -72,10 +74,10 @@ export default function ContactPage() {
                     <Mail className="h-5 w-5" />
                   </div>
                   <div>
-                    <h3 className="font-medium text-cream mb-1 text-lg">
+                    <h3 className="font-medium text-foreground mb-1 text-lg">
                       Email
                     </h3>
-                    <p className="text-cream/70">
+                    <p className="text-foreground/70">
                       <a
                         href={`mailto:${SOCIALS.email}`}
                         className="hover:text-gold transition-colors"
@@ -83,7 +85,7 @@ export default function ContactPage() {
                         {SOCIALS.email}
                       </a>
                     </p>
-                    <p className="text-cream/50 text-sm mt-1">
+                    <p className="text-foreground/50 text-sm mt-1">
                       We aim to reply within 24 hours
                     </p>
                   </div>
@@ -94,10 +96,10 @@ export default function ContactPage() {
                     <MessageSquare className="h-5 w-5" />
                   </div>
                   <div>
-                    <h3 className="font-medium text-cream mb-1 text-lg">
+                    <h3 className="font-medium text-foreground mb-1 text-lg">
                       WhatsApp
                     </h3>
-                    <p className="text-cream/70">
+                    <p className="text-foreground/70">
                       <a
                         href={SOCIALS.whatsapp.url}
                         target="_blank"
@@ -107,7 +109,7 @@ export default function ContactPage() {
                         {SOCIALS.whatsapp.number}
                       </a>
                     </p>
-                    <p className="text-cream/50 text-sm mt-1">
+                    <p className="text-foreground/50 text-sm mt-1">
                       Fastest response for quick queries
                     </p>
                   </div>
@@ -115,12 +117,12 @@ export default function ContactPage() {
               </div>
             </div>
 
-            <div className="p-8 rounded-2xl bg-white/5 border border-cream/10 relative overflow-hidden">
+            <div className="p-8 rounded-2xl bg-card border border-border relative overflow-hidden">
               <div className="absolute top-0 right-0 w-32 h-32 bg-gold/10 rounded-bl-full -z-10" />
               <h3 className="font-serif text-xl text-gold mb-3">
                 Custom Tailoring
               </h3>
-              <p className="text-cream/70 leading-relaxed text-sm">
+              <p className="text-foreground/70 leading-relaxed text-sm">
                 Looking for something remarkably unique? We offer bespoke
                 tailoring services for special occasions. Fill out the form or
                 reach out directly to schedule a virtual or in-person
@@ -130,8 +132,8 @@ export default function ContactPage() {
           </div>
 
           {/* Form */}
-          <div className="bg-white/5 border border-cream/10 p-8 sm:p-10 rounded-2xl shadow-xl backdrop-blur-sm">
-            <h2 className="font-serif text-2xl text-cream mb-6">
+          <div className="bg-card border border-border p-8 sm:p-10 rounded-2xl shadow-xl backdrop-blur-sm">
+            <h2 className="font-serif text-2xl text-foreground mb-6">
               Send us a Message
             </h2>
             <ContactForm />

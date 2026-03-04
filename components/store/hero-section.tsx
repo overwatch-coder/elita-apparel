@@ -14,7 +14,7 @@ const VALUE_PROPS = [
 
 export function HeroSection() {
   return (
-    <section className="relative min-h-screen flex items-center overflow-hidden bg-royal-black pt-20">
+    <section className="relative min-h-screen flex items-center overflow-hidden bg-background pt-20">
       {/* Subtle geometric pattern */}
       <div
         className="absolute inset-0 opacity-[0.03]"
@@ -58,7 +58,7 @@ export function HeroSection() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1, delay: 0.4 }}
-              className="font-serif text-4xl sm:text-5xl md:text-6xl lg:text-7xl text-cream leading-[1.05] mb-8"
+              className="font-serif text-4xl sm:text-5xl md:text-6xl lg:text-7xl text-foreground leading-[1.05] mb-8"
             >
               Wrapped in
               <br />
@@ -72,7 +72,7 @@ export function HeroSection() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.7 }}
-              className="text-cream/55 text-base sm:text-lg max-w-md mb-10 leading-relaxed"
+              className="text-foreground/60 text-base sm:text-lg max-w-md mb-10 leading-relaxed"
             >
               Where culture meets craftsmanship. Discover premium pieces that
               celebrate heritage through elite design and authentic artistry
@@ -100,7 +100,7 @@ export function HeroSection() {
                 asChild
                 variant="outline"
                 size="lg"
-                className="border-cream/25 text-cream hover:bg-cream/5 hover:border-cream/40 font-medium tracking-wider uppercase px-10 h-14 text-base"
+                className="border-foreground/20 text-foreground hover:bg-foreground/5 hover:border-foreground/30 font-medium tracking-wider uppercase px-10 h-14 text-base"
               >
                 <Link href="/collections">Explore Collections</Link>
               </Button>
@@ -116,7 +116,7 @@ export function HeroSection() {
               {VALUE_PROPS.map(({ icon: Icon, label }) => (
                 <div key={label} className="flex items-center gap-2.5">
                   <Icon className="h-4 w-4 text-gold/70" />
-                  <span className="text-cream/40 text-xs tracking-widest uppercase">
+                  <span className="text-foreground/40 text-xs tracking-widest uppercase">
                     {label}
                   </span>
                 </div>
@@ -144,10 +144,10 @@ export function HeroSection() {
                   <p className="text-gold/60 tracking-[0.5em] uppercase text-[10px] mb-3">
                     Est. 2025
                   </p>
-                  <p className="font-serif text-cream/20 text-5xl leading-none mb-3">
+                  <p className="font-serif text-foreground/10 text-5xl leading-none mb-3">
                     EA
                   </p>
-                  <p className="text-cream/20 tracking-[0.3em] uppercase text-[9px]">
+                  <p className="text-foreground/10 tracking-[0.3em] uppercase text-[9px]">
                     {BRAND.tagline}
                   </p>
                 </div>

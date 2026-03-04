@@ -36,9 +36,11 @@ export default function CartPage() {
     updateQuantity,
     removeItem,
     clearCart,
+    discountCode,
+    discountPercentage,
+    setDiscount,
   } = useCart();
-  const [discountCode, setDiscountCode] = useState("");
-  const [discountPercentage, setDiscountPercentage] = useState(0);
+  const [discountInput, setDiscountInput] = useState("");
   const [isApplyingCode, setIsApplyingCode] = useState(false);
 
   const [user, setUser] = useState<any>(null);
@@ -99,41 +101,27 @@ export default function CartPage() {
   };
 
   const handleApplyDiscount = async () => {
-    if (!discountCode.trim()) return;
-
+    if (!discountInput.trim()) return;
     setIsApplyingCode(true);
     try {
       const supabase = createClient();
       const { data, error } = await supabase
         .from("discount_codes")
         .select("*")
-        .eq("code", discountCode.toUpperCase().trim())
+        .eq("code", discountInput.toUpperCase().trim())
         .eq("is_active", true)
         .single();
 
       if (error || !data) {
         toast.error("Invalid or expired discount code");
-        setDiscountPercentage(0);
+        setDiscount("", 0);
         return;
       }
 
       const discount = data;
 
       // Check expiry
-      if (discount.expiry_date && new Date(discount.expiry_date) < new Date()) {
-        toast.error("This discount code has expired");
-        setDiscountPercentage(0);
-        return;
-      }
-
-      // Check usage
-      if (discount.max_uses && discount.usage_count >= discount.max_uses) {
-        toast.error("This discount code has reached its usage limit");
-        setDiscountPercentage(0);
-        return;
-      }
-
-      setDiscountPercentage(discount.percentage);
+      setDiscount(discount.code, discount.percentage);
       toast.success(`Discount code applied: ${discount.percentage}% off`);
     } catch {
       toast.error("Failed to apply discount code");
@@ -313,13 +301,13 @@ export default function CartPage() {
                 <div className="flex gap-2">
                   <Input
                     placeholder="Enter code"
-                    value={discountCode}
-                    onChange={(e) => setDiscountCode(e.target.value)}
+                    value={discountInput}
+                    onChange={(e) => setDiscountInput(e.target.value)}
                     className="h-10"
                   />
                   <Button
                     onClick={handleApplyDiscount}
-                    disabled={isApplyingCode || !discountCode.trim()}
+                    disabled={isApplyingCode || !discountInput.trim()}
                     variant="outline"
                     className="h-10 border-gold/50 hover:bg-gold/5 text-gold shrink-0"
                   >

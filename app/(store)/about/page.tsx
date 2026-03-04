@@ -37,15 +37,15 @@ export default function AboutPage() {
   return (
     <div className="min-h-screen">
       {/* Hero */}
-      <section className="bg-royal-black pt-24 lg:pt-32 pb-16">
+      <section className="bg-background pt-24 lg:pt-32 pb-16 border-b border-border/50">
         <div className="container mx-auto px-4 lg:px-8 text-center max-w-3xl">
           <p className="text-gold tracking-[0.4em] uppercase text-xs mb-4">
             Our Story
           </p>
-          <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl text-cream mb-6">
+          <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl text-foreground mb-6">
             About Elita Apparel
           </h1>
-          <p className="text-cream/50 leading-relaxed">
+          <p className="text-muted-foreground leading-relaxed">
             A premium African fashion house celebrating culture through elite
             craftsmanship, founded in {BRAND.location}.
           </p>
@@ -92,7 +92,7 @@ export default function AboutPage() {
       </section>
 
       {/* Values */}
-      <section className="py-16 lg:py-24 bg-cream-dark dark:bg-royal-black/30">
+      <section className="py-16 lg:py-24 bg-card border-y border-border/50">
         <div className="container mx-auto px-4 lg:px-8">
           <div className="text-center mb-14">
             <p className="text-gold tracking-[0.3em] uppercase text-xs mb-4">

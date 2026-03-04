@@ -69,7 +69,7 @@
   --radius: 0.5rem;
 
   /* ── Brand palette ── */
-  --gold: #d4b46e;
+  --gold: #c6a75e;
   --gold-light: #d4ba7a;
   --gold-dark: #a68b3e;
   --cream: #faf7f2;
@@ -87,7 +87,7 @@
   --card-foreground: #1a1a1a;
   --popover: #ffffff;
   --popover-foreground: #1a1a1a;
-  --primary: #c6a75e;
+  --primary: var(--gold);
   --primary-foreground: #ffffff;
   --secondary: #f0ebe1;
   --secondary-foreground: #1a1a1a;
@@ -98,7 +98,7 @@
   --destructive: #ce1126;
   --border: #e5dfd3;
   --input: #e5dfd3;
-  --ring: #c6a75e;
+  --ring: var(--gold);
 
   --chart-1: #c6a75e;
   --chart-2: #006b3f;
@@ -123,7 +123,7 @@
   --card-foreground: #faf7f2;
   --popover: #1a1a1a;
   --popover-foreground: #faf7f2;
-  --primary: #c6a75e;
+  --primary: var(--gold);
   --primary-foreground: #0f0f0f;
   --secondary: #2a2520;
   --secondary-foreground: #faf7f2;
@@ -134,7 +134,13 @@
   --destructive: #ce1126;
   --border: rgba(198, 167, 94, 0.15);
   --input: rgba(198, 167, 94, 0.2);
-  --ring: #c6a75e;
+  --ring: var(--gold);
+
+  /* Redefine brand colors for dark mode contrast */
+  --cream: #1a1a1a;
+  --cream-dark: #2a2520;
+  --earth: #faf7f2;
+  --earth-light: #a89880;
 
   --chart-1: #d4ba7a;
   --chart-2: #2ecc71;
