@@ -20,7 +20,9 @@ import { PaymentProcessingModal } from "@/components/checkout/payment-processing
 import { TrustBadges } from "@/components/checkout/trust-badges";
 import { GuestAccountPrompt } from "@/components/checkout/guest-account-prompt";
 import { createOrder } from "@/lib/actions/orders";
+import { subscribeToNewsletter } from "@/app/actions/marketing";
 import { toast } from "sonner";
+import { Checkbox } from "@/components/ui/checkbox";
 import type { User } from "@supabase/supabase-js";
 import type { Address } from "@/lib/types/database";
 
@@ -39,6 +41,7 @@ export default function CheckoutPage() {
 
   const [user, setUser] = useState<User | null>(null);
   const [isDataLoaded, setIsDataLoaded] = useState(false);
+  const [subscribeOptIn, setSubscribeOptIn] = useState(true);
 
   const [form, setForm] = useState({
     name: "",
@@ -123,6 +126,12 @@ export default function CheckoutPage() {
       }
 
       setOrderId(result.orderId!);
+
+      // Handle newsletter subscription immediately if opted in
+      if (subscribeOptIn && form.email) {
+        // Run asynchronously without waiting
+        subscribeToNewsletter(form.email, "checkout").catch(console.error);
+      }
 
       if (paymentMethod === "cod") {
         setProcessingStatus("success");
@@ -396,6 +405,22 @@ export default function CheckoutPage() {
                       placeholder="Any special instructions for delivery..."
                     />
                   </div>
+                </div>
+
+                <div className="mt-6 flex items-center space-x-2">
+                  <Checkbox
+                    id="subscribe-checkout"
+                    checked={subscribeOptIn}
+                    onCheckedChange={(checked) =>
+                      setSubscribeOptIn(checked as boolean)
+                    }
+                  />
+                  <label
+                    htmlFor="subscribe-checkout"
+                    className="text-sm font-medium leading-none text-foreground peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                  >
+                    Keep me updated on news and exclusive offers
+                  </label>
                 </div>
               </div>
 

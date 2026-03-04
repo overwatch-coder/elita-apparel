@@ -7,7 +7,9 @@ import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import { signupCustomerAction } from "@/lib/actions/auth";
+import { subscribeToNewsletter } from "@/app/actions/marketing";
 import { toast } from "sonner";
 
 export default function SignupPage() {
@@ -35,11 +37,19 @@ export default function SignupPage() {
     if (result?.error) {
       toast.error(result.error);
       setIsPending(false);
+      return;
+    }
+
+    // Handle newsletter opt-in
+    const subscribeOptIn = formData.get("subscribe") === "on";
+    if (subscribeOptIn) {
+      const email = formData.get("email") as string;
+      await subscribeToNewsletter(email, "signup");
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-royal-black p-4 py-20 relative overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center bg-background p-4 py-20 relative overflow-hidden">
       {/* Decorative corners */}
       <div className="absolute top-0 left-0 w-32 h-32 border-t border-l border-gold/20" />
       <div className="absolute bottom-0 right-0 w-32 h-32 border-b border-r border-gold/20" />
@@ -53,18 +63,22 @@ export default function SignupPage() {
               alt="Elita Apparel"
               width={140}
               height={56}
-              className="mx-auto h-14 w-auto object-contain mb-6"
+              className="mx-auto h-14 w-auto object-contain mb-6 dark:invert-0 light:invert transition-all"
               priority
             />
           </Link>
-          <h1 className="font-serif text-3xl text-cream">Create Account</h1>
-          <p className="text-sm text-cream/70 mt-2">Join Elita Apparel today</p>
+          <h1 className="font-serif text-3xl text-foreground">
+            Create Account
+          </h1>
+          <p className="text-sm text-muted-foreground mt-2">
+            Join Elita Apparel today
+          </p>
         </div>
 
         {/* Signup form */}
         <form onSubmit={handleSubmit} className="space-y-5">
           <div className="space-y-2">
-            <Label htmlFor="fullName" className="text-cream/70 text-sm">
+            <Label htmlFor="fullName" className="text-muted-foreground text-sm">
               Full Name
             </Label>
             <Input
@@ -74,12 +88,12 @@ export default function SignupPage() {
               required
               autoComplete="name"
               placeholder="e.g. Kwame Mensah"
-              className="h-12 bg-white/5 border-cream/10 text-cream placeholder:text-cream/30 focus-visible:ring-gold/50"
+              className="h-12 bg-card border-border text-foreground placeholder:text-muted-foreground focus-visible:ring-gold/50"
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="email" className="text-cream/70 text-sm">
+            <Label htmlFor="email" className="text-muted-foreground text-sm">
               Email Address
             </Label>
             <Input
@@ -89,12 +103,12 @@ export default function SignupPage() {
               required
               autoComplete="email"
               placeholder="Enter your email"
-              className="h-12 bg-white/5 border-cream/10 text-cream placeholder:text-cream/30 focus-visible:ring-gold/50"
+              className="h-12 bg-card border-border text-foreground placeholder:text-muted-foreground focus-visible:ring-gold/50"
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="password" className="text-cream/70 text-sm">
+            <Label htmlFor="password" className="text-muted-foreground text-sm">
               Password
             </Label>
             <div className="relative">
@@ -105,13 +119,13 @@ export default function SignupPage() {
                 required
                 autoComplete="new-password"
                 placeholder="••••••••"
-                className="h-12 bg-white/5 border-cream/10 text-cream placeholder:text-cream/30 focus-visible:ring-gold/50 pr-12"
+                className="h-12 bg-card border-border text-foreground placeholder:text-muted-foreground focus-visible:ring-gold/50 pr-12"
               />
               <Button
                 type="button"
                 variant="ghost"
                 size="icon"
-                className="absolute right-1 top-1/2 -translate-y-1/2 text-cream/50 hover:text-cream hover:bg-transparent"
+                className="absolute right-1 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground hover:bg-transparent"
                 onClick={() => setShowPassword(!showPassword)}
               >
                 {showPassword ? (
@@ -121,13 +135,16 @@ export default function SignupPage() {
                 )}
               </Button>
             </div>
-            <p className="text-xs text-cream/40">
+            <p className="text-xs text-muted-foreground/70">
               Must be at least 6 characters.
             </p>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="confirmPassword" className="text-cream/70 text-sm">
+            <Label
+              htmlFor="confirmPassword"
+              className="text-muted-foreground text-sm"
+            >
               Confirm Password
             </Label>
             <Input
@@ -137,8 +154,18 @@ export default function SignupPage() {
               required
               autoComplete="new-password"
               placeholder="••••••••"
-              className="h-12 bg-white/5 border-cream/10 text-cream placeholder:text-cream/30 focus-visible:ring-gold/50"
+              className="h-12 bg-card border-border text-foreground placeholder:text-muted-foreground focus-visible:ring-gold/50"
             />
+          </div>
+
+          <div className="flex items-center space-x-2 pt-2">
+            <Checkbox id="subscribe" name="subscribe" defaultChecked />
+            <label
+              htmlFor="subscribe"
+              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-foreground"
+            >
+              Sign me up for exclusive offers and news
+            </label>
           </div>
 
           <Button
@@ -156,7 +183,7 @@ export default function SignupPage() {
             )}
           </Button>
 
-          <p className="text-center text-sm text-cream/70 mt-6 pt-2">
+          <p className="text-center text-sm text-muted-foreground mt-6 pt-2">
             Already have an account?{" "}
             <Link
               href="/login"

@@ -228,6 +228,9 @@ export interface Database {
           delivery_payment_collected: boolean;
           created_at: string;
           updated_at: string;
+          campaign_id: string | null;
+          discount_code_used: string | null;
+          source: string | null;
         };
         Insert: {
           id?: string;
@@ -262,6 +265,9 @@ export interface Database {
           delivery_payment_collected?: boolean;
           created_at?: string;
           updated_at?: string;
+          campaign_id?: string | null;
+          discount_code_used?: string | null;
+          source?: string | null;
         };
         Update: {
           id?: string;
@@ -296,6 +302,9 @@ export interface Database {
           delivery_payment_collected?: boolean;
           created_at?: string;
           updated_at?: string;
+          campaign_id?: string | null;
+          discount_code_used?: string | null;
+          source?: string | null;
         };
         Relationships: [];
       };
@@ -673,6 +682,197 @@ export interface Database {
           created_at?: string;
         };
         Relationships: [];
+      };
+      subscribers: {
+        Row: {
+          id: string;
+          email: string;
+          full_name: string | null;
+          phone: string | null;
+          source: string | null;
+          tags: string[] | null;
+          is_subscribed: boolean;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          email: string;
+          full_name?: string | null;
+          phone?: string | null;
+          source?: string | null;
+          tags?: string[] | null;
+          is_subscribed?: boolean;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          email?: string;
+          full_name?: string | null;
+          phone?: string | null;
+          source?: string | null;
+          tags?: string[] | null;
+          is_subscribed?: boolean;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      campaigns: {
+        Row: {
+          id: string;
+          name: string;
+          subject_line: string;
+          preview_text: string | null;
+          content_html: string;
+          segment_id: string | null;
+          status: string;
+          scheduled_at: string | null;
+          sent_at: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          name: string;
+          subject_line: string;
+          preview_text?: string | null;
+          content_html: string;
+          segment_id?: string | null;
+          status?: string;
+          scheduled_at?: string | null;
+          sent_at?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          name?: string;
+          subject_line?: string;
+          preview_text?: string | null;
+          content_html?: string;
+          segment_id?: string | null;
+          status?: string;
+          scheduled_at?: string | null;
+          sent_at?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      automations: {
+        Row: {
+          id: string;
+          name: string;
+          trigger_event: string;
+          active: boolean;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          name: string;
+          trigger_event: string;
+          active?: boolean;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          name?: string;
+          trigger_event?: string;
+          active?: boolean;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      automation_emails: {
+        Row: {
+          id: string;
+          automation_id: string | null;
+          delay_minutes: number;
+          subject_line: string;
+          content_html: string;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          automation_id?: string | null;
+          delay_minutes?: number;
+          subject_line: string;
+          content_html: string;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          automation_id?: string | null;
+          delay_minutes?: number;
+          subject_line?: string;
+          content_html?: string;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "automation_emails_automation_id_fkey";
+            columns: ["automation_id"];
+            isOneToOne: false;
+            referencedRelation: "automations";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      automation_logs: {
+        Row: {
+          id: string;
+          automation_id: string | null;
+          email_id: string | null;
+          subscriber_email: string;
+          status: string | null;
+          scheduled_at: string | null;
+          sent_at: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          automation_id?: string | null;
+          email_id?: string | null;
+          subscriber_email: string;
+          status?: string | null;
+          scheduled_at?: string | null;
+          sent_at?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          automation_id?: string | null;
+          email_id?: string | null;
+          subscriber_email?: string;
+          status?: string | null;
+          scheduled_at?: string | null;
+          sent_at?: string | null;
+          created_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "automation_logs_automation_id_fkey";
+            columns: ["automation_id"];
+            isOneToOne: false;
+            referencedRelation: "automations";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "automation_logs_email_id_fkey";
+            columns: ["email_id"];
+            isOneToOne: false;
+            referencedRelation: "automation_emails";
+            referencedColumns: ["id"];
+          },
+        ];
       };
     };
     Views: {

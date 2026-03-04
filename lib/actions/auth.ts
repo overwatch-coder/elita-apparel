@@ -2,6 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
+import { triggerMarketingAutomation } from "@/lib/marketing/triggers";
 
 export async function loginAction(formData: FormData, redirectPath = "/admin") {
   const email = formData.get("email") as string;
@@ -60,6 +61,16 @@ export async function signupCustomerAction(formData: FormData) {
 
   if (error) {
     return { error: error.message };
+  }
+
+  // Trigger Marketing Automation
+  try {
+    await triggerMarketingAutomation("signup", {
+      email,
+      name: fullName,
+    });
+  } catch (triggerErr) {
+    console.error("Signup automation trigger error:", triggerErr);
   }
 
   // Usually email confirmation is required, but if disabled or after sign up we redirect to account

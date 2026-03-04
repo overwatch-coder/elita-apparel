@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Mail, MapPin, Phone, Globe } from "lucide-react";
@@ -7,6 +8,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { NAV_LINKS, BRAND, SOCIALS } from "@/lib/constants";
+import { subscribeToNewsletter } from "@/app/actions/marketing";
+import { toast } from "sonner";
 import {
   BsTwitterX as Twitter,
   BsTiktok as Tiktok,
@@ -16,6 +19,26 @@ import {
 } from "react-icons/bs";
 
 export function Footer() {
+  const [email, setEmail] = useState("");
+  const [isSubscribing, setIsSubscribing] = useState(false);
+
+  const handleSubscribe = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email) return;
+
+    setIsSubscribing(true);
+    const result = await subscribeToNewsletter(email, "newsletter");
+
+    if (result.success) {
+      toast.success(result.message);
+      setEmail("");
+    } else {
+      toast.error(result.error);
+    }
+
+    setIsSubscribing(false);
+  };
+
   const currentYear = new Date().getFullYear();
 
   return (
@@ -85,14 +108,22 @@ export function Footer() {
             <p className="text-sm text-muted-foreground leading-relaxed">
               Subscribe for updates on new collections and exclusive offers.
             </p>
-            <form className="space-y-3" onSubmit={(e) => e.preventDefault()}>
+            <form className="space-y-3" onSubmit={handleSubscribe}>
               <Input
                 type="email"
                 placeholder="Email Address"
-                className="bg-card border-border text-foreground placeholder:text-muted-foreground h-11"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                disabled={isSubscribing}
+                className="bg-card border-border text-foreground placeholder:text-muted-foreground h-11 focus-visible:ring-gold/50"
               />
-              <Button className="w-full bg-gold hover:bg-gold-dark text-white uppercase tracking-widest text-xs h-11">
-                Subscribe
+              <Button
+                type="submit"
+                disabled={isSubscribing}
+                className="w-full bg-gold hover:bg-gold-dark text-white uppercase tracking-widest text-xs h-11"
+              >
+                {isSubscribing ? "Subscribing..." : "Subscribe"}
               </Button>
             </form>
           </div>
@@ -119,7 +150,7 @@ export function Footer() {
               </nav>
             </div>
 
-            <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center gap-3">
               <Link
                 href={SOCIALS.instagram.url}
                 target="_blank"
@@ -137,6 +168,33 @@ export function Footer() {
                 aria-label="WhatsApp"
               >
                 <Whatsapp size={14} />
+              </Link>
+              <Link
+                href={SOCIALS.twitter.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="h-8 w-8 rounded-full border border-border flex items-center justify-center hover:bg-gold hover:border-gold hover:text-white transition-all duration-300"
+                aria-label="X (Twitter)"
+              >
+                <Twitter size={14} />
+              </Link>
+              <Link
+                href={SOCIALS.tiktok.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="h-8 w-8 rounded-full border border-border flex items-center justify-center hover:bg-gold hover:border-gold hover:text-white transition-all duration-300"
+                aria-label="TikTok"
+              >
+                <Tiktok size={14} />
+              </Link>
+              <Link
+                href={SOCIALS.facebook.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="h-8 w-8 rounded-full border border-border flex items-center justify-center hover:bg-gold hover:border-gold hover:text-white transition-all duration-300"
+                aria-label="Facebook"
+              >
+                <Facebook size={14} />
               </Link>
             </div>
           </div>

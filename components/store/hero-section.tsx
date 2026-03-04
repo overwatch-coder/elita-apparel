@@ -134,20 +134,20 @@ export function HeroSection() {
             {/* Large decorative gold ring */}
             <div className="relative w-[420px] h-[420px]">
               {/* Outer ring */}
-              <div className="absolute inset-0 rounded-full border border-gold/15" />
+              <div className="absolute inset-0 rounded-full border border-gold/40 dark:border-gold/15" />
               {/* Inner ring */}
-              <div className="absolute inset-8 rounded-full border border-gold/10" />
+              <div className="absolute inset-8 rounded-full border border-gold/30 dark:border-gold/10" />
 
               {/* Center content */}
               <div className="absolute inset-0 flex items-center justify-center">
                 <div className="text-center">
-                  <p className="text-gold/60 tracking-[0.5em] uppercase text-[10px] mb-3">
+                  <p className="text-gold/80 dark:text-gold/60 tracking-[0.5em] uppercase text-[10px] mb-3">
                     Est. 2025
                   </p>
-                  <p className="font-serif text-foreground/10 text-5xl leading-none mb-3">
+                  <p className="font-serif text-foreground/40 dark:text-foreground/10 text-5xl leading-none mb-3">
                     EA
                   </p>
-                  <p className="text-foreground/10 tracking-[0.3em] uppercase text-[9px]">
+                  <p className="text-foreground/40 dark:text-foreground/10 tracking-[0.3em] uppercase text-[9px]">
                     {BRAND.tagline}
                   </p>
                 </div>
@@ -164,7 +164,7 @@ export function HeroSection() {
                 className="absolute inset-4 rounded-full"
                 style={{
                   background:
-                    "conic-gradient(from 0deg, transparent 0%, transparent 85%, rgba(198, 167, 94, 0.15) 95%, transparent 100%)",
+                    "conic-gradient(from 0deg, transparent 0%, transparent 85%, rgba(198, 167, 94, 0.4) 95%, transparent 100%)",
                 }}
               />
             </div>

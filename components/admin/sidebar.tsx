@@ -15,6 +15,9 @@ import {
   MessageCircle,
   Star,
   Ruler,
+  Users,
+  Megaphone,
+  Zap,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -37,6 +40,9 @@ const NAV_ITEMS = [
   { label: "Reviews", href: "/admin/reviews", icon: Star },
   { label: "Size Guides", href: "/admin/size-guides", icon: Ruler },
   { label: "Inventory", href: "/admin/inventory", icon: BarChart3 },
+  { label: "Audience", href: "/admin/audience", icon: Users },
+  { label: "Campaigns", href: "/admin/campaigns", icon: Megaphone },
+  { label: "Automations", href: "/admin/automations", icon: Zap },
 ];
 
 export function AdminSidebar() {

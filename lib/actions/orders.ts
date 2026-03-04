@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
 import { sendOrderConfirmation } from "@/lib/mail";
 import { calculateDiscountedPrice } from "@/lib/constants";
+import { triggerMarketingAutomation } from "@/lib/marketing/triggers";
 
 export async function createOrder(
   formData: any,
@@ -69,6 +70,17 @@ export async function createOrder(
       console.error("Failed to send COD confirmation email:", emailError);
       // We don't fail the order just because the email failed
     }
+  }
+
+  // 4. Trigger Marketing Automation (Post-Purchase Flow)
+  try {
+    await triggerMarketingAutomation("order_placed", {
+      email: formData.email,
+      name: formData.name,
+      order_id: orderData.id,
+    });
+  } catch (triggerErr) {
+    console.error("Order automation trigger error:", triggerErr);
   }
 
   revalidatePath("/admin/orders");

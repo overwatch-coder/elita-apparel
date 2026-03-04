@@ -4,18 +4,21 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "motion/react";
-import { Eye } from "lucide-react";
+import { Eye, ShoppingBag, Plus, Minus } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { QuickViewModal } from "@/components/store/quick-view-modal";
 import { WishlistButton } from "@/components/store/wishlist-button";
+import { useCart } from "@/components/cart/cart-provider";
+import { cn } from "@/lib/utils";
 import { formatPrice, calculateDiscountedPrice } from "@/lib/constants";
 import type { Product, ProductImage } from "@/lib/types/database";
 
 interface ProductCardProps {
   product: Product & { product_images: ProductImage[] };
+  view?: "grid" | "list";
 }
 
-export function ProductCard({ product }: ProductCardProps) {
+export function ProductCard({ product, view = "grid" }: ProductCardProps) {
   const [quickViewOpen, setQuickViewOpen] = useState(false);
 
   const primaryImage = product.product_images.find((img) => img.is_primary);
@@ -27,6 +30,10 @@ export function ProductCard({ product }: ProductCardProps) {
     ? calculateDiscountedPrice(product.price, product.discount_percentage)
     : product.price;
 
+  const { items, updateQuantity } = useCart();
+  const cartItems = items.filter((i) => i.product_id === product.id);
+  const totalInCart = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -34,9 +41,23 @@ export function ProductCard({ product }: ProductCardProps) {
       viewport={{ once: true, margin: "-50px" }}
       transition={{ duration: 0.5 }}
     >
-      <Link href={`/shop/${product.slug}`} className="group block">
+      <Link
+        href={`/shop/${product.slug}`}
+        className={cn(
+          "group block",
+          view === "list" &&
+            "flex flex-col sm:flex-row gap-6 bg-card border border-border/50 rounded-xl overflow-hidden hover:border-gold/30 transition-colors",
+        )}
+      >
         {/* Image container */}
-        <div className="relative aspect-3/4 overflow-hidden rounded-lg bg-cream-dark mb-4">
+        <div
+          className={cn(
+            "relative overflow-hidden bg-cream-dark",
+            view === "list"
+              ? "w-full sm:w-1/3 aspect-square sm:aspect-3/4 shrink-0"
+              : "aspect-3/4 rounded-lg mb-4",
+          )}
+        >
           {imageUrl ? (
             <Image
               src={imageUrl}
@@ -87,26 +108,73 @@ export function ProductCard({ product }: ProductCardProps) {
             <WishlistButton productId={product.id} />
           </div>
 
-          {/* Quick view button */}
-          <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-500">
-            <button
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                setQuickViewOpen(true);
-              }}
-              className="w-full bg-white/95 backdrop-blur-sm rounded-md py-2.5 text-center flex items-center justify-center gap-2 hover:bg-white transition-colors"
-            >
-              <Eye className="h-3.5 w-3.5 text-foreground" />
-              <span className="text-xs tracking-widest uppercase text-foreground font-medium">
-                Quick View
-              </span>
-            </button>
+          {/* Add to Cart / Quantity button */}
+          <div className="absolute bottom-0 left-0 right-0 p-4">
+            {totalInCart > 0 ? (
+              <div
+                className="w-full bg-background/95 backdrop-blur-sm rounded-md py-1.5 px-3 flex items-center justify-between shadow-lg border border-border/50"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                }}
+              >
+                <button
+                  onClick={() => {
+                    const item = cartItems[0];
+                    updateQuantity(
+                      item.product_id,
+                      item.size,
+                      item.quantity - 1,
+                    );
+                  }}
+                  className="h-8 w-8 flex items-center justify-center rounded-sm hover:bg-muted text-foreground transition-colors"
+                >
+                  <Minus className="h-4 w-4" />
+                </button>
+                <span className="font-medium text-foreground text-sm">
+                  {totalInCart}
+                </span>
+                <button
+                  onClick={() => {
+                    const item = cartItems[0];
+                    updateQuantity(
+                      item.product_id,
+                      item.size,
+                      item.quantity + 1,
+                    );
+                  }}
+                  className="h-8 w-8 flex items-center justify-center rounded-sm hover:bg-muted text-foreground transition-colors"
+                >
+                  <Plus className="h-4 w-4" />
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setQuickViewOpen(true);
+                }}
+                className="w-full bg-background/95 backdrop-blur-sm rounded-md py-2.5 text-center flex items-center justify-center gap-2 hover:bg-background transition-colors text-foreground shadow-lg border border-border/50"
+              >
+                <ShoppingBag className="h-3.5 w-3.5" />
+                <span className="text-xs tracking-widest uppercase font-medium">
+                  Add to Cart
+                </span>
+              </button>
+            )}
           </div>
         </div>
 
         {/* Product info */}
-        <div className="space-y-1.5">
+        <div
+          className={cn(
+            "space-y-1.5",
+            view === "list"
+              ? "p-6 sm:p-8 flex flex-col justify-center flex-1"
+              : "",
+          )}
+        >
           {product.fabric_type && (
             <p className="text-[10px] tracking-[0.2em] uppercase text-muted-foreground">
               {product.fabric_type}

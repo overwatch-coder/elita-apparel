@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import { createClient } from "@/lib/supabase/server";
 import { ProductCard } from "@/components/store/product-card";
 import { ProductFilters } from "@/components/store/product-filters";
+import { ShopSidebar } from "@/components/store/shop-sidebar";
 import { WhatsAppButton } from "@/components/store/whatsapp-button";
 import type { Metadata } from "next";
 
@@ -18,6 +19,7 @@ interface ShopPageProps {
     sort?: string;
     q?: string;
     page?: string;
+    view?: string;
   }>;
 }
 
@@ -94,6 +96,8 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
   const { data: products, count } = await query;
   const totalPages = Math.ceil((count || 0) / perPage);
 
+  const view = params.view || "grid";
+
   return (
     <>
       <div className="pt-28 pb-20">
@@ -109,64 +113,96 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
             <div className="w-12 h-px bg-gold mx-auto" />
           </div>
 
-          {/* Filters */}
-          <Suspense fallback={null}>
-            <ProductFilters categories={categories || []} />
-          </Suspense>
-
-          {/* Results count */}
-          <p className="text-sm text-muted-foreground mt-6 mb-8">
-            {count || 0} {count === 1 ? "product" : "products"} found
-          </p>
-
-          {/* Product grid */}
-          {products && products.length > 0 ? (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
-              {products.map((product) => (
-                <ProductCard key={product.id} product={product} />
-              ))}
+          <div className="flex flex-col lg:flex-row gap-8 lg:gap-12">
+            {/* Sidebar (Desktop only) */}
+            <div className="hidden lg:block">
+              <Suspense fallback={null}>
+                <ShopSidebar categories={categories || []} />
+              </Suspense>
             </div>
-          ) : (
-            <div className="text-center py-20">
-              <p className="font-serif text-xl text-muted-foreground mb-2">
-                No products found
-              </p>
-              <p className="text-sm text-muted-foreground">
-                Try adjusting your filters or search query.
-              </p>
-            </div>
-          )}
 
-          {/* Pagination */}
-          {totalPages > 1 && (
-            <div className="flex items-center justify-center gap-2 mt-12">
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map(
-                (pageNum) => {
-                  const params2 = new URLSearchParams();
-                  if (params.category) params2.set("category", params.category);
-                  if (params.collection)
-                    params2.set("collection", params.collection);
-                  if (params.sort) params2.set("sort", params.sort);
-                  if (params.q) params2.set("q", params.q);
-                  if (pageNum > 1) params2.set("page", String(pageNum));
+            {/* Main content */}
+            <div className="flex-1 min-w-0">
+              {/* Filters */}
+              <Suspense fallback={null}>
+                <ProductFilters categories={categories || []} />
+              </Suspense>
 
-                  return (
-                    <a
-                      key={pageNum}
-                      href={`/shop?${params2.toString()}`}
-                      className={`h-10 w-10 rounded-md flex items-center justify-center text-sm font-medium transition-colors ${
-                        pageNum === page
-                          ? "bg-gold text-white"
-                          : "bg-secondary hover:bg-gold/10 text-foreground"
-                      }`}
+              {/* Results count */}
+              <p className="text-sm text-muted-foreground mt-6 mb-8">
+                {count || 0} {count === 1 ? "product" : "products"} found
+              </p>
+
+              {/* Product grid / list */}
+              {products && products.length > 0 ? (
+                <div
+                  className={
+                    view === "list"
+                      ? "flex flex-col gap-6"
+                      : "grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8"
+                  }
+                >
+                  {products.map((product) => (
+                    <div
+                      key={product.id}
+                      className={
+                        view === "list" ? "max-w-3xl mx-auto w-full" : ""
+                      }
                     >
-                      {pageNum}
-                    </a>
-                  );
-                },
+                      {/* Assuming ProductCard handles layout switching or we just restrict its width */}
+                      <ProductCard
+                        product={product}
+                        view={view as "grid" | "list"}
+                      />
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-20">
+                  <p className="font-serif text-xl text-muted-foreground mb-2">
+                    No products found
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    Try adjusting your filters or search query.
+                  </p>
+                </div>
+              )}
+
+              {/* Pagination */}
+              {totalPages > 1 && (
+                <div className="flex items-center justify-center gap-2 mt-12">
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                    (pageNum) => {
+                      const params2 = new URLSearchParams();
+                      if (params.category)
+                        params2.set("category", params.category);
+                      if (params.collection)
+                        params2.set("collection", params.collection);
+                      if (params.sort) params2.set("sort", params.sort);
+                      if (params.q) params2.set("q", params.q);
+                      if (params.view && params.view !== "grid")
+                        params2.set("view", params.view);
+                      if (pageNum > 1) params2.set("page", String(pageNum));
+
+                      return (
+                        <a
+                          key={pageNum}
+                          href={`/shop?${params2.toString()}`}
+                          className={`h-10 w-10 rounded-md flex items-center justify-center text-sm font-medium transition-colors ${
+                            pageNum === page
+                              ? "bg-gold text-white"
+                              : "bg-secondary hover:bg-gold/10 text-foreground"
+                          }`}
+                        >
+                          {pageNum}
+                        </a>
+                      );
+                    },
+                  )}
+                </div>
               )}
             </div>
-          )}
+          </div>
         </div>
       </div>
 

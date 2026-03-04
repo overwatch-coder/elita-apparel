@@ -5,7 +5,7 @@ import { BRAND_MESSAGES } from "@/lib/constants";
 
 export function BrandStory() {
   return (
-    <section className="pt-24 lg:pt-32 pb-16 bg-royal-black text-cream relative overflow-hidden">
+    <section className="pt-24 lg:pt-32 pb-16 bg-card text-foreground relative overflow-hidden">
       {/* Decorative gold lines */}
       <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-gold/30 to-transparent" />
       <div className="absolute bottom-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-gold/30 to-transparent" />
@@ -39,7 +39,7 @@ export function BrandStory() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-cream/60 text-base sm:text-lg leading-relaxed mb-12 max-w-3xl mx-auto"
+            className="text-muted-foreground text-base sm:text-lg leading-relaxed mb-12 max-w-3xl mx-auto"
           >
             Elita Apparel is a premium African fashion house rooted in Accra,
             Ghana. Each garment reflects premium fabrics, skilled tailoring, and
@@ -76,10 +76,10 @@ export function BrandStory() {
                 className="text-center"
               >
                 <div className="w-12 h-px bg-gold mx-auto mb-6" />
-                <h3 className="font-serif text-lg text-cream mb-3">
+                <h3 className="font-serif text-lg text-foreground mb-3">
                   {item.title}
                 </h3>
-                <p className="text-sm text-cream/50 leading-relaxed">
+                <p className="text-sm text-muted-foreground/80 leading-relaxed">
                   {item.description}
                 </p>
               </motion.div>
@@ -92,9 +92,9 @@ export function BrandStory() {
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 1, delay: 0.5 }}
-            className="mt-20 pt-12 border-t border-cream/10"
+            className="mt-20 pt-12 border-t border-border/50"
           >
-            <p className="text-cream/30 tracking-[0.3em] uppercase text-xs">
+            <p className="text-muted-foreground/50 tracking-[0.3em] uppercase text-xs">
               {BRAND_MESSAGES[0]}
             </p>
           </motion.div>

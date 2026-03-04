@@ -6,8 +6,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import { submitContactMessage } from "@/lib/actions/contact";
+import { subscribeToNewsletter } from "@/app/actions/marketing";
 
 export function ContactForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -25,6 +27,13 @@ export function ContactForm() {
       if (result.error) {
         toast.error(result.error);
       } else {
+        // Handle newsletter opt-in
+        const subscribeOptIn = formData.get("subscribe") === "on";
+        if (subscribeOptIn) {
+          const email = formData.get("email") as string;
+          subscribeToNewsletter(email, "contact").catch(console.error);
+        }
+
         setIsSuccess(true);
         e.currentTarget.reset();
         toast.success("Message sent successfully!");
@@ -143,6 +152,16 @@ export function ContactForm() {
           placeholder="How can we help you today?"
           className="min-h-[150px] bg-background border-border text-foreground placeholder:text-muted-foreground focus-visible:ring-gold/50 resize-y"
         />
+      </div>
+
+      <div className="flex items-center space-x-2 pt-2 pb-2">
+        <Checkbox id="subscribe" name="subscribe" defaultChecked />
+        <label
+          htmlFor="subscribe"
+          className="text-sm font-medium leading-none text-foreground peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+        >
+          Subscribe me to updates and exclusive offers
+        </label>
       </div>
 
       <Button
