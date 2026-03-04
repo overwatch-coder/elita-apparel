@@ -1,0 +1,28 @@
+"use client";
+
+import Link from "next/link";
+import { MessageCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { BRAND } from "@/lib/constants";
+
+export function WhatsAppButton() {
+  const whatsappUrl = `https://wa.me/${BRAND.whatsappNumber.replace(
+    /\+/g,
+    "",
+  )}?text=${encodeURIComponent(
+    "Hi! I'd like to inquire about your products.",
+  )}`;
+
+  return (
+    <Button
+      asChild
+      size="lg"
+      className="fixed bottom-6 right-6 z-40 h-14 w-14 rounded-full bg-[#25D366] hover:bg-[#128C7E] text-white shadow-lg shadow-[#25D366]/30 hover:shadow-[#128C7E]/30 transition-all duration-300 hover:scale-110 p-0"
+      aria-label="Chat on WhatsApp"
+    >
+      <Link href={whatsappUrl} target="_blank" rel="noopener noreferrer">
+        <MessageCircle className="h-6 w-6" />
+      </Link>
+    </Button>
+  );
+}

@@ -1,0 +1,101 @@
+"use client";
+
+import { useState } from "react";
+import Image from "next/image";
+import { cn } from "@/lib/utils";
+import type { ProductImage } from "@/lib/types/database";
+
+interface ProductGalleryProps {
+  images: ProductImage[];
+  productName: string;
+}
+
+export function ProductGallery({ images, productName }: ProductGalleryProps) {
+  const sortedImages = [...images].sort((a, b) => {
+    if (a.is_primary) return -1;
+    if (b.is_primary) return 1;
+    return a.position - b.position;
+  });
+
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [isZoomed, setIsZoomed] = useState(false);
+  const [zoomPosition, setZoomPosition] = useState({ x: 50, y: 50 });
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!isZoomed) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
+    setZoomPosition({ x, y });
+  };
+
+  const currentImage = sortedImages[selectedIndex];
+
+  return (
+    <div className="flex flex-col-reverse lg:flex-row gap-4">
+      {/* Thumbnail strip */}
+      {sortedImages.length > 1 && (
+        <div className="flex lg:flex-col gap-2 overflow-x-auto lg:overflow-y-auto lg:max-h-[600px]">
+          {sortedImages.map((image, index) => (
+            <button
+              key={image.id}
+              onClick={() => setSelectedIndex(index)}
+              className={cn(
+                "relative shrink-0 w-16 h-20 lg:w-20 lg:h-24 rounded-md overflow-hidden border-2 transition-all duration-200",
+                index === selectedIndex
+                  ? "border-gold"
+                  : "border-transparent hover:border-gold/50",
+              )}
+            >
+              <Image
+                src={image.image_url}
+                alt={`${productName} - View ${index + 1}`}
+                fill
+                className="object-cover"
+                sizes="80px"
+              />
+            </button>
+          ))}
+        </div>
+      )}
+
+      {/* Main image */}
+      <div
+        className="relative flex-1 aspect-3/4 rounded-lg overflow-hidden bg-cream-dark cursor-zoom-in"
+        onClick={() => setIsZoomed(!isZoomed)}
+        onMouseMove={handleMouseMove}
+        onMouseLeave={() => setIsZoomed(false)}
+      >
+        {currentImage && (
+          <Image
+            src={currentImage.image_url}
+            alt={`${productName} - Main view`}
+            fill
+            className={cn(
+              "object-cover transition-transform duration-300",
+              isZoomed && "scale-200",
+            )}
+            style={
+              isZoomed
+                ? {
+                    transformOrigin: `${zoomPosition.x}% ${zoomPosition.y}%`,
+                  }
+                : undefined
+            }
+            sizes="(max-width: 1024px) 100vw, 50vw"
+            priority
+          />
+        )}
+
+        {/* Zoom hint */}
+        {!isZoomed && (
+          <div className="absolute bottom-4 right-4 bg-white/90 backdrop-blur-sm rounded-md px-3 py-1.5">
+            <span className="text-[10px] tracking-wider uppercase text-royal-black font-medium">
+              Click to zoom
+            </span>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
