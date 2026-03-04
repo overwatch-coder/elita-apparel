@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Playfair_Display, DM_Sans } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
 import { CartProvider } from "@/components/cart/cart-provider";
+import { WhatsAppButton } from "@/components/store/whatsapp-button";
 import "./globals.css";
 
 const playfairDisplay = Playfair_Display({
@@ -68,6 +69,7 @@ export default function RootLayout({
         <CartProvider>
           {children}
           <Toaster position="top-right" richColors />
+          <WhatsAppButton />
         </CartProvider>
       </body>
     </html>

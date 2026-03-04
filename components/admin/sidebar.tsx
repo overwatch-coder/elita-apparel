@@ -90,7 +90,12 @@ export function AdminSidebar() {
               View Store →
             </Link>
           </Button>
-          <form action={logoutAction}>
+          <form
+            action={async () => {
+              "use server";
+              await logoutAction();
+            }}
+          >
             <Button
               type="submit"
               variant="ghost"

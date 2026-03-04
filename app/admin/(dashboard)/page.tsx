@@ -7,6 +7,8 @@ import {
   AlertTriangle,
   FolderOpen,
   Tags,
+  Users,
+  MessageSquare,
 } from "lucide-react";
 import { formatPrice } from "@/lib/constants";
 import type { Metadata } from "next";
@@ -26,6 +28,8 @@ export default async function AdminDashboard() {
     { count: lowStockCount },
     { count: collectionCount },
     { count: categoryCount },
+    { count: userCount },
+    { count: unreadMessagesCount },
   ] = await Promise.all([
     supabase.from("products").select("*", { count: "exact", head: true }),
     supabase.from("orders").select("*", { count: "exact", head: true }),
@@ -37,6 +41,11 @@ export default async function AdminDashboard() {
       .gt("stock_quantity", 0),
     supabase.from("collections").select("*", { count: "exact", head: true }),
     supabase.from("categories").select("*", { count: "exact", head: true }),
+    supabase.from("profiles").select("*", { count: "exact", head: true }),
+    supabase
+      .from("contact_messages")
+      .select("*", { count: "exact", head: true })
+      .eq("is_read", false),
   ]);
 
   const totalRevenue =
@@ -89,6 +98,21 @@ export default async function AdminDashboard() {
       icon: Tags,
       color: "text-earth",
     },
+    {
+      label: "Total Customers",
+      value: userCount || 0,
+      icon: Users,
+      color: "text-primary",
+    },
+    {
+      label: "Unread Messages",
+      value: unreadMessagesCount || 0,
+      icon: MessageSquare,
+      color:
+        unreadMessagesCount && unreadMessagesCount > 0
+          ? "text-ghana-red font-bold"
+          : "text-muted-foreground",
+    },
   ];
 
   return (
@@ -101,7 +125,7 @@ export default async function AdminDashboard() {
       </div>
 
       {/* Stats grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {stats.map((stat) => (
           <Card key={stat.label} className="border-border/50">
             <CardHeader className="flex flex-row items-center justify-between pb-2">

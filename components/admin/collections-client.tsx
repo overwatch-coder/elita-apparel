@@ -24,6 +24,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { SingleImageUpload } from "@/components/admin/single-image-upload";
 import {
   createCollection,
   updateCollection,
@@ -138,6 +139,15 @@ export function CollectionsClient({ collections }: CollectionsClientProps) {
                 />
               </div>
               <div>
+                <Label>Cover Image</Label>
+                <div className="mt-1.5">
+                  <SingleImageUpload
+                    name="image_url"
+                    defaultValue={editingCollection?.image_url}
+                  />
+                </div>
+              </div>
+              <div>
                 <Label htmlFor="col-slug">Slug *</Label>
                 <Input
                   id="col-slug"
@@ -193,6 +203,7 @@ export function CollectionsClient({ collections }: CollectionsClientProps) {
         <Table>
           <TableHeader>
             <TableRow>
+              <TableHead className="w-16">Image</TableHead>
               <TableHead>Name</TableHead>
               <TableHead>Slug</TableHead>
               <TableHead>Status</TableHead>
@@ -203,6 +214,21 @@ export function CollectionsClient({ collections }: CollectionsClientProps) {
             {collections.length > 0 ? (
               collections.map((col) => (
                 <TableRow key={col.id}>
+                  <TableCell>
+                    {col.image_url ? (
+                      <div className="relative w-10 h-10 rounded overflow-hidden">
+                        <img
+                          src={col.image_url}
+                          alt=""
+                          className="object-cover w-full h-full"
+                        />
+                      </div>
+                    ) : (
+                      <div className="w-10 h-10 rounded bg-muted flex items-center justify-center text-xs text-muted-foreground">
+                        —
+                      </div>
+                    )}
+                  </TableCell>
                   <TableCell className="font-medium">{col.name}</TableCell>
                   <TableCell className="text-sm text-muted-foreground">
                     {col.slug}
@@ -242,7 +268,7 @@ export function CollectionsClient({ collections }: CollectionsClientProps) {
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={4} className="text-center py-12">
+                <TableCell colSpan={5} className="text-center py-12">
                   <p className="text-muted-foreground">No collections yet</p>
                 </TableCell>
               </TableRow>

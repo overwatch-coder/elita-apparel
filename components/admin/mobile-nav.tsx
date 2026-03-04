@@ -82,7 +82,13 @@ export function AdminMobileNav() {
             })}
           </nav>
           <div className="absolute bottom-0 left-0 right-0 border-t border-border p-4">
-            <form action={logoutAction}>
+            <form
+              action={async () => {
+                "use server";
+                await logoutAction();
+              }}
+              className="mt-8"
+            >
               <Button
                 type="submit"
                 variant="ghost"

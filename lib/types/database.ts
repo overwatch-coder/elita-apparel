@@ -205,8 +205,19 @@ export interface Database {
           total_amount: number;
           discount_code: string | null;
           discount_amount: number;
-          status: "pending" | "paid" | "shipped" | "delivered" | "cancelled";
+          status:
+            | "pending"
+            | "paid"
+            | "processing"
+            | "shipped"
+            | "out_for_delivery"
+            | "delivered"
+            | "cancelled";
+          payment_status: "pending" | "paid" | "failed" | "refunded";
+          tracking_note: string | null;
+          estimated_delivery: string | null;
           notes: string | null;
+          user_id: string | null;
           created_at: string;
           updated_at: string;
         };
@@ -223,8 +234,19 @@ export interface Database {
           total_amount: number;
           discount_code?: string | null;
           discount_amount?: number;
-          status?: "pending" | "paid" | "shipped" | "delivered" | "cancelled";
+          status?:
+            | "pending"
+            | "paid"
+            | "processing"
+            | "shipped"
+            | "out_for_delivery"
+            | "delivered"
+            | "cancelled";
+          payment_status?: "pending" | "paid" | "failed" | "refunded";
+          tracking_note?: string | null;
+          estimated_delivery?: string | null;
           notes?: string | null;
+          user_id?: string | null;
           created_at?: string;
           updated_at?: string;
         };
@@ -241,8 +263,19 @@ export interface Database {
           total_amount?: number;
           discount_code?: string | null;
           discount_amount?: number;
-          status?: "pending" | "paid" | "shipped" | "delivered" | "cancelled";
+          status?:
+            | "pending"
+            | "paid"
+            | "processing"
+            | "shipped"
+            | "out_for_delivery"
+            | "delivered"
+            | "cancelled";
+          payment_status?: "pending" | "paid" | "failed" | "refunded";
+          tracking_note?: string | null;
+          estimated_delivery?: string | null;
           notes?: string | null;
+          user_id?: string | null;
           created_at?: string;
           updated_at?: string;
         };
@@ -347,6 +380,127 @@ export interface Database {
         };
         Relationships: [];
       };
+      profiles: {
+        Row: {
+          id: string;
+          full_name: string | null;
+          phone: string | null;
+          role: "admin" | "customer";
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id: string;
+          full_name?: string | null;
+          phone?: string | null;
+          role?: "admin" | "customer";
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          full_name?: string | null;
+          phone?: string | null;
+          role?: "admin" | "customer";
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "profiles_id_fkey";
+            columns: ["id"];
+            isOneToOne: true;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      addresses: {
+        Row: {
+          id: string;
+          user_id: string;
+          full_name: string;
+          phone: string;
+          address_line_1: string;
+          address_line_2: string | null;
+          city: string;
+          region: string | null;
+          country: string;
+          is_default: boolean;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          full_name: string;
+          phone: string;
+          address_line_1: string;
+          address_line_2?: string | null;
+          city: string;
+          region?: string | null;
+          country?: string;
+          is_default?: boolean;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          full_name?: string;
+          phone?: string;
+          address_line_1?: string;
+          address_line_2?: string | null;
+          city?: string;
+          region?: string | null;
+          country?: string;
+          is_default?: boolean;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "addresses_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      contact_messages: {
+        Row: {
+          id: string;
+          full_name: string;
+          email: string;
+          phone: string | null;
+          subject: string;
+          message: string;
+          is_read: boolean;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          full_name: string;
+          email: string;
+          phone?: string | null;
+          subject: string;
+          message: string;
+          is_read?: boolean;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          full_name?: string;
+          email?: string;
+          phone?: string | null;
+          subject?: string;
+          message?: string;
+          is_read?: boolean;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
     };
     Views: {
       [_ in never]: never;
@@ -375,6 +529,9 @@ export type Order = Tables["orders"]["Row"];
 export type OrderItem = Tables["order_items"]["Row"];
 export type DiscountCode = Tables["discount_codes"]["Row"];
 export type AdminUser = Tables["admin_users"]["Row"];
+export type Profile = Tables["profiles"]["Row"];
+export type Address = Tables["addresses"]["Row"];
+export type ContactMessage = Tables["contact_messages"]["Row"];
 
 // ── Composite types (with joins) ────────────────────────────────────
 
@@ -386,6 +543,13 @@ export interface ProductWithImages extends Product {
 
 export interface OrderWithItems extends Order {
   order_items: OrderItem[];
+}
+
+export interface OrderWithItemsAndUser extends OrderWithItems {
+  profiles?: {
+    full_name: string | null;
+    email: string | null;
+  } | null;
 }
 
 // ── Cart types (client-side) ────────────────────────────────────────

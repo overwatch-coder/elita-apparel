@@ -81,9 +81,18 @@ export const DEFAULT_CATEGORIES = [
 export const ORDER_STATUSES = [
   { value: "pending", label: "Pending" },
   { value: "paid", label: "Paid" },
+  { value: "processing", label: "Processing" },
   { value: "shipped", label: "Shipped" },
+  { value: "out for delivery", label: "Out for Delivery" },
   { value: "delivered", label: "Delivered" },
   { value: "cancelled", label: "Cancelled" },
+] as const;
+
+export const PAYMENT_STATUSES = [
+  { value: "pending", label: "Pending" },
+  { value: "paid", label: "Paid" },
+  { value: "failed", label: "Failed" },
+  { value: "refunded", label: "Refunded" },
 ] as const;
 
 // ── Currency ────────────────────────────────────────────────────────

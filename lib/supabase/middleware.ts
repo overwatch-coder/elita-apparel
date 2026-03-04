@@ -55,5 +55,22 @@ export async function updateSession(request: NextRequest) {
     }
   }
 
+  // Protect customer account routes
+  if (request.nextUrl.pathname.startsWith("/account")) {
+    if (!user) {
+      const url = request.nextUrl.clone();
+      url.pathname = "/login";
+      return NextResponse.redirect(url);
+    }
+  }
+
+  // Redirect logged-in users away from auth pages
+  const authRoutes = ["/login", "/signup", "/forgot-password"];
+  if (authRoutes.includes(request.nextUrl.pathname) && user) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/account";
+    return NextResponse.redirect(url);
+  }
+
   return supabaseResponse;
 }

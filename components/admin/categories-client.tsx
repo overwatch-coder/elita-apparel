@@ -21,6 +21,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { SingleImageUpload } from "@/components/admin/single-image-upload";
 import {
   createCategory,
   updateCategory,
@@ -138,6 +139,15 @@ export function CategoriesClient({ categories }: CategoriesClientProps) {
                 />
               </div>
               <div>
+                <Label>Category Image</Label>
+                <div className="mt-1.5">
+                  <SingleImageUpload
+                    name="image_url"
+                    defaultValue={editingCategory?.image_url}
+                  />
+                </div>
+              </div>
+              <div>
                 <Label htmlFor="cat-slug">Slug *</Label>
                 <Input
                   id="cat-slug"
@@ -163,6 +173,7 @@ export function CategoriesClient({ categories }: CategoriesClientProps) {
         <Table>
           <TableHeader>
             <TableRow>
+              <TableHead className="w-16">Image</TableHead>
               <TableHead>Name</TableHead>
               <TableHead>Slug</TableHead>
               <TableHead className="text-right">Actions</TableHead>
@@ -172,6 +183,21 @@ export function CategoriesClient({ categories }: CategoriesClientProps) {
             {categories.length > 0 ? (
               categories.map((cat) => (
                 <TableRow key={cat.id}>
+                  <TableCell>
+                    {cat.image_url ? (
+                      <div className="relative w-10 h-10 rounded overflow-hidden">
+                        <img
+                          src={cat.image_url}
+                          alt=""
+                          className="object-cover w-full h-full"
+                        />
+                      </div>
+                    ) : (
+                      <div className="w-10 h-10 rounded bg-muted flex items-center justify-center text-xs text-muted-foreground">
+                        —
+                      </div>
+                    )}
+                  </TableCell>
                   <TableCell className="font-medium">{cat.name}</TableCell>
                   <TableCell className="text-sm text-muted-foreground">
                     {cat.slug}
@@ -199,7 +225,7 @@ export function CategoriesClient({ categories }: CategoriesClientProps) {
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={3} className="text-center py-12">
+                <TableCell colSpan={4} className="text-center py-12">
                   <p className="text-muted-foreground">No categories yet</p>
                 </TableCell>
               </TableRow>
