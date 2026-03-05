@@ -148,6 +148,12 @@ export function Footer() {
                   Shop All
                 </Link>
                 <Link
+                  href="/track"
+                  className="text-sm text-muted-foreground hover:text-gold transition-colors duration-300"
+                >
+                  Track Order
+                </Link>
+                <Link
                   href="/contact"
                   className="text-sm text-muted-foreground hover:text-gold transition-colors duration-300"
                 >

@@ -20,7 +20,8 @@ export async function sendOrderConfirmation(order: any, items: any[]) {
   }
 
   const isCOD = order.payment_method === "cod";
-  const orderIdShort = order.id.slice(0, 8).toUpperCase();
+  const trackingNumber =
+    order.tracking_number || order.id.slice(0, 8).toUpperCase();
 
   const emailHtml = `
     <!DOCTYPE html>
@@ -63,7 +64,7 @@ export async function sendOrderConfirmation(order: any, items: any[]) {
           
           <div class="hero">
             <h1>Thank You for Your Order!</h1>
-            <p>Order #${orderIdShort} has been successfully placed.</p>
+            <p>Order #${trackingNumber} has been successfully placed.</p>
             <p>${isCOD ? "Our team will contact you shortly to coordinate payment and delivery." : "Your payment has been verified. We are now preparing your order for shipment."}</p>
           </div>
 
@@ -86,8 +87,17 @@ export async function sendOrderConfirmation(order: any, items: any[]) {
             <div class="summary">
               <div class="summary-row">
                 <div class="summary-label">Subtotal</div>
-                <div class="summary-value">${formatPrice(order.total_amount)}</div>
+                <div class="summary-value">${formatPrice(order.total_amount + (order.discount_amount || 0))}</div>
               </div>
+              ${
+                order.discount_amount > 0
+                  ? `
+              <div class="summary-row">
+                <div class="summary-label" style="color: #2e7d32;">Discount</div>
+                <div class="summary-value" style="color: #2e7d32;">-${formatPrice(order.discount_amount)}</div>
+              </div>`
+                  : ""
+              }
               <div class="summary-row">
                 <div class="summary-label">Shipping</div>
                 <div class="summary-value">Calculated at delivery</div>
@@ -130,7 +140,7 @@ export async function sendOrderConfirmation(order: any, items: any[]) {
       from:
         process.env.SMTP_FROM || `"Elita Apparel" <${process.env.SMTP_USER}>`,
       to: order.customer_email,
-      subject: `Order Confirmation #${orderIdShort} - Elita Apparel`,
+      subject: `Order Confirmation #${trackingNumber} - Elita Apparel`,
       html: emailHtml,
     });
 

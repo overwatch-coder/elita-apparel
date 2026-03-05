@@ -14,10 +14,17 @@ export async function createOrder(
 ) {
   const supabase = await createClient();
 
+  // Generate an 8-character alphanumeric tracking number
+  const trackingNumber = Math.random()
+    .toString(36)
+    .substring(2, 10)
+    .toUpperCase();
+
   // 1. Create the order
   const { data: orderData, error: orderError } = await supabase
     .from("orders")
     .insert({
+      tracking_number: trackingNumber,
       user_id: userId,
       customer_name: formData.name,
       customer_email: formData.email,
@@ -28,7 +35,8 @@ export async function createOrder(
       shipping_zip: formData.zip || null,
       shipping_country: formData.country,
       total_amount: formData.totalAmount,
-      discount_amount: 0,
+      discount_amount: formData.discountAmount || 0,
+      discount_code: formData.discountCode || null,
       status: "pending" as const,
       payment_status: "pending" as const,
       payment_method: paymentMethod as any,
@@ -58,11 +66,35 @@ export async function createOrder(
 
   if (itemsError) {
     console.error("Order items error:", itemsError);
-    // Ideally we would roll back the order here, but for simplicity:
+    // Rollback the order
+    await supabase.from("orders").delete().eq("id", orderData.id);
     return { error: itemsError.message };
   }
 
-  // 3. If COD, send confirmation email immediately
+  // 3. Increment discount usage count if a code was used
+  if (formData.discountCode) {
+    const cleanCode = formData.discountCode.trim().toUpperCase();
+    await supabase.rpc("increment_discount_usage", {
+      code_to_increment: cleanCode,
+    });
+    // Fallback if RPC doesn't exist (though RPC is safer for concurrency)
+    /*
+    const { data: codeData } = await supabase
+      .from("discount_codes")
+      .select("usage_count")
+      .eq("code", cleanCode)
+      .single();
+    
+    if (codeData) {
+      await supabase
+        .from("discount_codes")
+        .update({ usage_count: codeData.usage_count + 1 })
+        .eq("code", cleanCode);
+    }
+    */
+  }
+
+  // 4. If COD, send confirmation email immediately
   if (paymentMethod === "cod") {
     try {
       await sendOrderConfirmation(orderData, orderItems);
@@ -86,5 +118,59 @@ export async function createOrder(
   revalidatePath("/admin/orders");
   if (userId) revalidatePath("/account/orders");
 
-  return { success: true, orderId: orderData.id };
+  return { success: true, orderId: orderData.id, trackingNumber };
+}
+
+export async function getOrderTrackingDetails(
+  trackingNumber: string,
+  email: string,
+) {
+  const supabase = await createClient();
+
+  const cleanId = trackingNumber.trim().toUpperCase();
+  const cleanEmail = email.trim().toLowerCase();
+
+  // Validate the inputs exist
+  if (!cleanId || !cleanEmail) {
+    return { error: "Both tracking number and email are required." };
+  }
+
+  const { data: order, error: orderError } = await supabase
+    .from("orders")
+    .select(
+      `
+      id,
+      created_at,
+      status,
+      payment_status,
+      total_amount,
+      shipping_address,
+      shipping_city,
+      shipping_state,
+      shipping_zip,
+      shipping_country,
+      tracking_number,
+      discount_amount,
+      discount_code,
+      order_items (
+        id,
+        product_name,
+        quantity,
+        size,
+        price
+      )
+    `,
+    )
+    .eq("tracking_number", cleanId)
+    .eq("customer_email", cleanEmail)
+    .single();
+
+  if (orderError || !order) {
+    return {
+      error:
+        "Order not found. Please verify your tracking number and email address.",
+    };
+  }
+
+  return { order };
 }

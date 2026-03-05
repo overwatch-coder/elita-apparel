@@ -2,7 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 
-export async function validateDiscountCode(code: string) {
+export async function validateDiscountCode(code: string, email?: string) {
   const supabase = await createClient();
 
   const cleanCode = code.trim().toUpperCase();
@@ -27,6 +27,21 @@ export async function validateDiscountCode(code: string) {
   // Check usage limit
   if (data.max_uses && data.usage_count >= data.max_uses) {
     return { error: "This discount code has reached its usage limit" };
+  }
+
+  // Check if this user (email) has already used this code
+  if (email) {
+    const { count, error: orderError } = await supabase
+      .from("orders")
+      .select("*", { count: "exact", head: true })
+      .eq("customer_email", email.trim().toLowerCase())
+      .eq("discount_code", cleanCode);
+
+    if (orderError) {
+      console.error("Error checking discount usage in orders:", orderError);
+    } else if (count && count > 0) {
+      return { error: "You have already used this discount code." };
+    }
   }
 
   return { percentage: data.percentage };

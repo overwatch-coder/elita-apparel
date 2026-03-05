@@ -226,10 +226,11 @@ export interface Database {
           paid_at: string | null;
           payment_verified: boolean;
           delivery_payment_collected: boolean;
+          tracking_number: string | null;
           created_at: string;
           updated_at: string;
           campaign_id: string | null;
-          discount_code_used: string | null;
+          discount_code_used: string | null; // DEPRECATED: Use discount_code instead
           source: string | null;
         };
         Insert: {
@@ -263,6 +264,7 @@ export interface Database {
           paid_at?: string | null;
           payment_verified?: boolean;
           delivery_payment_collected?: boolean;
+          tracking_number?: string | null;
           created_at?: string;
           updated_at?: string;
           campaign_id?: string | null;
@@ -1019,7 +1021,12 @@ export interface Database {
       [_ in never]: never;
     };
     Functions: {
-      [_ in never]: never;
+      increment_discount_usage: {
+        Args: {
+          code_to_increment: string;
+        };
+        Returns: void;
+      };
     };
     Enums: {
       [_ in never]: never;

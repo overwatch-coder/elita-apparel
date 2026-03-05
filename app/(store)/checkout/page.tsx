@@ -41,6 +41,7 @@ export default function CheckoutPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
   const [orderId, setOrderId] = useState<string | null>(null);
+  const [trackingNumber, setTrackingNumber] = useState<string | null>(null);
 
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("cod");
   const [processingStatus, setProcessingStatus] = useState<
@@ -121,7 +122,7 @@ export default function CheckoutPage() {
 
     setIsApplyingDiscount(true);
     try {
-      const result = await validateDiscountCode(localDiscountCode);
+      const result = await validateDiscountCode(localDiscountCode, form.email);
       if (result.percentage) {
         setDiscount(localDiscountCode.toUpperCase(), result.percentage);
         toast.success(`Coupon applied! ${result.percentage}% off.`);
@@ -161,6 +162,7 @@ export default function CheckoutPage() {
       }
 
       setOrderId(result.orderId!);
+      if (result.trackingNumber) setTrackingNumber(result.trackingNumber);
 
       // Handle newsletter subscription immediately if opted in
       if (subscribeOptIn && form.email) {
@@ -230,9 +232,17 @@ export default function CheckoutPage() {
               WhatsApp/Email to coordinate delivery and payment.
             </p>
             <p className="text-sm text-muted-foreground mb-8">
-              Order ID:{" "}
-              <span className="font-mono text-gold font-medium">
-                {orderId.slice(0, 8).toUpperCase()}
+              Order Tracking Number:{" "}
+              <span className="font-mono text-gold font-bold tracking-widest text-lg ml-2">
+                {trackingNumber || orderId?.slice(0, 8).toUpperCase()}
+              </span>
+              <br />
+              <span className="text-xs mt-2 block">
+                Save this number to{" "}
+                <Link href="/track" className="underline hover:text-gold">
+                  track your order
+                </Link>{" "}
+                status.
               </span>
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
