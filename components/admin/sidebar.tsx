@@ -36,6 +36,7 @@ const NAV_ITEMS = [
   { label: "Products", href: "/admin/products", icon: Package },
   { label: "Collections", href: "/admin/collections", icon: FolderOpen },
   { label: "Categories", href: "/admin/categories", icon: Tags },
+  { label: "Fabric Types", href: "/admin/fabric-types", icon: Ruler },
   { label: "Orders", href: "/admin/orders", icon: ShoppingCart },
   {
     label: "WhatsApp Orders",
@@ -55,7 +56,6 @@ const NAV_ITEMS = [
     href: "/admin/marketing/analytics",
     icon: PieChart,
   },
-  { label: "Fabric Types", href: "/admin/settings/fabric-types", icon: Ruler },
 ];
 
 export function AdminSidebar({
