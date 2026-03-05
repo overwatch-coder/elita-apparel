@@ -167,16 +167,16 @@ export default async function AdminDashboard() {
                       {formatPrice(order.total_amount)}
                     </p>
                     <span
-                      className={`text-xs px-2 py-0.5 rounded-full ${
+                      className={`text-xs px-2 py-0.5 rounded-full font-medium border ${
                         order.status === "paid"
-                          ? "bg-ghana-green/10 text-ghana-green"
+                          ? "bg-ghana-green/10 text-ghana-green border-ghana-green/20"
                           : order.status === "pending"
-                            ? "bg-gold/10 text-gold"
+                            ? "bg-gold/10 text-gold border-gold/20"
                             : order.status === "shipped"
-                              ? "bg-blue-100 text-blue-700"
+                              ? "bg-blue-500/10 text-blue-500 border-blue-500/20"
                               : order.status === "delivered"
-                                ? "bg-green-100 text-green-700"
-                                : "bg-red-100 text-red-700"
+                                ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20"
+                                : "bg-red-500/10 text-red-500 border-red-500/20"
                       }`}
                     >
                       {order.status}

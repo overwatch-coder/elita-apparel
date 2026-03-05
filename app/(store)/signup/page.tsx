@@ -49,7 +49,7 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background p-4 py-20 relative overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center bg-background p-4 py-20 relative overflow-hidden transition-colors">
       {/* Decorative corners */}
       <div className="absolute top-0 left-0 w-32 h-32 border-t border-l border-gold/20" />
       <div className="absolute bottom-0 right-0 w-32 h-32 border-b border-r border-gold/20" />
@@ -87,8 +87,8 @@ export default function SignupPage() {
               type="text"
               required
               autoComplete="name"
-              placeholder="e.g. Kwame Mensah"
-              className="h-12 bg-card border-border text-foreground placeholder:text-muted-foreground focus-visible:ring-gold/50"
+              placeholder="Kwame Mensah"
+              className="h-12 bg-card border-border text-foreground placeholder:text-muted-foreground/50 focus-visible:ring-gold/50"
             />
           </div>
 
@@ -103,7 +103,7 @@ export default function SignupPage() {
               required
               autoComplete="email"
               placeholder="Enter your email"
-              className="h-12 bg-card border-border text-foreground placeholder:text-muted-foreground focus-visible:ring-gold/50"
+              className="h-12 bg-card border-border text-foreground placeholder:text-muted-foreground/50 focus-visible:ring-gold/50"
             />
           </div>
 
@@ -119,7 +119,7 @@ export default function SignupPage() {
                 required
                 autoComplete="new-password"
                 placeholder="••••••••"
-                className="h-12 bg-card border-border text-foreground placeholder:text-muted-foreground focus-visible:ring-gold/50 pr-12"
+                className="h-12 bg-card border-border text-foreground placeholder:text-muted-foreground/50 focus-visible:ring-gold/50 pr-12"
               />
               <Button
                 type="button"
@@ -154,7 +154,7 @@ export default function SignupPage() {
               required
               autoComplete="new-password"
               placeholder="••••••••"
-              className="h-12 bg-card border-border text-foreground placeholder:text-muted-foreground focus-visible:ring-gold/50"
+              className="h-12 bg-card border-border text-foreground placeholder:text-muted-foreground/50 focus-visible:ring-gold/50"
             />
           </div>
 

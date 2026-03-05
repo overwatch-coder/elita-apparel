@@ -37,7 +37,7 @@ export default function UpdatePasswordPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-royal-black p-4 py-20 relative overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center bg-background p-4 py-20 relative overflow-hidden transition-colors">
       {/* Decorative corners */}
       <div className="absolute top-0 left-0 w-32 h-32 border-t border-l border-gold/20" />
       <div className="absolute bottom-0 right-0 w-32 h-32 border-b border-r border-gold/20" />
@@ -51,12 +51,14 @@ export default function UpdatePasswordPage() {
               alt="Elita Apparel"
               width={140}
               height={56}
-              className="mx-auto h-14 w-auto object-contain mb-6"
+              className="mx-auto h-14 w-auto object-contain mb-6 dark:invert-0 light:invert transition-all"
               priority
             />
           </Link>
-          <h1 className="font-serif text-3xl text-cream">Update Password</h1>
-          <p className="text-sm text-cream/70 mt-2">
+          <h1 className="font-serif text-3xl text-foreground">
+            Update Password
+          </h1>
+          <p className="text-sm text-muted-foreground mt-2">
             Set your new account password
           </p>
         </div>
@@ -64,7 +66,7 @@ export default function UpdatePasswordPage() {
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-5">
           <div className="space-y-2">
-            <Label htmlFor="password" className="text-cream/70 text-sm">
+            <Label htmlFor="password" className="text-muted-foreground text-sm">
               New Password
             </Label>
             <div className="relative">
@@ -75,13 +77,13 @@ export default function UpdatePasswordPage() {
                 required
                 autoComplete="new-password"
                 placeholder="••••••••"
-                className="h-12 bg-white/5 border-cream/10 text-cream placeholder:text-cream/30 focus-visible:ring-gold/50 pr-12"
+                className="h-12 bg-card border-border text-foreground placeholder:text-muted-foreground/50 focus-visible:ring-gold/50 pr-12"
               />
               <Button
                 type="button"
                 variant="ghost"
                 size="icon"
-                className="absolute right-1 top-1/2 -translate-y-1/2 text-cream/50 hover:text-cream hover:bg-transparent"
+                className="absolute right-1 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground hover:bg-transparent"
                 onClick={() => setShowPassword(!showPassword)}
               >
                 {showPassword ? (
@@ -91,13 +93,16 @@ export default function UpdatePasswordPage() {
                 )}
               </Button>
             </div>
-            <p className="text-xs text-cream/40">
+            <p className="text-xs text-muted-foreground/60">
               Must be at least 6 characters.
             </p>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="confirmPassword" className="text-cream/70 text-sm">
+            <Label
+              htmlFor="confirmPassword"
+              className="text-muted-foreground text-sm"
+            >
               Confirm New Password
             </Label>
             <Input
@@ -107,7 +112,7 @@ export default function UpdatePasswordPage() {
               required
               autoComplete="new-password"
               placeholder="••••••••"
-              className="h-12 bg-white/5 border-cream/10 text-cream placeholder:text-cream/30 focus-visible:ring-gold/50"
+              className="h-12 bg-card border-border text-foreground placeholder:text-muted-foreground/50 focus-visible:ring-gold/50"
             />
           </div>
 

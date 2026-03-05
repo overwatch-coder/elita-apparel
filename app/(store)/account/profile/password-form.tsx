@@ -41,7 +41,7 @@ export function PasswordForm() {
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
       <div className="space-y-2">
-        <Label htmlFor="password" className="text-cream/70 text-sm">
+        <Label htmlFor="password" className="text-muted-foreground text-sm">
           New Password
         </Label>
         <div className="relative">
@@ -52,13 +52,13 @@ export function PasswordForm() {
             required
             autoComplete="new-password"
             placeholder="••••••••"
-            className="h-12 bg-black/20 border-cream/10 text-cream placeholder:text-cream/30 focus-visible:ring-gold/50 pr-12"
+            className="h-12 bg-card border-border text-foreground placeholder:text-muted-foreground/50 focus-visible:ring-gold/50 pr-12"
           />
           <Button
             type="button"
             variant="ghost"
             size="icon"
-            className="absolute right-1 top-1/2 -translate-y-1/2 text-cream/50 hover:text-cream hover:bg-transparent"
+            className="absolute right-1 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground hover:bg-transparent"
             onClick={() => setShowPassword(!showPassword)}
           >
             {showPassword ? (
@@ -68,11 +68,16 @@ export function PasswordForm() {
             )}
           </Button>
         </div>
-        <p className="text-xs text-cream/40">Must be at least 6 characters.</p>
+        <p className="text-xs text-muted-foreground/60">
+          Must be at least 6 characters.
+        </p>
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="confirmPassword" className="text-cream/70 text-sm">
+        <Label
+          htmlFor="confirmPassword"
+          className="text-muted-foreground text-sm"
+        >
           Confirm New Password
         </Label>
         <Input
@@ -82,7 +87,7 @@ export function PasswordForm() {
           required
           autoComplete="new-password"
           placeholder="••••••••"
-          className="h-12 bg-black/20 border-cream/10 text-cream placeholder:text-cream/30 focus-visible:ring-gold/50"
+          className="h-12 bg-card border-border text-foreground placeholder:text-muted-foreground/50 focus-visible:ring-gold/50"
         />
       </div>
 

@@ -31,6 +31,7 @@ import {
 } from "lucide-react";
 import { logoutAction } from "@/lib/actions/auth";
 import { cn } from "@/lib/utils";
+import { ScrollArea } from "../ui/scroll-area";
 
 const NAV_ITEMS = [
   { label: "Dashboard", href: "/admin", icon: LayoutDashboard },
@@ -63,41 +64,55 @@ export function AdminMobileNav() {
             <Menu className="h-5 w-5" />
           </Button>
         </SheetTrigger>
-        <SheetContent side="left" className="w-64 p-0">
-          <SheetHeader className="p-4 border-b border-border">
+        <SheetContent side="left" className="w-64 p-0 flex flex-col h-full">
+          <SheetHeader className="p-4 border-b border-border/50 text-left">
             <SheetTitle className="sr-only">Admin Menu</SheetTitle>
-            <Image
-              src="/logo.png"
-              alt="Elita Apparel"
-              width={100}
-              height={40}
-              className="h-8 w-auto object-contain invert dark:invert-0"
-            />
+            <div className="flex items-center gap-3">
+              <Image
+                src="/logo.png"
+                alt="Elita Apparel"
+                width={32}
+                height={32}
+                className="h-8 w-auto object-contain"
+              />
+              <div className="flex flex-col text-left">
+                <span className="font-serif text-lg tracking-wide text-foreground leading-none">
+                  Elita
+                </span>
+                <span className="text-[10px] font-medium text-gold tracking-widest uppercase mt-0.5">
+                  Admin
+                </span>
+              </div>
+            </div>
           </SheetHeader>
-          <nav className="space-y-1 p-3">
-            {NAV_ITEMS.map((item) => {
-              const isActive =
-                pathname === item.href ||
-                (item.href !== "/admin" && pathname.startsWith(item.href));
-              return (
-                <SheetClose asChild key={item.href}>
-                  <Link
-                    href={item.href}
-                    className={cn(
-                      "flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition-colors",
-                      isActive
-                        ? "bg-gold/10 text-gold"
-                        : "text-muted-foreground hover:bg-accent hover:text-foreground",
-                    )}
-                  >
-                    <item.icon className="h-4 w-4" />
-                    {item.label}
-                  </Link>
-                </SheetClose>
-              );
-            })}
-          </nav>
-          <div className="absolute bottom-0 left-0 right-0 border-t border-border p-4">
+          <div className="flex-1 min-h-0">
+            <ScrollArea className="h-full">
+              <nav className="space-y-1 px-3 py-4">
+                {NAV_ITEMS.map((item) => {
+                  const isActive =
+                    pathname === item.href ||
+                    (item.href !== "/admin" && pathname.startsWith(item.href));
+                  return (
+                    <SheetClose asChild key={item.href}>
+                      <Link
+                        href={item.href}
+                        className={cn(
+                          "flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition-colors",
+                          isActive
+                            ? "bg-gold/10 text-gold"
+                            : "text-muted-foreground hover:bg-accent hover:text-foreground",
+                        )}
+                      >
+                        <item.icon className="h-4 w-4" />
+                        {item.label}
+                      </Link>
+                    </SheetClose>
+                  );
+                })}
+              </nav>
+            </ScrollArea>
+          </div>
+          <div className="mt-auto border-t border-border p-4 bg-card">
             <form action={() => logoutAction()} className="mt-8">
               <Button
                 type="submit"

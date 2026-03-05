@@ -51,8 +51,8 @@ export function AddressList({ addresses }: AddressListProps) {
           key={address.id}
           className={`relative p-5 sm:p-6 rounded-lg border transition-all ${
             address.is_default
-              ? "bg-white/10 border-gold/50 shadow-sm shadow-gold/10"
-              : "bg-white/5 border-cream/10 hover:border-cream/30"
+              ? "bg-accent/10 border-gold/50 shadow-sm shadow-gold/10"
+              : "bg-card border-border hover:border-gold/30"
           }`}
         >
           {address.is_default && (
@@ -63,30 +63,34 @@ export function AddressList({ addresses }: AddressListProps) {
           )}
 
           <div className="space-y-1 mb-6 pr-20">
-            <h3 className="font-medium text-cream text-lg">
+            <h3 className="font-medium text-foreground text-lg">
               {address.full_name}
             </h3>
-            <p className="text-cream/70 text-sm mt-2">
+            <p className="text-muted-foreground text-sm mt-2">
               {address.address_line_1}
             </p>
             {address.address_line_2 && (
-              <p className="text-cream/70 text-sm">{address.address_line_2}</p>
+              <p className="text-muted-foreground text-sm">
+                {address.address_line_2}
+              </p>
             )}
-            <p className="text-cream/70 text-sm">
+            <p className="text-muted-foreground text-sm">
               {address.city}, {address.region}
             </p>
-            <p className="text-cream/70 text-sm">{address.country}</p>
-            <p className="text-cream/70 text-sm pt-2">{address.phone}</p>
+            <p className="text-muted-foreground text-sm">{address.country}</p>
+            <p className="text-muted-foreground text-sm pt-2">
+              {address.phone}
+            </p>
           </div>
 
-          <div className="flex items-center gap-3 pt-4 border-t border-cream/10">
+          <div className="flex items-center gap-3 pt-4 border-t border-border">
             {!address.is_default && (
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => handleSetDefault(address.id)}
                 disabled={loadingId === address.id}
-                className="text-xs text-cream/70 hover:text-gold hover:bg-gold/10"
+                className="text-xs text-muted-foreground hover:text-gold hover:bg-gold/10"
               >
                 {loadingId === address.id && actionType === "default" ? (
                   <Loader2 className="mr-2 h-3.5 w-3.5 animate-spin" />

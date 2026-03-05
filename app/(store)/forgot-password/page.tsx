@@ -32,7 +32,7 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-royal-black p-4 py-20 relative overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center bg-background p-4 py-20 relative overflow-hidden transition-colors">
       {/* Decorative corners */}
       <div className="absolute top-0 left-0 w-32 h-32 border-t border-l border-gold/20" />
       <div className="absolute bottom-0 right-0 w-32 h-32 border-b border-r border-gold/20" />
@@ -46,27 +46,29 @@ export default function ForgotPasswordPage() {
               alt="Elita Apparel"
               width={140}
               height={56}
-              className="mx-auto h-14 w-auto object-contain mb-6"
+              className="mx-auto h-14 w-auto object-contain mb-6 dark:invert-0 light:invert"
               priority
             />
           </Link>
-          <h1 className="font-serif text-3xl text-cream">Reset Password</h1>
-          <p className="text-sm text-cream/70 mt-2">
+          <h1 className="font-serif text-3xl text-foreground">
+            Reset Password
+          </h1>
+          <p className="text-sm text-muted-foreground mt-2">
             Enter your email to receive recovery instructions
           </p>
         </div>
 
         {isSuccess ? (
-          <div className="bg-white/5 border border-gold/20 p-6 text-center space-y-4 rounded-sm">
+          <div className="bg-accent/30 border border-gold/20 p-6 text-center space-y-4 rounded-sm">
             <h3 className="text-gold font-serif text-lg">Check Your Email</h3>
-            <p className="text-cream/80 text-sm leading-relaxed">
+            <p className="text-foreground/80 text-sm leading-relaxed">
               We've sent password reset instructions to the email address you
               provided. Please check your inbox (and spam folder) for the link.
             </p>
             <Button
               asChild
               variant="outline"
-              className="w-full h-12 border-cream/20 text-cream hover:bg-white/5 uppercase tracking-wider mt-4"
+              className="w-full h-12 border-border text-foreground hover:bg-accent/50 uppercase tracking-wider mt-4"
             >
               <Link href="/login">Return to Login</Link>
             </Button>
@@ -74,7 +76,7 @@ export default function ForgotPasswordPage() {
         ) : (
           <form onSubmit={handleSubmit} className="space-y-5">
             <div className="space-y-2">
-              <Label htmlFor="email" className="text-cream/70 text-sm">
+              <Label htmlFor="email" className="text-muted-foreground text-sm">
                 Email Address
               </Label>
               <Input
@@ -84,7 +86,7 @@ export default function ForgotPasswordPage() {
                 required
                 autoComplete="email"
                 placeholder="Enter your registered email"
-                className="h-12 bg-white/5 border-cream/10 text-cream placeholder:text-cream/30 focus-visible:ring-gold/50"
+                className="h-12 bg-accent/20 border-border text-foreground placeholder:text-muted-foreground/50 focus-visible:ring-gold/50"
               />
             </div>
 
@@ -106,7 +108,7 @@ export default function ForgotPasswordPage() {
             <div className="text-center mt-6 pt-2">
               <Link
                 href="/login"
-                className="inline-flex items-center text-sm text-cream/50 hover:text-gold transition-colors"
+                className="inline-flex items-center text-sm text-muted-foreground hover:text-gold transition-colors"
               >
                 <ArrowLeft className="mr-2 h-4 w-4" />
                 Back to Sign In

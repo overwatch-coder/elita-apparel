@@ -19,7 +19,7 @@ export default function LoginPage() {
     setIsPending(true);
 
     const formData = new FormData(e.currentTarget);
-    const result = await loginAction(formData, "/account");
+    const result = await loginAction(formData);
 
     if (result?.error) {
       toast.error(result.error);
@@ -28,7 +28,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background p-4 py-20 relative overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center bg-background p-4 py-20 relative overflow-hidden transition-colors">
       {/* Decorative corners */}
       <div className="absolute top-0 left-0 w-32 h-32 border-t border-l border-gold/20" />
       <div className="absolute bottom-0 right-0 w-32 h-32 border-b border-r border-gold/20" />
@@ -42,7 +42,7 @@ export default function LoginPage() {
               alt="Elita Apparel"
               width={140}
               height={56}
-              className="mx-auto h-14 w-auto object-contain mb-6"
+              className="mx-auto h-14 w-auto object-contain mb-6 dark:invert-0 light:invert transition-all"
               priority
             />
           </Link>
@@ -65,7 +65,7 @@ export default function LoginPage() {
               required
               autoComplete="email"
               placeholder="Enter your email"
-              className="h-12 bg-card border-border text-foreground placeholder:text-muted-foreground focus-visible:ring-gold/50"
+              className="h-12 bg-card border-border text-foreground placeholder:text-muted-foreground/50 focus-visible:ring-gold/50"
             />
           </div>
 
@@ -93,7 +93,7 @@ export default function LoginPage() {
                 required
                 autoComplete="current-password"
                 placeholder="••••••••"
-                className="h-12 bg-card border-border text-foreground placeholder:text-muted-foreground focus-visible:ring-gold/50 pr-12"
+                className="h-12 bg-card border-border text-foreground placeholder:text-muted-foreground/50 focus-visible:ring-gold/50 pr-12"
               />
               <Button
                 type="button"

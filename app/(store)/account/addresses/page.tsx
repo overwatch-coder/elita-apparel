@@ -28,10 +28,10 @@ export default async function AddressesPage() {
     <div className="space-y-8">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-serif text-cream mb-2">
+          <h1 className="text-2xl font-serif text-foreground mb-2">
             Saved Addresses
           </h1>
-          <p className="text-cream/70 text-sm">
+          <p className="text-muted-foreground text-sm">
             Manage your shipping destinations for faster checkout.
           </p>
         </div>
@@ -41,11 +41,11 @@ export default async function AddressesPage() {
       {addresses && addresses.length > 0 ? (
         <AddressList addresses={addresses} />
       ) : (
-        <div className="bg-white/5 border border-cream/10 rounded-lg p-10 text-center">
-          <h3 className="text-lg font-serif text-cream mb-2">
+        <div className="bg-card border border-border rounded-lg p-10 text-center">
+          <h3 className="text-lg font-serif text-foreground mb-2">
             No addresses saved
           </h3>
-          <p className="text-sm text-cream/70 max-w-sm mx-auto">
+          <p className="text-sm text-muted-foreground max-w-sm mx-auto">
             You haven't added any shipping addresses yet. Add one now to speed
             up your next checkout.
           </p>

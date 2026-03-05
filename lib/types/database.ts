@@ -930,6 +930,33 @@ export interface Database {
           },
         ];
       };
+      fabric_types: {
+        Row: {
+          id: string;
+          name: string;
+          slug: string;
+          description: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          name: string;
+          slug: string;
+          description?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          name?: string;
+          slug?: string;
+          description?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
     };
     Views: {
       [_ in never]: never;
@@ -962,6 +989,7 @@ export type Profile = Tables["profiles"]["Row"];
 export type Address = Tables["addresses"]["Row"];
 export type ContactMessage = Tables["contact_messages"]["Row"];
 export type WhatsAppOrder = Tables["whatsapp_orders"]["Row"];
+export type FabricType = Tables["fabric_types"]["Row"];
 // ── Composite types (with joins) ────────────────────────────────────
 
 export interface ProductWithImages extends Product {

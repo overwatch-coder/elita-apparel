@@ -68,19 +68,19 @@ export default async function OrderDetailPage({ params }: OrderPageProps) {
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-cream/10 pb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-6">
         <div>
           <Link
             href="/account/orders"
-            className="inline-flex items-center text-sm text-cream/50 hover:text-gold transition-colors mb-4"
+            className="inline-flex items-center text-sm text-muted-foreground/50 hover:text-gold transition-colors mb-4"
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back to Orders
           </Link>
-          <h1 className="text-2xl font-serif text-cream">
+          <h1 className="text-2xl font-serif text-foreground">
             Order #{order.id.slice(0, 8).toUpperCase()}
           </h1>
-          <p className="text-cream/70 text-sm mt-1">
+          <p className="text-muted-foreground text-sm mt-1">
             Placed on {new Date(order.created_at).toLocaleDateString()} at{" "}
             {new Date(order.created_at).toLocaleTimeString([], {
               hour: "2-digit",
@@ -89,7 +89,7 @@ export default async function OrderDetailPage({ params }: OrderPageProps) {
           </p>
         </div>
         <div className="text-left sm:text-right">
-          <p className="text-xs text-cream/50 uppercase tracking-wider mb-1">
+          <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">
             Order Status
           </p>
           <span
@@ -106,14 +106,14 @@ export default async function OrderDetailPage({ params }: OrderPageProps) {
 
       {/* Tracking Timeline */}
       {!isCancelledOrFailed && (
-        <div className="bg-white/5 border border-cream/10 rounded-lg p-6 sm:p-8">
-          <h3 className="font-serif text-lg text-cream mb-6">
+        <div className="bg-card border border-border rounded-lg p-6 sm:p-8">
+          <h3 className="font-serif text-lg text-foreground mb-6">
             Tracking Timeline
           </h3>
 
           <div className="relative">
             {/* Connecting line */}
-            <div className="absolute top-5 left-6 right-6 h-0.5 bg-white/10 hidden sm:block">
+            <div className="absolute top-5 left-6 right-6 h-0.5 bg-accent/20 hidden sm:block">
               <div
                 className="h-full bg-gold transition-all duration-500 ease-in-out"
                 style={{
@@ -134,7 +134,7 @@ export default async function OrderDetailPage({ params }: OrderPageProps) {
                     className="flex sm:flex-col items-center gap-4 sm:gap-3 text-center w-full sm:w-1/4"
                   >
                     {/* Vertical line for mobile */}
-                    <div className="absolute left-[23px] top-[40px] bottom-[-24px] w-0.5 bg-white/10 sm:hidden block last:hidden">
+                    <div className="absolute left-[23px] top-[40px] bottom-[-24px] w-0.5 bg-accent/20 sm:hidden block last:hidden">
                       {isActive && index < currentIndex && (
                         <div className="w-full h-full bg-gold" />
                       )}
@@ -143,7 +143,7 @@ export default async function OrderDetailPage({ params }: OrderPageProps) {
                     <div
                       className={`
                       h-12 w-12 rounded-full flex items-center justify-center border-2 transition-colors relative z-10 shrink-0
-                      ${isActive ? "bg-gold border-gold text-white" : "bg-royal-black border-cream/20 text-cream/30"}
+                      ${isActive ? "bg-gold border-gold text-white" : "bg-card border-border text-muted-foreground/30"}
                       ${isCurrent ? "ring-4 ring-gold/20" : ""}
                     `}
                     >
@@ -151,7 +151,7 @@ export default async function OrderDetailPage({ params }: OrderPageProps) {
                     </div>
                     <div className="text-left sm:text-center mt-1">
                       <p
-                        className={`text-sm font-medium ${isActive ? "text-cream" : "text-cream/40"}`}
+                        className={`text-sm font-medium ${isActive ? "text-foreground" : "text-muted-foreground"}`}
                       >
                         {step.label}
                       </p>
@@ -171,12 +171,12 @@ export default async function OrderDetailPage({ params }: OrderPageProps) {
           </div>
 
           {order.tracking_note && (
-            <div className="mt-8 pt-6 border-t border-cream/10">
+            <div className="mt-8 pt-6 border-t border-border">
               <div className="bg-gold/5 border border-gold/20 rounded-md p-4">
                 <h4 className="text-sm font-medium text-gold mb-1">
                   Latest Update
                 </h4>
-                <p className="text-cream/80 text-sm whitespace-pre-wrap">
+                <p className="text-foreground/80 text-sm whitespace-pre-wrap">
                   {order.tracking_note}
                 </p>
               </div>
@@ -189,27 +189,27 @@ export default async function OrderDetailPage({ params }: OrderPageProps) {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Items */}
         <div className="lg:col-span-2 space-y-6">
-          <h3 className="font-serif text-lg text-cream">Items Ordered</h3>
-          <div className="bg-white/5 border border-cream/10 rounded-lg divide-y divide-cream/10">
+          <h3 className="font-serif text-lg text-foreground">Items Ordered</h3>
+          <div className="bg-card border border-border rounded-lg divide-y divide-border">
             {order.order_items.map((item: any) => (
               <div
                 key={item.id}
                 className="p-4 sm:p-6 flex flex-col sm:flex-row sm:items-center gap-4"
               >
-                <div className="h-20 w-16 bg-white/5 rounded-md flex items-center justify-center shrink-0 border border-cream/10">
-                  <Package className="h-6 w-6 text-cream/20" />
+                <div className="h-20 w-16 bg-accent/5 rounded-md flex items-center justify-center shrink-0 border border-border">
+                  <Package className="h-6 w-6 text-muted-foreground/20" />
                 </div>
                 <div className="flex-1 space-y-1">
-                  <h4 className="text-base font-medium text-cream">
+                  <h4 className="text-base font-medium text-foreground">
                     {item.product_name}
                   </h4>
-                  <div className="flex items-center gap-3 text-sm text-cream/60">
+                  <div className="flex items-center gap-3 text-sm text-muted-foreground">
                     <span>Size: {item.size}</span>
-                    <span className="w-1 h-1 rounded-full bg-cream/30" />
+                    <span className="w-1 h-1 rounded-full bg-border" />
                     <span>Qty: {item.quantity}</span>
                   </div>
                 </div>
-                <p className="text-sm font-medium text-cream sm:text-right">
+                <p className="text-sm font-medium text-foreground sm:text-right">
                   GH₵{(item.price * item.quantity).toFixed(2)}
                 </p>
               </div>
@@ -219,21 +219,21 @@ export default async function OrderDetailPage({ params }: OrderPageProps) {
 
         {/* Summary & Shipping Details */}
         <div className="space-y-6">
-          <div className="bg-white/5 border border-cream/10 rounded-lg p-6">
-            <h3 className="font-serif text-lg text-cream mb-4">
+          <div className="bg-card border border-border rounded-lg p-6">
+            <h3 className="font-serif text-lg text-foreground mb-4">
               Order Summary
             </h3>
 
             <div className="space-y-3 mb-4">
               <div className="flex justify-between text-sm">
-                <span className="text-cream/60">Subtotal</span>
-                <span className="text-cream">
+                <span className="text-muted-foreground">Subtotal</span>
+                <span className="text-foreground">
                   GH₵{order.total_amount.toFixed(2)}
                 </span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-cream/60">Shipping</span>
-                <span className="text-cream">Free</span>
+                <span className="text-muted-foreground">Shipping</span>
+                <span className="text-foreground">Free</span>
               </div>
               {order.discount_amount > 0 && (
                 <div className="flex justify-between text-sm text-ghana-red">
@@ -243,24 +243,28 @@ export default async function OrderDetailPage({ params }: OrderPageProps) {
               )}
             </div>
 
-            <div className="pt-4 border-t border-cream/10 flex justify-between">
-              <span className="font-medium text-cream">Total</span>
+            <div className="pt-4 border-t border-border flex justify-between">
+              <span className="font-medium text-foreground">Total</span>
               <span className="text-lg font-bold text-gold">
                 GH₵{order.total_amount.toFixed(2)}
               </span>
             </div>
-            <p className="text-xs text-cream/40 mt-2">
+            <p className="text-xs text-muted-foreground/40 mt-2">
               Payment Status:{" "}
-              <strong className="uppercase">{order.payment_status}</strong>
+              <strong className="uppercase font-semibold">
+                {order.payment_status}
+              </strong>
             </p>
           </div>
 
-          <div className="bg-white/5 border border-cream/10 rounded-lg p-6">
-            <h3 className="font-serif text-lg text-cream mb-4">
+          <div className="bg-card border border-border rounded-lg p-6">
+            <h3 className="font-serif text-lg text-foreground mb-4">
               Shipping Information
             </h3>
-            <div className="space-y-1 text-sm text-cream/70">
-              <p className="font-medium text-cream">{order.customer_name}</p>
+            <div className="space-y-1 text-sm text-muted-foreground">
+              <p className="font-medium text-foreground">
+                {order.customer_name}
+              </p>
               <p>{order.shipping_address}</p>
               <p>
                 {order.shipping_city}
@@ -273,11 +277,11 @@ export default async function OrderDetailPage({ params }: OrderPageProps) {
             </div>
 
             {order.notes && (
-              <div className="mt-4 pt-4 border-t border-cream/10">
-                <p className="text-xs text-cream/50 uppercase tracking-wider mb-1">
+              <div className="mt-4 pt-4 border-t border-border">
+                <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">
                   Order Notes
                 </p>
-                <p className="text-sm text-cream/70">{order.notes}</p>
+                <p className="text-sm text-muted-foreground">{order.notes}</p>
               </div>
             )}
           </div>

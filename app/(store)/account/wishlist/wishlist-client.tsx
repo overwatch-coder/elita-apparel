@@ -60,11 +60,11 @@ export function WishlistPageClient({ items }: { items: WishlistItem[] }) {
   if (items.length === 0 || items.every((i) => !i.products)) {
     return (
       <div className="text-center py-20">
-        <Heart className="h-16 w-16 text-cream/10 mx-auto mb-6" />
-        <h1 className="font-serif text-2xl mb-3 text-cream">
+        <Heart className="h-16 w-16 text-muted-foreground/10 mx-auto mb-6" />
+        <h1 className="font-serif text-2xl mb-3 text-foreground">
           Your elegance awaits.
         </h1>
-        <p className="text-cream/60 mb-8 max-w-md mx-auto">
+        <p className="text-muted-foreground mb-8 max-w-md mx-auto">
           Save items you love to your wishlist and find them here when
           you&apos;re ready.
         </p>
@@ -82,8 +82,8 @@ export function WishlistPageClient({ items }: { items: WishlistItem[] }) {
     <div>
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="font-serif text-2xl text-cream">My Wishlist</h1>
-          <p className="text-sm text-cream/60 mt-1">
+          <h1 className="font-serif text-2xl text-foreground">My Wishlist</h1>
+          <p className="text-sm text-muted-foreground mt-1">
             {items.filter((i) => i.products).length} saved items
           </p>
         </div>
@@ -112,7 +112,7 @@ export function WishlistPageClient({ items }: { items: WishlistItem[] }) {
           return (
             <div
               key={item.product_id}
-              className="group bg-white/5 border border-cream/10 rounded-lg overflow-hidden"
+              className="group bg-card border border-border rounded-lg overflow-hidden"
             >
               <Link
                 href={`/shop/${product.slug}`}
@@ -132,13 +132,13 @@ export function WishlistPageClient({ items }: { items: WishlistItem[] }) {
               <div className="p-4 space-y-3">
                 <div>
                   {product.fabric_type && (
-                    <p className="text-[10px] tracking-[0.2em] uppercase text-cream/50">
+                    <p className="text-[10px] tracking-[0.2em] uppercase text-muted-foreground/50">
                       {product.fabric_type}
                     </p>
                   )}
                   <Link
                     href={`/shop/${product.slug}`}
-                    className="font-serif text-base text-cream hover:text-gold transition-colors leading-tight block"
+                    className="font-serif text-base text-foreground hover:text-gold transition-colors leading-tight block"
                   >
                     {product.name}
                   </Link>
@@ -147,7 +147,7 @@ export function WishlistPageClient({ items }: { items: WishlistItem[] }) {
                       {formatPrice(discountedPrice)}
                     </span>
                     {hasDiscount && (
-                      <span className="text-xs text-cream/40 line-through">
+                      <span className="text-xs text-muted-foreground/40 line-through">
                         {formatPrice(product.price)}
                       </span>
                     )}
@@ -168,7 +168,7 @@ export function WishlistPageClient({ items }: { items: WishlistItem[] }) {
                     onClick={() => handleRemove(item.product_id)}
                     variant="outline"
                     size="sm"
-                    className="border-cream/10 text-cream/50 hover:text-red-400 hover:border-red-400/30"
+                    className="border-border text-muted-foreground/50 hover:text-red-400 hover:border-red-400/30"
                   >
                     <Trash2 className="h-3.5 w-3.5" />
                   </Button>

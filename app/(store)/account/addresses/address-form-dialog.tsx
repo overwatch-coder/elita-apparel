@@ -46,12 +46,12 @@ export function AddressFormDialog() {
           Add New Address
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px] bg-royal-black text-cream border-cream/10">
+      <DialogContent className="sm:max-w-[425px] bg-background text-foreground border-border">
         <DialogHeader>
-          <DialogTitle className="font-serif text-xl text-cream">
+          <DialogTitle className="font-serif text-xl text-foreground">
             Add Shipping Address
           </DialogTitle>
-          <DialogDescription className="text-cream/60">
+          <DialogDescription className="text-muted-foreground">
             Enter your delivery details. We currently ship within Ghana.
           </DialogDescription>
         </DialogHeader>
@@ -59,31 +59,37 @@ export function AddressFormDialog() {
         <form onSubmit={handleSubmit} className="space-y-4 pt-4">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="fullName" className="text-cream/70 text-xs">
+              <Label
+                htmlFor="fullName"
+                className="text-muted-foreground text-xs"
+              >
                 Full Name
               </Label>
               <Input
                 id="fullName"
                 name="fullName"
                 required
-                className="bg-white/5 border-cream/10 text-cream h-10"
+                className="bg-card border-border text-foreground h-10"
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="phone" className="text-cream/70 text-xs">
+              <Label htmlFor="phone" className="text-muted-foreground text-xs">
                 Phone Number
               </Label>
               <Input
                 id="phone"
                 name="phone"
                 required
-                className="bg-white/5 border-cream/10 text-cream h-10"
+                className="bg-card border-border text-foreground h-10"
               />
             </div>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="addressLine1" className="text-cream/70 text-xs">
+            <Label
+              htmlFor="addressLine1"
+              className="text-muted-foreground text-xs"
+            >
               Street Address
             </Label>
             <Input
@@ -91,35 +97,38 @@ export function AddressFormDialog() {
               name="addressLine1"
               required
               placeholder="House No, Street name"
-              className="bg-white/5 border-cream/10 text-cream h-10"
+              className="bg-card border-border text-foreground h-10"
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="addressLine2" className="text-cream/70 text-xs">
+            <Label
+              htmlFor="addressLine2"
+              className="text-muted-foreground text-xs"
+            >
               Apartment, suite, etc. (Optional)
             </Label>
             <Input
               id="addressLine2"
               name="addressLine2"
-              className="bg-white/5 border-cream/10 text-cream h-10"
+              className="bg-card border-border text-foreground h-10"
             />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="city" className="text-cream/70 text-xs">
+              <Label htmlFor="city" className="text-muted-foreground text-xs">
                 City
               </Label>
               <Input
                 id="city"
                 name="city"
                 required
-                className="bg-white/5 border-cream/10 text-cream h-10"
+                className="bg-card border-border text-foreground h-10"
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="region" className="text-cream/70 text-xs">
+              <Label htmlFor="region" className="text-muted-foreground text-xs">
                 Region
               </Label>
               <Input
@@ -127,7 +136,7 @@ export function AddressFormDialog() {
                 name="region"
                 required
                 placeholder="Greater Accra"
-                className="bg-white/5 border-cream/10 text-cream h-10"
+                className="bg-card border-border text-foreground h-10"
               />
             </div>
           </div>
@@ -145,15 +154,15 @@ export function AddressFormDialog() {
             />
           </div>
 
-          <div className="flex items-center space-x-2 pt-2 pb-4 border-b border-cream/10">
+          <div className="flex items-center space-x-2 pt-2 pb-4 border-b border-border">
             <Checkbox
               id="isDefault"
               name="isDefault"
-              className="border-cream/20 data-[state=checked]:bg-gold data-[state=checked]:text-white"
+              className="border-border data-[state=checked]:bg-gold data-[state=checked]:text-white"
             />
             <label
               htmlFor="isDefault"
-              className="text-sm font-medium leading-none text-cream/80 peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+              className="text-sm font-medium leading-none text-muted-foreground peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
               Set as default shipping address
             </label>
@@ -164,7 +173,7 @@ export function AddressFormDialog() {
               type="button"
               variant="ghost"
               onClick={() => setOpen(false)}
-              className="text-cream/70 hover:text-cream hover:bg-white/5"
+              className="text-muted-foreground hover:text-foreground hover:bg-accent/5"
             >
               Cancel
             </Button>

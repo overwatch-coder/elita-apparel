@@ -4,7 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { triggerMarketingAutomation } from "@/lib/marketing/triggers";
 
-export async function loginAction(formData: FormData, redirectPath = "/admin") {
+export async function loginAction(formData: FormData) {
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
 
@@ -14,7 +14,10 @@ export async function loginAction(formData: FormData, redirectPath = "/admin") {
 
   const supabase = await createClient();
 
-  const { error } = await supabase.auth.signInWithPassword({
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.signInWithPassword({
     email,
     password,
   });
@@ -23,10 +26,27 @@ export async function loginAction(formData: FormData, redirectPath = "/admin") {
     return { error: error.message };
   }
 
-  redirect(redirectPath);
+  if (user) {
+    // Check role from profiles
+    const { data: profile, error: profileError } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", user.id)
+      .single();
+
+    if (profileError) {
+      console.error("Login profile fetch error:", profileError);
+    }
+
+    if (profile?.role === "admin") {
+      return redirect("/admin");
+    }
+  }
+
+  return redirect("/account");
 }
 
-export async function logoutAction(redirectPath = "/admin/login") {
+export async function logoutAction(redirectPath = "/login") {
   const supabase = await createClient();
   await supabase.auth.signOut();
   redirect(redirectPath);

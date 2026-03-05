@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,15 +16,29 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Loader2 } from "lucide-react";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
+import { Loader2, Package } from "lucide-react";
 import { createProduct, updateProduct } from "@/lib/actions/products";
-import { SIZES, FABRIC_TYPES } from "@/lib/constants";
+import { ProductImageManager } from "./product-image-manager";
+import { createClient } from "@/lib/supabase/client";
+import { SIZES } from "@/lib/constants";
 import { toast } from "sonner";
-import type { Product, Category, Collection } from "@/lib/types/database";
+import type {
+  Product,
+  Category,
+  Collection,
+  FabricType,
+  ProductWithImages,
+} from "@/lib/types/database";
 
 interface ProductFormProps {
-  product?: Product;
+  product?: ProductWithImages;
   categories: Category[];
   collections: Collection[];
 }
@@ -50,6 +64,19 @@ export function ProductForm({
   );
 
   const isEditing = !!product;
+  const [fabricTypes, setFabricTypes] = useState<FabricType[]>([]);
+
+  useEffect(() => {
+    async function loadFabricTypes() {
+      const supabase = createClient();
+      const { data } = await supabase
+        .from("fabric_types")
+        .select("*")
+        .order("name");
+      if (data) setFabricTypes(data);
+    }
+    loadFabricTypes();
+  }, []);
 
   const handleNameChange = (value: string) => {
     setName(value);
@@ -254,9 +281,9 @@ export function ProductForm({
                   <SelectValue placeholder="Select fabric" />
                 </SelectTrigger>
                 <SelectContent>
-                  {FABRIC_TYPES.map((fabric) => (
-                    <SelectItem key={fabric} value={fabric}>
-                      {fabric}
+                  {fabricTypes.map((fabric) => (
+                    <SelectItem key={fabric.slug} value={fabric.slug}>
+                      {fabric.name}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -334,6 +361,35 @@ export function ProductForm({
               </div>
             ))}
           </div>
+        </CardContent>
+      </Card>
+
+      {/* Product Images */}
+      <Card className="border-border/50">
+        <CardHeader>
+          <CardTitle className="font-serif text-xl text-gold">
+            Product Images
+          </CardTitle>
+          <CardDescription>
+            {isEditing
+              ? "Manage product primary image and gallery."
+              : "You can add and manage product images once the product is created."}
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {isEditing ? (
+            <ProductImageManager
+              productId={product.id}
+              initialImages={product.product_images || []}
+            />
+          ) : (
+            <div className="flex flex-col items-center justify-center py-8 text-center border-2 border-dashed border-border rounded-lg bg-accent/30">
+              <Package className="h-12 w-12 text-muted-foreground/30 mb-4" />
+              <p className="text-sm text-muted-foreground max-w-[250px]">
+                Create the product first to enable image upload and management.
+              </p>
+            </div>
+          )}
         </CardContent>
       </Card>
 

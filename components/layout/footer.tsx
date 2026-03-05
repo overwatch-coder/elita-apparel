@@ -18,7 +18,11 @@ import {
   BsInstagram as Instagram,
 } from "react-icons/bs";
 
+import { usePathname } from "next/navigation";
+
 export function Footer() {
+  const pathname = usePathname();
+  const isAccountPage = pathname.startsWith("/account");
   const [email, setEmail] = useState("");
   const [isSubscribing, setIsSubscribing] = useState(false);
 
@@ -40,6 +44,8 @@ export function Footer() {
   };
 
   const currentYear = new Date().getFullYear();
+
+  if (isAccountPage) return null;
 
   return (
     <footer className="bg-background text-foreground selection:bg-gold/30 selection:text-white border-t border-border">

@@ -1,12 +1,31 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { User, ShoppingBag, MapPin, LogOut, Heart } from "lucide-react";
+import {
+  User,
+  ShoppingBag,
+  MapPin,
+  LogOut,
+  Heart,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
+import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { logoutAction } from "@/lib/actions/auth";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { ModeToggle } from "@/components/layout/mode-toggle";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 
 const navItems = [
+  {
+    title: "Back to Store",
+    href: "/",
+    icon: ChevronLeft,
+  },
   {
     title: "Overview",
     href: "/account",
@@ -34,48 +53,144 @@ const navItems = [
   },
 ];
 
-export function AccountSidebar({ className }: { className?: string }) {
+export function AccountSidebar({
+  className,
+  user,
+}: {
+  className?: string;
+  user: { name: string; email: string; role: string };
+}) {
   const pathname = usePathname();
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
   return (
-    <nav className={cn("space-y-1 w-full md:w-64 shrink-0", className)}>
-      <div className="hidden md:block mb-8 px-4">
-        <h2 className="text-xl font-serif text-cream">My Account</h2>
+    <aside
+      className={cn(
+        "relative flex-col h-screen transition-all duration-300 ease-in-out border-r border-border bg-card hidden md:flex group shrink-0",
+        isCollapsed ? "w-16" : "w-64",
+        className,
+      )}
+    >
+      {/* Collapse Toggle */}
+      <Button
+        variant="ghost"
+        size="icon"
+        className="absolute -right-3 top-20 h-6 w-6 rounded-full border bg-background shadow-sm z-50 opacity-0 group-hover:opacity-100 transition-opacity"
+        onClick={() => setIsCollapsed(!isCollapsed)}
+      >
+        {isCollapsed ? (
+          <ChevronRight className="h-3 w-3" />
+        ) : (
+          <ChevronLeft className="h-3 w-3" />
+        )}
+      </Button>
+
+      {/* Header / Brand */}
+      <div
+        className={cn(
+          "flex h-20 items-center overflow-hidden transition-all border-b border-border/50",
+          isCollapsed ? "px-2 justify-center" : "px-6",
+        )}
+      >
+        <Link href="/" className="flex items-center gap-3">
+          <Image
+            src="/logo.png"
+            alt="Elita Apparel"
+            width={32}
+            height={32}
+            className="h-8 w-auto object-contain"
+          />
+          {!isCollapsed && (
+            <span className="font-serif text-lg tracking-wide text-foreground truncate">
+              Elita
+            </span>
+          )}
+        </Link>
       </div>
 
-      <div className="flex md:flex-col gap-2 overflow-x-auto pb-4 md:pb-0 hide-scrollbar px-4 md:px-0">
-        {navItems.map((item) => {
-          const isActive = pathname === item.href;
+      <div className="flex-1 min-h-0 py-6">
+        <ScrollArea className="h-full px-3">
+          <nav className="space-y-1">
+            {navItems.map((item) => {
+              const isActive = pathname === item.href;
 
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={cn(
-                "flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium whitespace-nowrap transition-colors",
-                isActive
-                  ? "bg-gold text-white shadow-sm"
-                  : "text-cream/70 hover:bg-white/5 hover:text-cream",
-              )}
-            >
-              <item.icon className="h-4 w-4" />
-              {item.title}
-            </Link>
-          );
-        })}
-      </div>
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={cn(
+                    "flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition-colors",
+                    isActive
+                      ? "bg-gold text-white shadow-sm"
+                      : "text-muted-foreground hover:bg-accent hover:text-foreground",
+                    isCollapsed && "justify-center px-0",
+                  )}
+                  title={isCollapsed ? item.title : undefined}
+                >
+                  <item.icon
+                    className={cn(
+                      "h-4 w-4 shrink-0",
+                      isActive ? "text-white" : "text-gold",
+                    )}
+                  />
+                  {!isCollapsed && <span>{item.title}</span>}
+                </Link>
+              );
+            })}
+          </nav>
+        </ScrollArea>
 
-      <div className="mt-8 px-4 border-t border-cream/10 pt-4 hidden md:block">
-        <form action={() => logoutAction("/login")}>
-          <button
-            type="submit"
-            className="flex w-full items-center gap-3 rounded-md px-4 py-3 text-sm font-medium text-red-400 hover:bg-white/5 hover:text-red-300 transition-colors"
+        {/* User / Footer Section */}
+        <div className="p-4 mt-auto border-t border-border/50 space-y-4">
+          <div
+            className={cn("flex items-center gap-2", isCollapsed && "flex-col")}
           >
-            <LogOut className="h-4 w-4" />
-            Sign Out
-          </button>
-        </form>
+            <ModeToggle />
+            {!isCollapsed && (
+              <span className="text-xs text-muted-foreground">Appearance</span>
+            )}
+          </div>
+
+          <Separator className="bg-border/50" />
+
+          {/* User Profile Info */}
+          <Link
+            href="/account/profile"
+            className={cn(
+              "flex items-center gap-3 p-2 rounded-md hover:bg-accent transition-colors overflow-hidden",
+              isCollapsed && "justify-center px-0",
+            )}
+          >
+            <div className="h-8 w-8 rounded-full bg-gold/10 flex items-center justify-center shrink-0">
+              <User className="h-4 w-4 text-gold" />
+            </div>
+            {!isCollapsed && (
+              <div className="flex flex-col min-w-0">
+                <span className="text-sm font-medium text-foreground truncate">
+                  {user.name}
+                </span>
+                <span className="text-[10px] text-muted-foreground uppercase tracking-wider">
+                  {user.role}
+                </span>
+              </div>
+            )}
+          </Link>
+
+          <form action={() => logoutAction("/login")}>
+            <button
+              type="submit"
+              className={cn(
+                "flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-destructive hover:bg-destructive/10 transition-colors",
+                isCollapsed && "justify-center px-0",
+              )}
+              title={isCollapsed ? "Sign Out" : undefined}
+            >
+              <LogOut className="h-4 w-4 shrink-0" />
+              {!isCollapsed && <span>Sign Out</span>}
+            </button>
+          </form>
+        </div>
       </div>
-    </nav>
+    </aside>
   );
 }

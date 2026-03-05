@@ -13,9 +13,11 @@ import { MobileNav } from "./mobile-nav";
 import { ModeToggle } from "./mode-toggle";
 
 export function Navbar() {
+  const pathname = usePathname();
+  const isAccountPage = pathname.startsWith("/account");
+
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
-  const pathname = usePathname();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -24,6 +26,8 @@ export function Navbar() {
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  if (isAccountPage) return null;
 
   return (
     <header
