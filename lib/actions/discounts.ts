@@ -5,12 +5,15 @@ import { createClient } from "@/lib/supabase/server";
 export async function validateDiscountCode(code: string) {
   const supabase = await createClient();
 
+  const cleanCode = code.trim().toUpperCase();
+
   const { data, error } = await supabase
     .from("discount_codes")
     .select("*")
-    .eq("code", code.toUpperCase())
+    // Match code directly. In Supabase, if we created it uppercase, this works
+    .eq("code", cleanCode)
     .eq("is_active", true)
-    .single();
+    .maybeSingle();
 
   if (error || !data) {
     return { error: "Invalid or inactive discount code" };

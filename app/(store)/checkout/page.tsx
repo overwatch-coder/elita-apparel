@@ -21,15 +21,23 @@ import { TrustBadges } from "@/components/checkout/trust-badges";
 import { GuestAccountPrompt } from "@/components/checkout/guest-account-prompt";
 import { createOrder } from "@/lib/actions/orders";
 import { subscribeToNewsletter } from "@/app/actions/marketing";
+import { LocationSelector } from "@/components/checkout/location-selector";
 import { toast } from "sonner";
 import { Checkbox } from "@/components/ui/checkbox";
+import { validateDiscountCode } from "@/lib/actions/discounts";
 import type { User } from "@supabase/supabase-js";
 import type { Address } from "@/lib/types/database";
 
 export default function CheckoutPage() {
   const router = useRouter();
-  const { items, totalPrice, discountCode, discountPercentage, clearCart } =
-    useCart();
+  const {
+    items,
+    totalPrice,
+    discountCode,
+    discountPercentage,
+    clearCart,
+    setDiscount,
+  } = useCart();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
   const [orderId, setOrderId] = useState<string | null>(null);
@@ -54,6 +62,9 @@ export default function CheckoutPage() {
     country: "Ghana",
     notes: "",
   });
+
+  const [localDiscountCode, setLocalDiscountCode] = useState("");
+  const [isApplyingDiscount, setIsApplyingDiscount] = useState(false);
 
   const discountAmount = totalPrice * (discountPercentage / 100);
   const finalTotal = totalPrice - discountAmount;
@@ -99,6 +110,30 @@ export default function CheckoutPage() {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+
+  const handleLocationChange = (key: string, value: string) => {
+    setForm((prev) => ({ ...prev, [key]: value }));
+  };
+
+  const handleApplyDiscount = async () => {
+    if (!localDiscountCode.trim()) return;
+
+    setIsApplyingDiscount(true);
+    try {
+      const result = await validateDiscountCode(localDiscountCode);
+      if (result.percentage) {
+        setDiscount(localDiscountCode.toUpperCase(), result.percentage);
+        toast.success(`Coupon applied! ${result.percentage}% off.`);
+        setLocalDiscountCode(""); // Clear local input after success
+      } else {
+        toast.error(result.error || "Invalid coupon code");
+      }
+    } catch (error) {
+      toast.error("Failed to apply coupon");
+    } finally {
+      setIsApplyingDiscount(false);
+    }
   };
 
   const handleSubmit = async (e: React.SubmitEvent) => {
@@ -339,59 +374,12 @@ export default function CheckoutPage() {
                       placeholder="12 Independence Avenue"
                     />
                   </div>
-                  <div>
-                    <Label htmlFor="city" className="text-muted-foreground">
-                      City *
-                    </Label>
-                    <Input
-                      id="city"
-                      name="city"
-                      value={form.city}
-                      onChange={handleChange}
-                      required
-                      className="mt-1.5 bg-background border-border text-foreground focus-visible:ring-gold/50 h-12"
-                      placeholder="Accra"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="state" className="text-muted-foreground">
-                      Region/State
-                    </Label>
-                    <Input
-                      id="state"
-                      name="state"
-                      value={form.state}
-                      onChange={handleChange}
-                      className="mt-1.5 bg-background border-border text-foreground focus-visible:ring-gold/50 h-12"
-                      placeholder="Greater Accra"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="zip" className="text-muted-foreground">
-                      Postal Code
-                    </Label>
-                    <Input
-                      id="zip"
-                      name="zip"
-                      value={form.zip}
-                      onChange={handleChange}
-                      className="mt-1.5 bg-background border-border text-foreground focus-visible:ring-gold/50 h-12"
-                      placeholder="GA-XXX-XXXX"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="country" className="text-muted-foreground">
-                      Country *
-                    </Label>
-                    <Input
-                      id="country"
-                      name="country"
-                      value={form.country}
-                      onChange={handleChange}
-                      required
-                      className="mt-1.5 bg-background border-border text-foreground focus-visible:ring-gold/50 h-12"
-                    />
-                  </div>
+                  <LocationSelector
+                    country={form.country}
+                    state={form.state}
+                    city={form.city}
+                    onLocationChange={handleLocationChange}
+                  />
                   <div className="sm:col-span-2">
                     <Label htmlFor="notes" className="text-muted-foreground">
                       Order Notes (Optional)
@@ -469,26 +457,69 @@ export default function CheckoutPage() {
 
                 <Separator className="bg-border/20" />
 
+                {/* Discount Code Section */}
+                <div className="flex gap-2">
+                  <Input
+                    placeholder="Gift card or discount code"
+                    value={localDiscountCode}
+                    onChange={(e) => setLocalDiscountCode(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        handleApplyDiscount();
+                      }
+                    }}
+                    className="bg-background border-border h-12"
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="h-12 border-border"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleApplyDiscount();
+                    }}
+                    disabled={isApplyingDiscount || !localDiscountCode.trim()}
+                  >
+                    {isApplyingDiscount ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      "Apply"
+                    )}
+                  </Button>
+                </div>
+
+                <Separator className="bg-border/20" />
+
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
-                    <span className="text-foreground/60">Subtotal</span>
+                    <span className="text-muted-foreground">Subtotal</span>
                     <span className="text-foreground">
                       {formatPrice(totalPrice)}
                     </span>
                   </div>
                   {discountPercentage > 0 && (
                     <div className="flex justify-between text-sm">
-                      <span className="text-ghana-green">
+                      <span className="text-ghana-green font-medium">
                         Discount ({discountCode})
+                        <button
+                          type="button"
+                          className="ml-2 text-xs text-muted-foreground hover:text-destructive underline"
+                          onClick={() => useCart().setDiscount("", 0)}
+                        >
+                          Remove
+                        </button>
                       </span>
-                      <span className="text-ghana-green">
+                      <span className="text-ghana-green font-medium">
                         -{formatPrice(discountAmount)}
                       </span>
                     </div>
                   )}
                   <div className="flex justify-between text-sm">
-                    <span className="text-foreground/60">Shipping</span>
-                    <span className="text-foreground/60">Calculated later</span>
+                    <span className="text-muted-foreground">Shipping</span>
+                    <span className="text-muted-foreground">
+                      Calculated later
+                    </span>
                   </div>
                 </div>
 
@@ -520,7 +551,7 @@ export default function CheckoutPage() {
 
                 <TrustBadges />
 
-                <p className="text-xs text-foreground/40 text-center lh-relaxed">
+                <p className="text-xs text-muted-foreground text-center leading-relaxed">
                   By placing your order, you agree to our terms of service and
                   policies. A representative will contact you shortly to confirm
                   arrangements.

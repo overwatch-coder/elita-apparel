@@ -45,8 +45,8 @@ export function CartSheet() {
           )}
         </Button>
       </SheetTrigger>
-      <SheetContent className="flex w-full flex-col sm:max-w-lg">
-        <SheetHeader>
+      <SheetContent className="flex w-full flex-col sm:max-w-lg p-6">
+        <SheetHeader className="px-0">
           <div className="flex items-center justify-between">
             <SheetTitle className="font-serif text-xl">
               Your Cart ({totalItems})
@@ -71,8 +71,8 @@ export function CartSheet() {
           </div>
         ) : (
           <>
-            <ScrollArea className="flex-1 -mx-6 px-6">
-              <div className="space-y-4 py-4">
+            <ScrollArea className="flex-1 -mx-6">
+              <div className="space-y-6 py-4 px-6">
                 {items.map((item) => {
                   const discountedPrice = calculateDiscountedPrice(
                     item.price,
@@ -82,23 +82,23 @@ export function CartSheet() {
                   return (
                     <div
                       key={`${item.product_id}-${item.size}`}
-                      className="flex gap-4"
+                      className="flex gap-4 group"
                     >
-                      <div className="relative h-24 w-20 shrink-0 overflow-hidden rounded-md bg-cream-dark">
+                      <div className="relative h-24 w-20 shrink-0 overflow-hidden rounded-md bg-cream-dark border border-border/50">
                         <Image
                           src={item.image_url}
                           alt={item.name}
                           fill
-                          className="object-cover"
+                          className="object-cover transition-transform group-hover:scale-110"
                           sizes="80px"
                         />
                       </div>
-                      <div className="flex flex-1 flex-col justify-between">
+                      <div className="flex flex-1 flex-col justify-between py-0.5">
                         <div>
-                          <h4 className="font-medium text-sm leading-tight">
+                          <h4 className="font-medium text-sm leading-tight hover:text-gold transition-colors">
                             {item.name}
                           </h4>
-                          <p className="text-xs text-muted-foreground mt-0.5">
+                          <p className="text-[10px] text-muted-foreground mt-1 uppercase tracking-wider font-semibold">
                             Size: {item.size}
                           </p>
                         </div>
@@ -107,7 +107,7 @@ export function CartSheet() {
                             <Button
                               variant="outline"
                               size="icon"
-                              className="h-7 w-7"
+                              className="h-7 w-7 rounded-full border-border/60 hover:border-gold hover:text-gold"
                               onClick={() =>
                                 updateQuantity(
                                   item.product_id,
@@ -118,13 +118,13 @@ export function CartSheet() {
                             >
                               <Minus className="h-3 w-3" />
                             </Button>
-                            <span className="w-6 text-center text-sm font-medium">
+                            <span className="w-6 text-center text-xs font-bold">
                               {item.quantity}
                             </span>
                             <Button
                               variant="outline"
                               size="icon"
-                              className="h-7 w-7"
+                              className="h-7 w-7 rounded-full border-border/60 hover:border-gold hover:text-gold"
                               onClick={() =>
                                 updateQuantity(
                                   item.product_id,
@@ -137,13 +137,13 @@ export function CartSheet() {
                             </Button>
                           </div>
                           <div className="flex items-center gap-2">
-                            <span className="text-sm font-semibold text-gold">
+                            <span className="text-sm font-bold text-gold">
                               {formatPrice(discountedPrice * item.quantity)}
                             </span>
                             <Button
                               variant="ghost"
                               size="icon"
-                              className="h-7 w-7 text-muted-foreground hover:text-destructive"
+                              className="h-7 w-7 text-muted-foreground/50 hover:text-destructive hover:bg-destructive/5"
                               onClick={() =>
                                 removeItem(item.product_id, item.size)
                               }
@@ -159,7 +159,7 @@ export function CartSheet() {
               </div>
             </ScrollArea>
 
-            <div className="space-y-4 pt-4 border-t">
+            <div className="space-y-4 pt-6 border-t">
               <div className="flex items-center justify-between">
                 <span className="text-base font-medium">Subtotal</span>
                 <span className="text-lg font-bold text-gold">

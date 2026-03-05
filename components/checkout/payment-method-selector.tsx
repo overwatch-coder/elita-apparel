@@ -48,10 +48,10 @@ export function PaymentMethodSelector({
           return (
             <label
               key={method.id}
-              className={`relative flex cursor-pointer rounded-xl border p-5 transition-all duration-300 hover:border-gold/50 hover:bg-white/5 ${
+              className={`relative flex cursor-pointer rounded-xl border p-5 transition-all duration-300 hover:border-gold/50 ${
                 isSelected
                   ? "border-gold bg-gold/5 shadow-[0_0_15px_rgba(202,176,131,0.15)] ring-1 ring-gold"
-                  : "border-border/50 bg-black/20"
+                  : "border-border bg-card hover:bg-accent hover:text-accent-foreground"
               }`}
             >
               <input
@@ -67,8 +67,8 @@ export function PaymentMethodSelector({
                   <div
                     className={`mt-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition-colors ${
                       isSelected
-                        ? "bg-gold text-black"
-                        : "bg-white/10 text-white"
+                        ? "bg-gold text-white"
+                        : "bg-muted text-muted-foreground"
                     }`}
                   >
                     <Icon className="h-5 w-5" />

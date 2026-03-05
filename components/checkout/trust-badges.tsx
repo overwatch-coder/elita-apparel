@@ -29,8 +29,8 @@ export function TrustBadges() {
             <badge.icon className="h-4 w-4 text-gold" />
           </div>
           <div>
-            <p className="text-xs font-medium text-cream">{badge.label}</p>
-            <p className="text-[10px] text-cream/50">{badge.detail}</p>
+            <p className="text-xs font-medium text-foreground">{badge.label}</p>
+            <p className="text-[10px] text-muted-foreground">{badge.detail}</p>
           </div>
         </div>
       ))}
