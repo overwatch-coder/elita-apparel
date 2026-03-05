@@ -23,6 +23,7 @@ import {
   ChevronLeft,
   ChevronRight,
   ChevronDown,
+  Settings,
 } from "lucide-react";
 import { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
@@ -103,6 +104,7 @@ const NAV_GROUPS: (NavGroup | NavItem)[] = [
       { label: "Reviews", href: "/admin/reviews", icon: Star },
     ],
   },
+  { label: "Settings", href: "/admin/settings", icon: Settings },
 ];
 
 export function AdminSidebar({

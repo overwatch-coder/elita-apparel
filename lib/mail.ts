@@ -144,3 +144,47 @@ export async function sendOrderConfirmation(order: any, items: any[]) {
     return { error: "Failed to send email" };
   }
 }
+export async function sendVerificationCodeEmail(
+  email: string,
+  code: string,
+  type: "email_change" | "password_change",
+) {
+  if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
+    console.warn("SMTP credentials missing. Logging OTP to console:", code);
+    return { success: true };
+  }
+
+  const typeLabel =
+    type === "email_change" ? "Email Address Change" : "Password Change";
+  const actionText =
+    type === "email_change" ? "updating your email" : "changing your password";
+
+  const emailHtml = `
+    <div style="font-family: serif; color: #1a1a1a; max-width: 600px; margin: 0 auto; padding: 40px; border: 1px solid #e5e5e5;">
+      <h2 style="text-align: center; border-bottom: 2px solid #cab083; padding-bottom: 20px;">Verification Code</h2>
+      <p>Hello,</p>
+      <p>You recently requested to securely ${actionText} on your Elita Apparel account.</p>
+      <div style="background: #fdfaf5; padding: 30px; border-radius: 8px; text-align: center; margin: 30px 0;">
+        <span style="font-size: 32px; font-weight: bold; letter-spacing: 5px; color: #cab083;">${code}</span>
+      </div>
+      <p>This code will expire in 10 minutes. If you did not make this request, please ignore this email or contact support if you have concerns.</p>
+      <p style="margin-top: 40px; border-top: 1px solid #eeeeee; padding-top: 20px; font-size: 12px; color: #999999; text-align: center;">
+        &copy; ${new Date().getFullYear()} Elita Apparel. All rights reserved.
+      </p>
+    </div>
+  `;
+
+  try {
+    await transporter.sendMail({
+      from:
+        process.env.SMTP_FROM || `"Elita Apparel" <${process.env.SMTP_USER}>`,
+      to: email,
+      subject: `Your Verification Code - ${typeLabel}`,
+      html: emailHtml,
+    });
+    return { success: true };
+  } catch (error) {
+    console.error("Error sending verification code email:", error);
+    return { error: "Failed to send verification code" };
+  }
+}

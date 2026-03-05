@@ -148,3 +148,185 @@ export async function updatePasswordAction(formData: FormData) {
 
   redirect("/account");
 }
+
+// ── Secure Account Update Actions ────────────────────────────────
+
+import { sendVerificationCodeEmail } from "@/lib/mail";
+
+/**
+ * Initiates an email change by verifying current password and sending an OTP
+ */
+export async function initiateEmailChange(formData: FormData) {
+  const newEmail = formData.get("newEmail") as string;
+  const currentPassword = formData.get("currentPassword") as string;
+
+  if (!newEmail || !currentPassword) {
+    return { error: "Both fields are required" };
+  }
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) return { error: "Unauthorized" };
+
+  // 1. Verify current password by signing in
+  const { error: authError } = await supabase.auth.signInWithPassword({
+    email: user.email!,
+    password: currentPassword,
+  });
+
+  if (authError) return { error: "Invalid password confirmation" };
+
+  // 2. Generate 6-digit OTP
+  const code = Math.floor(100000 + Math.random() * 900000).toString();
+  const expiresAt = new Date(Date.now() + 10 * 60 * 1000).toISOString(); // 10 mins
+
+  // 3. Save OTP to database
+  const { error: dbError } = await supabase.from("verification_codes").insert({
+    user_id: user.id,
+    code,
+    type: "email_change",
+    metadata: { new_email: newEmail },
+    expires_at: expiresAt,
+  });
+
+  if (dbError) return { error: "Failed to generate verification code" };
+
+  // 4. Send email
+  await sendVerificationCodeEmail(newEmail, code, "email_change");
+
+  return {
+    success: true,
+    message: "Verification code sent to your new email.",
+  };
+}
+
+/**
+ * Confirms an email change using the OTP
+ */
+export async function confirmEmailChange(otp: string) {
+  if (!otp || otp.length !== 6) return { error: "Invalid verification code" };
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) return { error: "Unauthorized" };
+
+  // 1. Find and verify OTP
+  const { data: codeData, error: fetchError } = await supabase
+    .from("verification_codes")
+    .select("*")
+    .eq("user_id", user.id)
+    .eq("code", otp)
+    .eq("type", "email_change")
+    .gt("expires_at", new Date().toISOString())
+    .single();
+
+  if (fetchError || !codeData)
+    return { error: "Invalid or expired verification code" };
+
+  const newEmail = codeData.metadata.new_email;
+
+  // 2. Update user email in Auth
+  const { error: updateError } = await supabase.auth.updateUser({
+    email: newEmail,
+  });
+
+  if (updateError) return { error: updateError.message };
+
+  // 3. Delete used code
+  await supabase.from("verification_codes").delete().eq("id", codeData.id);
+
+  return {
+    success: true,
+    message: "Email updated successfully. Please verify your new email.",
+  };
+}
+
+/**
+ * Initiates a password change by sending an OTP
+ */
+export async function initiatePasswordChange(formData: FormData) {
+  const currentPassword = formData.get("currentPassword") as string;
+
+  if (!currentPassword) return { error: "Current password is required" };
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) return { error: "Unauthorized" };
+
+  // 1. Verify current password
+  const { error: authError } = await supabase.auth.signInWithPassword({
+    email: user.email!,
+    password: currentPassword,
+  });
+
+  if (authError) return { error: "Invalid current password" };
+
+  // 2. Generate OTP
+  const code = Math.floor(100000 + Math.random() * 900000).toString();
+  const expiresAt = new Date(Date.now() + 10 * 60 * 1000).toISOString();
+
+  // 3. Save OTP
+  const { error: dbError } = await supabase.from("verification_codes").insert({
+    user_id: user.id,
+    code,
+    type: "password_change",
+    expires_at: expiresAt,
+  });
+
+  if (dbError) return { error: "Failed to generate verification code" };
+
+  // 4. Send email
+  await sendVerificationCodeEmail(user.email!, code, "password_change");
+
+  return { success: true, message: "Verification code sent to your email." };
+}
+
+/**
+ * Confirms a password change using OTP
+ */
+export async function confirmPasswordChange(otp: string, newPassword: string) {
+  if (!otp || otp.length !== 6) return { error: "Invalid code" };
+  if (!newPassword || newPassword.length < 6)
+    return { error: "Password too short" };
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) return { error: "Unauthorized" };
+
+  // 1. Verify OTP
+  const { data: codeData, error: fetchError } = await supabase
+    .from("verification_codes")
+    .select("*")
+    .eq("user_id", user.id)
+    .eq("code", otp)
+    .eq("type", "password_change")
+    .gt("expires_at", new Date().toISOString())
+    .single();
+
+  if (fetchError || !codeData)
+    return { error: "Invalid or expired verification code" };
+
+  // 2. Update password
+  const { error: updateError } = await supabase.auth.updateUser({
+    password: newPassword,
+  });
+
+  if (updateError) return { error: updateError.message };
+
+  // 3. Delete used code
+  await supabase.from("verification_codes").delete().eq("id", codeData.id);
+
+  return { success: true, message: "Password updated successfully." };
+}

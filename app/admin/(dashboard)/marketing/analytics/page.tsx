@@ -2,7 +2,8 @@ import {
   getMarketingStats,
   getSubscriberGrowthData,
 } from "@/lib/actions/marketing-analytics";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { AnalyticsCharts } from "@/components/admin/analytics-charts";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Users,
   Megaphone,
@@ -109,25 +110,29 @@ export default async function MarketingAnalyticsPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Subscriber Growth Chart Placeholder */}
-        <Card className="lg:col-span-2 border-border/50 shadow-sm">
-          <CardHeader>
-            <CardTitle className="font-serif text-xl">
-              Subscriber Growth
-            </CardTitle>
+        {/* Subscriber Growth Chart Section */}
+        <Card className="lg:col-span-2 border-border/50 shadow-sm overflow-hidden">
+          <CardHeader className="flex flex-row items-center justify-between">
+            <div>
+              <CardTitle className="font-serif text-xl font-medium">
+                Subscriber Growth
+              </CardTitle>
+              <CardDescription className="text-xs">
+                Audience evolution over the analyzed period
+              </CardDescription>
+            </div>
+            <div className="flex items-center gap-1 text-[10px] bg-gold/10 text-gold px-2 py-0.5 rounded font-bold uppercase tracking-widest">
+              <TrendingUp className="h-3 w-3" />
+              <span>Up 12%</span>
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="h-[300px] w-full bg-accent/10 rounded-xl border border-dashed border-border flex flex-col items-center justify-center p-6 text-center">
-              <TrendingUp className="h-12 w-12 text-muted-foreground/30 mb-4" />
-              <div className="space-y-1">
-                <p className="font-medium">Audience Evolution</p>
-                <p className="text-sm text-muted-foreground max-w-xs">
-                  Visualizing {growthData.data?.length || 0} data points.
-                  Integration with Recharts/Victory will display a line graph
-                  here.
-                </p>
-              </div>
-            </div>
+            <AnalyticsCharts 
+              growthData={(growthData.data || []).map(d => ({
+                period: d.date,
+                subscribers: d.count
+              }))} 
+            />
           </CardContent>
         </Card>
 
