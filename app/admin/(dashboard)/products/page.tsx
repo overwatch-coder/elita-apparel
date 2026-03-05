@@ -14,18 +14,33 @@ import { Plus } from "lucide-react";
 import { formatPrice } from "@/lib/constants";
 import type { Metadata } from "next";
 import { ProductActions } from "@/components/admin/product-actions";
+import { DataPagination } from "@/components/admin/data-pagination";
 
 export const metadata: Metadata = { title: "Products | Admin" };
 
-export default async function AdminProductsPage() {
+interface PageProps {
+  searchParams: Promise<{ page?: string; pageSize?: string }>;
+}
+
+export default async function AdminProductsPage({ searchParams }: PageProps) {
+  const { page = "1", pageSize = "10" } = await searchParams;
+  const currentPage = parseInt(page);
+  const size = parseInt(pageSize);
+  const from = (currentPage - 1) * size;
+  const to = from + size - 1;
+
   const supabase = await createClient();
 
-  const { data: products } = await supabase
-    .from("products")
-    .select(
-      "*, category:categories(name), collection:collections(name), product_images(image_url, is_primary)",
-    )
-    .order("created_at", { ascending: false });
+  const [{ data: products, count }, { data: categories }] = await Promise.all([
+    supabase
+      .from("products")
+      .select("*, category:categories(name), collection:collections(name)", {
+        count: "exact",
+      })
+      .order("created_at", { ascending: false })
+      .range(from, to),
+    supabase.from("categories").select("id, name"),
+  ]);
 
   return (
     <div className="space-y-6">
@@ -44,7 +59,7 @@ export default async function AdminProductsPage() {
         </Button>
       </div>
 
-      <div className="rounded-lg border border-border/50 overflow-hidden">
+      <div className="rounded-lg border border-border/50 overflow-hidden bg-card">
         <Table>
           <TableHeader>
             <TableRow>
@@ -121,6 +136,12 @@ export default async function AdminProductsPage() {
           </TableBody>
         </Table>
       </div>
+
+      <DataPagination
+        totalCount={count || 0}
+        pageSize={size}
+        currentPage={currentPage}
+      />
     </div>
   );
 }

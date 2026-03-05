@@ -1,7 +1,6 @@
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { ProductForm } from "@/components/admin/product-form";
-import { ImageUpload } from "@/components/admin/image-upload";
+import { ProductWizard } from "@/components/admin/product-wizard";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = { title: "Edit Product | Admin" };
@@ -20,16 +19,16 @@ export default async function EditProductPage({
     { data: product },
     { data: categories },
     { data: collections },
-    { data: images },
+    { data: fabricTypes },
   ] = await Promise.all([
-    supabase.from("products").select("*").eq("id", id).single(),
+    supabase
+      .from("products")
+      .select("*, product_images(*)")
+      .eq("id", id)
+      .single(),
     supabase.from("categories").select("*").order("name"),
     supabase.from("collections").select("*").order("name"),
-    supabase
-      .from("product_images")
-      .select("*")
-      .eq("product_id", id)
-      .order("position"),
+    supabase.from("fabric_types").select("*").order("name"),
   ]);
 
   if (!product) {
@@ -38,15 +37,11 @@ export default async function EditProductPage({
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="font-serif text-3xl">Edit Product</h1>
-        <p className="text-muted-foreground mt-1">{product.name}</p>
-      </div>
-      <ImageUpload productId={product.id} images={images || []} />
-      <ProductForm
-        product={product}
+      <ProductWizard
+        product={product as any}
         categories={categories || []}
         collections={collections || []}
+        fabricTypes={fabricTypes || []}
       />
     </div>
   );

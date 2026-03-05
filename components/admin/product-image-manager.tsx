@@ -14,6 +14,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import {
   uploadProductImage,
   deleteProductImage,
@@ -39,6 +40,7 @@ export function ProductImageManager({
 }: ProductImageManagerProps) {
   const [images, setImages] = useState<ProductImage[]>(initialImages);
   const [isUploading, setIsUploading] = useState(false);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -54,18 +56,12 @@ export function ProductImageManager({
       toast.error(result.error);
     } else {
       toast.success("Image uploaded successfully");
-      // Refresh images list (in a real app we'd fetch or update state)
-      // For simplicity here, we'll suggest a refresh if we can't get the new ID easily
-      // But uploadProductImage returns success: true, url: publicUrl
-      // We should ideally reload the page or fetch updated images
       window.location.reload();
     }
     setIsUploading(false);
   };
 
   const handleDelete = async (imageId: string) => {
-    if (!confirm("Are you sure you want to delete this image?")) return;
-
     const result = await deleteProductImage(imageId, productId);
     if (result.error) {
       toast.error(result.error);
@@ -73,6 +69,7 @@ export function ProductImageManager({
       toast.success("Image deleted");
       setImages(images.filter((img) => img.id !== imageId));
     }
+    setDeleteId(null);
   };
 
   const handleSetPrimary = async (imageId: string) => {
@@ -92,6 +89,17 @@ export function ProductImageManager({
 
   return (
     <div className="space-y-6">
+      {/* Custom Confirm Dialog */}
+      <ConfirmDialog
+        open={!!deleteId}
+        onOpenChange={(open) => !open && setDeleteId(null)}
+        onConfirm={() => deleteId && handleDelete(deleteId)}
+        title="Delete Image?"
+        description="This action cannot be undone. This image will be permanently removed from the product gallery."
+        variant="destructive"
+        confirmText="Delete"
+      />
+
       {/* Upload Area */}
       <div className="flex items-center justify-center w-full">
         <label

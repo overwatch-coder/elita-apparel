@@ -3,8 +3,9 @@
 import { useState, useEffect } from "react";
 import { AdminSidebar } from "@/components/admin/sidebar";
 import { AdminMobileNav } from "@/components/admin/mobile-nav";
-import { cn } from "@/lib/utils";
 import { createClient } from "@/lib/supabase/client";
+import { useRouter } from "next/navigation";
+import { AdminBreadcrumbs } from "@/components/admin/admin-breadcrumbs";
 
 export default function AdminDashboardLayout({
   children,
@@ -13,6 +14,7 @@ export default function AdminDashboardLayout({
 }) {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [user, setUser] = useState<{ name: string; role: string } | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     async function getUser() {
@@ -28,7 +30,7 @@ export default function AdminDashboardLayout({
           .single();
 
         if (profile?.role !== "admin") {
-          window.location.href = "/account";
+          router.push("/account");
           return;
         }
 
@@ -37,7 +39,7 @@ export default function AdminDashboardLayout({
           role: profile?.role || "admin",
         });
       } else {
-        window.location.href = "/login";
+        router.push("/login");
       }
     }
     getUser();
@@ -55,8 +57,11 @@ export default function AdminDashboardLayout({
       {/* Main Content Area */}
       <div className="flex flex-col flex-1 min-w-0 h-full overflow-hidden">
         <AdminMobileNav />
-        <main className="flex-1 overflow-y-auto scroll-smooth">
-          <div className="p-4 sm:p-6 lg:p-10">{children}</div>
+        <main className="overflow-y-auto scroll-smooth">
+          <div className="p-4 sm:p-6 lg:p-10">
+            <AdminBreadcrumbs />
+            {children}
+          </div>
         </main>
       </div>
     </div>

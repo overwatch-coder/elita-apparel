@@ -13,16 +13,18 @@ import { MoreHorizontal, Pencil, Trash2, Eye, EyeOff } from "lucide-react";
 import { deleteProduct, toggleProductPublished } from "@/lib/actions/products";
 import { toast } from "sonner";
 
+import { useState } from "react";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+
 interface ProductActionsProps {
-  product: { id: string; is_published: boolean; slug: string };
+  product: { id: string; name: string; is_published: boolean; slug: string };
 }
 
 export function ProductActions({ product }: ProductActionsProps) {
   const router = useRouter();
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   const handleDelete = async () => {
-    if (!confirm("Are you sure you want to delete this product?")) return;
-
     const result = await deleteProduct(product.id);
     if (result.error) {
       toast.error(result.error);
@@ -30,6 +32,7 @@ export function ProductActions({ product }: ProductActionsProps) {
       toast.success("Product deleted");
       router.refresh();
     }
+    setShowDeleteDialog(false);
   };
 
   const handleTogglePublish = async () => {
@@ -76,13 +79,22 @@ export function ProductActions({ product }: ProductActionsProps) {
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem
-          onClick={handleDelete}
+          onClick={() => setShowDeleteDialog(true)}
           className="text-destructive focus:text-destructive"
         >
           <Trash2 className="h-4 w-4 mr-2" />
           Delete
         </DropdownMenuItem>
       </DropdownMenuContent>
+      <ConfirmDialog
+        open={showDeleteDialog}
+        onOpenChange={setShowDeleteDialog}
+        onConfirm={handleDelete}
+        title={`Delete "${product.name}"?`}
+        description="This will permanently delete the product and all associated images. This action cannot be undone."
+        variant="destructive"
+        confirmText="Delete Product"
+      />
     </DropdownMenu>
   );
 }
