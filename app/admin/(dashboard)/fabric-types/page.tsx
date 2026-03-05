@@ -26,6 +26,7 @@ import { Label } from "@/components/ui/label";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
 import type { FabricType } from "@/lib/types/database";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
 export default function FabricTypesPage() {
   const [fabricTypes, setFabricTypes] = useState<FabricType[]>([]);

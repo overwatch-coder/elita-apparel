@@ -47,6 +47,7 @@ export function ConfirmDialog({
           <AlertDialogAction asChild onClick={onConfirm}>
             <Button
               variant={variant === "destructive" ? "destructive" : "default"}
+              className={variant === "destructive" ? "text-white" : ""}
             >
               {confirmText}
             </Button>

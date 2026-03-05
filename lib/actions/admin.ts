@@ -2,46 +2,69 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
+import { uploadToStorage } from "./storage";
 
 export async function createCollection(formData: FormData) {
   const supabase = await createClient();
 
-  const { error } = await supabase.from("collections").insert({
-    name: formData.get("name") as string,
-    slug: formData.get("slug") as string,
-    description: (formData.get("description") as string) || null,
-    cultural_story: (formData.get("cultural_story") as string) || null,
-    image_url: (formData.get("image_url") as string) || null,
-    is_published: formData.get("is_published") === "true",
-  });
+  try {
+    let imageUrl = (formData.get("image_url_url") as string) || null;
+    const imageFile = formData.get("image_url") as File;
 
-  if (error) return { error: error.message };
+    if (imageFile && imageFile.size > 0) {
+      imageUrl = await uploadToStorage("product-images", imageFile);
+    }
 
-  revalidatePath("/admin/collections");
-  revalidatePath("/");
-  return { success: true };
+    const { error } = await supabase.from("collections").insert({
+      name: formData.get("name") as string,
+      slug: formData.get("slug") as string,
+      description: (formData.get("description") as string) || null,
+      cultural_story: (formData.get("cultural_story") as string) || null,
+      image_url: imageUrl,
+      is_published: formData.get("is_published") === "true",
+    });
+
+    if (error) return { error: error.message };
+
+    revalidatePath("/admin/collections");
+    revalidatePath("/");
+    return { success: true };
+  } catch (error: any) {
+    return { error: error.message || "Failed to upload image" };
+  }
 }
 
 export async function updateCollection(id: string, formData: FormData) {
   const supabase = await createClient();
 
-  const { error } = await supabase
-    .from("collections")
-    .update({
-      name: formData.get("name") as string,
-      slug: formData.get("slug") as string,
-      description: (formData.get("description") as string) || null,
-      cultural_story: (formData.get("cultural_story") as string) || null,
-      image_url: (formData.get("image_url") as string) || null,
-      is_published: formData.get("is_published") === "true",
-    })
-    .eq("id", id);
+  try {
+    let imageUrl = (formData.get("image_url_url") as string) || null;
+    const imageFile = formData.get("image_url") as File;
 
-  if (error) return { error: error.message };
+    if (imageFile && imageFile.size > 0) {
+      imageUrl = await uploadToStorage("product-images", imageFile);
+    }
 
-  revalidatePath("/admin/collections");
-  revalidatePath("/");
-  return { success: true };
+    const { error } = await supabase
+      .from("collections")
+      .update({
+        name: formData.get("name") as string,
+        slug: formData.get("slug") as string,
+        description: (formData.get("description") as string) || null,
+        cultural_story: (formData.get("cultural_story") as string) || null,
+        image_url: imageUrl,
+        is_published: formData.get("is_published") === "true",
+      })
+      .eq("id", id);
+
+    if (error) return { error: error.message };
+
+    revalidatePath("/admin/collections");
+    revalidatePath("/");
+    return { success: true };
+  } catch (error: any) {
+    return { error: error.message || "Failed to upload image" };
+  }
 }
 
 export async function deleteCollection(id: string) {
@@ -57,34 +80,56 @@ export async function deleteCollection(id: string) {
 export async function createCategory(formData: FormData) {
   const supabase = await createClient();
 
-  const { error } = await supabase.from("categories").insert({
-    name: formData.get("name") as string,
-    slug: formData.get("slug") as string,
-    image_url: (formData.get("image_url") as string) || null,
-  });
+  try {
+    let imageUrl = (formData.get("image_url_url") as string) || null;
+    const imageFile = formData.get("image_url") as File;
 
-  if (error) return { error: error.message };
+    if (imageFile && imageFile.size > 0) {
+      imageUrl = await uploadToStorage("product-images", imageFile);
+    }
 
-  revalidatePath("/admin/categories");
-  return { success: true };
+    const { error } = await supabase.from("categories").insert({
+      name: formData.get("name") as string,
+      slug: formData.get("slug") as string,
+      image_url: imageUrl,
+    });
+
+    if (error) return { error: error.message };
+
+    revalidatePath("/admin/categories");
+    return { success: true };
+  } catch (error: any) {
+    return { error: error.message || "Failed to upload image" };
+  }
 }
 
 export async function updateCategory(id: string, formData: FormData) {
   const supabase = await createClient();
 
-  const { error } = await supabase
-    .from("categories")
-    .update({
-      name: formData.get("name") as string,
-      slug: formData.get("slug") as string,
-      image_url: (formData.get("image_url") as string) || null,
-    })
-    .eq("id", id);
+  try {
+    let imageUrl = (formData.get("image_url_url") as string) || null;
+    const imageFile = formData.get("image_url") as File;
 
-  if (error) return { error: error.message };
+    if (imageFile && imageFile.size > 0) {
+      imageUrl = await uploadToStorage("product-images", imageFile);
+    }
 
-  revalidatePath("/admin/categories");
-  return { success: true };
+    const { error } = await supabase
+      .from("categories")
+      .update({
+        name: formData.get("name") as string,
+        slug: formData.get("slug") as string,
+        image_url: imageUrl,
+      })
+      .eq("id", id);
+
+    if (error) return { error: error.message };
+
+    revalidatePath("/admin/categories");
+    return { success: true };
+  } catch (error: any) {
+    return { error: error.message || "Failed to upload image" };
+  }
 }
 
 export async function deleteCategory(id: string) {

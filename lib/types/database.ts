@@ -767,6 +767,7 @@ export interface Database {
           name: string;
           trigger_event: string;
           active: boolean;
+          trigger_conditions: Json;
           created_at: string;
           updated_at: string;
         };
@@ -775,6 +776,7 @@ export interface Database {
           name: string;
           trigger_event: string;
           active?: boolean;
+          trigger_conditions?: Json;
           created_at?: string;
           updated_at?: string;
         };
@@ -783,6 +785,7 @@ export interface Database {
           name?: string;
           trigger_event?: string;
           active?: boolean;
+          trigger_conditions?: Json;
           created_at?: string;
           updated_at?: string;
         };
@@ -957,6 +960,60 @@ export interface Database {
         };
         Relationships: [];
       };
+      instagram_posts: {
+        Row: {
+          id: string;
+          image_url: string;
+          post_url: string;
+          display_order: number;
+          is_active: boolean;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          image_url: string;
+          post_url: string;
+          display_order?: number;
+          is_active?: boolean;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          image_url?: string;
+          post_url?: string;
+          display_order?: number;
+          is_active?: boolean;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      site_settings: {
+        Row: {
+          key: string;
+          value: Json;
+          description: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          key: string;
+          value: Json;
+          description?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          key?: string;
+          value?: Json;
+          description?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
     };
     Views: {
       [_ in never]: never;
@@ -990,6 +1047,8 @@ export type Address = Tables["addresses"]["Row"];
 export type ContactMessage = Tables["contact_messages"]["Row"];
 export type WhatsAppOrder = Tables["whatsapp_orders"]["Row"];
 export type FabricType = Tables["fabric_types"]["Row"];
+export type InstagramPost = Tables["instagram_posts"]["Row"];
+export type SiteSetting = Tables["site_settings"]["Row"];
 // ── Composite types (with joins) ────────────────────────────────────
 
 export interface ProductWithImages extends Product {

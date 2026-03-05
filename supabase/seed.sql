@@ -193,3 +193,19 @@ INSERT INTO discount_codes (code, percentage, expiry_date, is_active, max_uses) 
   ('EARLYBIRD10', 10, now() + interval '90 days', true, 100),
   ('INDEPENDENCE15', 15, '2026-03-31'::timestamptz, true, 50),
   ('WELCOME5', 5, null, true, null);
+
+-- ─── Instagram Feed ──────────────────────────────────────────────────────────
+
+INSERT INTO instagram_posts (image_url, post_url, display_order) VALUES
+  ('https://images.unsplash.com/photo-1548273515-edba7c89b787?q=80&w=600&auto=format&fit=crop', 'https://www.instagram.com/p/C-X-X-X-X-1/', 0),
+  ('https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=600&auto=format&fit=crop', 'https://www.instagram.com/p/C-X-X-X-X-2/', 1),
+  ('https://images.unsplash.com/photo-1581044777550-4cfa60707c33?q=80&w=600&auto=format&fit=crop', 'https://www.instagram.com/p/C-X-X-X-X-3/', 2),
+  ('https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=600&auto=format&fit=crop', 'https://www.instagram.com/p/C-X-X-X-X-4/', 3),
+  ('https://images.unsplash.com/photo-1539109132314-d03b984ce275?q=80&w=600&auto=format&fit=crop', 'https://www.instagram.com/p/C-X-X-X-X-5/', 4),
+  ('https://images.unsplash.com/photo-1509631179647-0177331693ae?q=80&w=600&auto=format&fit=crop', 'https://www.instagram.com/p/C-X-X-X-X-6/', 5);
+
+-- ─── Site Settings ──────────────────────────────────────────────────────────
+
+INSERT INTO site_settings (key, value, description)
+VALUES ('instagram_feed_limit', '6'::jsonb, 'Number of Instagram posts to show on the landing page')
+ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value;

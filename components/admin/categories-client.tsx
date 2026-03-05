@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -47,6 +48,7 @@ export function CategoriesClient({ categories }: CategoriesClientProps) {
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
+  const [deleteId, setDeleteId] = useState<string | null>(null);
 
   const handleOpen = (category?: Category) => {
     if (category) {
@@ -86,12 +88,6 @@ export function CategoriesClient({ categories }: CategoriesClientProps) {
   };
 
   const handleDelete = async (id: string) => {
-    if (
-      !confirm(
-        "Delete this category? Products in this category will be unlinked.",
-      )
-    )
-      return;
     const result = await deleteCategory(id);
     if (result.error) {
       toast.error(result.error);
@@ -99,10 +95,20 @@ export function CategoriesClient({ categories }: CategoriesClientProps) {
       toast.success("Category deleted");
       router.refresh();
     }
+    setDeleteId(null);
   };
 
   return (
     <div className="space-y-6">
+      <ConfirmDialog
+        open={!!deleteId}
+        onOpenChange={(open) => !open && setDeleteId(null)}
+        onConfirm={() => deleteId && handleDelete(deleteId)}
+        title="Delete Category?"
+        description="Are you sure you want to delete this category? Products in this category will be unlinked but not deleted."
+        variant="destructive"
+        confirmText="Delete"
+      />
       <div className="flex items-center justify-between">
         <div>
           <h1 className="font-serif text-3xl">Categories</h1>
@@ -215,7 +221,7 @@ export function CategoriesClient({ categories }: CategoriesClientProps) {
                         variant="ghost"
                         size="icon"
                         className="h-8 w-8 text-muted-foreground hover:text-destructive"
-                        onClick={() => handleDelete(cat.id)}
+                        onClick={() => setDeleteId(cat.id)}
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>

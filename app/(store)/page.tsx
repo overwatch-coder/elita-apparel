@@ -37,6 +37,22 @@ export default async function HomePage() {
     .order("created_at", { ascending: false })
     .limit(4);
 
+  // Fetch Instagram posts
+  const { data: instagramPosts } = await supabase
+    .from("instagram_posts")
+    .select("*")
+    .eq("is_active", true)
+    .order("display_order", { ascending: true });
+
+  // Fetch Instagram limit
+  const { data: instagramLimitSetting } = await supabase
+    .from("site_settings")
+    .select("value")
+    .eq("key", "instagram_feed_limit")
+    .single();
+
+  const instagramLimit = parseInt(instagramLimitSetting?.value as string) || 6;
+
   return (
     <>
       <OrganizationJsonLd />
@@ -68,7 +84,7 @@ export default async function HomePage() {
       />
 
       {/* Instagram Section */}
-      <InstagramSection />
+      <InstagramSection posts={instagramPosts || []} limit={instagramLimit} />
 
       {/* WhatsApp Button */}
       <WhatsAppButton />

@@ -36,7 +36,7 @@ export function PopupForm({ initialData, discountCodes }: PopupFormProps) {
     image_url: initialData?.image_url || "",
     cta_label: initialData?.cta_label || "",
     cta_url: initialData?.cta_url || "",
-    discount_code: initialData?.discount_code || "",
+    discount_code: initialData?.discount_code || "none",
     delay_seconds: initialData?.delay_seconds || 5,
     is_active: initialData?.is_active ?? false,
   });
@@ -45,13 +45,19 @@ export function PopupForm({ initialData, discountCodes }: PopupFormProps) {
     e.preventDefault();
     setLoading(true);
 
+    const submissionData = {
+      ...formData,
+      discount_code:
+        formData.discount_code === "none" ? null : formData.discount_code,
+    };
+
     try {
       if (initialData?.id) {
-        const { error } = await updatePopup(initialData.id, formData);
+        const { error } = await updatePopup(initialData.id, submissionData);
         if (error) throw new Error(error);
         toast.success("Popup updated successfully");
       } else {
-        const { error } = await createPopup(formData);
+        const { error } = await createPopup(submissionData);
         if (error) throw new Error(error);
         toast.success("Popup created successfully");
       }
@@ -239,7 +245,7 @@ export function PopupForm({ initialData, discountCodes }: PopupFormProps) {
                     <SelectValue placeholder="Select a code" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">No Discount</SelectItem>
+                    <SelectItem value="none">No Discount</SelectItem>
                     {discountCodes.map((code) => (
                       <SelectItem key={code.id} value={code.code}>
                         {code.code} ({code.percentage}%)

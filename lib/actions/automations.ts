@@ -87,10 +87,27 @@ export async function toggleAutomation(id: string, active: boolean) {
   return { success: true };
 }
 
-export async function updateAutomationFlow(id: string, emails: any[]) {
+export async function updateAutomationFlow(
+  id: string,
+  emails: any[],
+  conditions?: any[],
+) {
   const supabase = await createClient();
 
   try {
+    // 1. Update conditions if provided
+    if (conditions) {
+      const { error: condError } = await supabase
+        .from("automations")
+        .update({
+          trigger_conditions: conditions,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", id);
+      if (condError) throw condError;
+    }
+
+    // 2. Update/Insert emails
     for (const email of emails) {
       if (email.id) {
         const { error } = await supabase
@@ -118,4 +135,36 @@ export async function updateAutomationFlow(id: string, emails: any[]) {
     console.error("Error updating automation flow:", err);
     return { success: false, error: err.message };
   }
+}
+
+export async function createAutomation(name: string, trigger_event: string) {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("automations")
+    .insert([{ name, trigger_event, active: false }])
+    .select()
+    .single();
+
+  if (error) {
+    console.error("Error creating automation:", error);
+    return { success: false, error: error.message };
+  }
+
+  revalidatePath("/admin/automations");
+  return { success: true, data };
+}
+
+export async function deleteAutomation(id: string) {
+  const supabase = await createClient();
+
+  const { error } = await supabase.from("automations").delete().eq("id", id);
+
+  if (error) {
+    console.error("Error deleting automation:", error);
+    return { success: false, error: error.message };
+  }
+
+  revalidatePath("/admin/automations");
+  return { success: true };
 }

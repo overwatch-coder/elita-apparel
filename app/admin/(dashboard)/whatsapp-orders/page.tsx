@@ -12,14 +12,6 @@ export default async function AdminWhatsAppOrdersPage() {
   const { data: userData } = await supabase.auth.getUser();
   if (!userData?.user) redirect("/admin/login");
 
-  const { data: adminCheck } = await supabase
-    .from("admin_users")
-    .select("role")
-    .eq("user_id", userData.user.id)
-    .single();
-
-  if (!adminCheck) redirect("/");
-
   // Fetch whatsapp orders
   const { data: orders, error } = await supabase
     .from("whatsapp_orders")

@@ -22,39 +22,86 @@ import {
   PieChart,
   ChevronLeft,
   ChevronRight,
+  ChevronDown,
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { logoutAction } from "@/lib/actions/auth";
 import { cn } from "@/lib/utils";
 import { ModeToggle } from "@/components/layout/mode-toggle";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 
-const NAV_ITEMS = [
+type NavItem = {
+  label: string;
+  href: string;
+  icon: any;
+};
+
+type NavGroup = {
+  label: string;
+  icon: any;
+  items: NavItem[];
+};
+
+const NAV_GROUPS: (NavGroup | NavItem)[] = [
   { label: "Dashboard", href: "/admin", icon: LayoutDashboard },
-  { label: "Collections", href: "/admin/collections", icon: FolderOpen },
-  { label: "Categories", href: "/admin/categories", icon: Tags },
-  { label: "Fabric Types", href: "/admin/fabric-types", icon: Ruler },
-  { label: "Products", href: "/admin/products", icon: Package },
-  { label: "Orders", href: "/admin/orders", icon: ShoppingCart },
   {
-    label: "WhatsApp Orders",
-    href: "/admin/whatsapp-orders",
-    icon: MessageCircle,
+    label: "Catalog",
+    icon: FolderOpen,
+    items: [
+      { label: "Collections", href: "/admin/collections", icon: FolderOpen },
+      { label: "Categories", href: "/admin/categories", icon: Tags },
+      { label: "Fabric Types", href: "/admin/fabric-types", icon: Ruler },
+      { label: "Products", href: "/admin/products", icon: Package },
+      { label: "Size Guides", href: "/admin/size-guides", icon: Ruler },
+    ],
   },
-  { label: "Discounts", href: "/admin/discounts", icon: Percent },
-  { label: "Reviews", href: "/admin/reviews", icon: Star },
-  { label: "Size Guides", href: "/admin/size-guides", icon: Ruler },
-  { label: "Inventory", href: "/admin/inventory", icon: BarChart3 },
-  { label: "Audience", href: "/admin/audience", icon: Users },
-  { label: "Campaigns", href: "/admin/campaigns", icon: Megaphone },
-  { label: "Automations", href: "/admin/automations", icon: Zap },
-  { label: "Popups", href: "/admin/marketing/popups", icon: MousePointer2 },
   {
-    label: "Marketing Stats",
-    href: "/admin/marketing/analytics",
-    icon: PieChart,
+    label: "Sales",
+    icon: ShoppingCart,
+    items: [
+      { label: "Orders", href: "/admin/orders", icon: ShoppingCart },
+      {
+        label: "WhatsApp Orders",
+        href: "/admin/whatsapp-orders",
+        icon: MessageCircle,
+      },
+      { label: "Inventory", href: "/admin/inventory", icon: BarChart3 },
+      { label: "Discounts", href: "/admin/discounts", icon: Percent },
+    ],
+  },
+  {
+    label: "Marketing",
+    icon: Megaphone,
+    items: [
+      {
+        label: "Marketing Stats",
+        href: "/admin/marketing/analytics",
+        icon: PieChart,
+      },
+      { label: "Campaigns", href: "/admin/campaigns", icon: Megaphone },
+      { label: "Automations", href: "/admin/automations", icon: Zap },
+      { label: "Popups", href: "/admin/marketing/popups", icon: MousePointer2 },
+      {
+        label: "Instagram Feed",
+        href: "/admin/marketing/instagram",
+        icon: Megaphone,
+      },
+    ],
+  },
+  {
+    label: "Customers",
+    icon: Users,
+    items: [
+      { label: "Audience", href: "/admin/audience", icon: Users },
+      { label: "Reviews", href: "/admin/reviews", icon: Star },
+    ],
   },
 ];
 
@@ -123,34 +170,53 @@ export function AdminSidebar({
         <div className="flex-1 min-h-0">
           <ScrollArea className="h-full">
             <nav className="space-y-1 px-3 py-4">
-              {NAV_ITEMS.map((item) => {
-                const isActive =
-                  pathname === item.href ||
-                  (item.href !== "/admin" && pathname.startsWith(item.href));
+              {NAV_GROUPS.map((item, index) => {
+                if ("href" in item) {
+                  const isActive =
+                    pathname === item.href ||
+                    (item.href !== "/admin" && pathname.startsWith(item.href));
+
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      className={cn(
+                        "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
+                        isActive
+                          ? "bg-gold/10 text-gold shadow-sm"
+                          : "text-muted-foreground hover:bg-accent hover:text-foreground",
+                        isCollapsed && "justify-center px-0",
+                      )}
+                      title={isCollapsed ? item.label : undefined}
+                    >
+                      <item.icon
+                        className={cn(
+                          "h-4 w-4 shrink-0",
+                          isActive ? "text-gold" : "text-muted-foreground",
+                        )}
+                      />
+                      {!isCollapsed && (
+                        <span className="truncate">{item.label}</span>
+                      )}
+                    </Link>
+                  );
+                }
+
+                // It's a group
+                const isGroupActive = item.items.some(
+                  (subItem) =>
+                    pathname === subItem.href ||
+                    pathname.startsWith(subItem.href),
+                );
 
                 return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    className={cn(
-                      "flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition-colors",
-                      isActive
-                        ? "bg-gold/10 text-gold shadow-sm"
-                        : "text-muted-foreground hover:bg-accent hover:text-foreground",
-                      isCollapsed && "justify-center px-0",
-                    )}
-                    title={isCollapsed ? item.label : undefined}
-                  >
-                    <item.icon
-                      className={cn(
-                        "h-4 w-4 shrink-0",
-                        isActive ? "text-gold" : "text-muted-foreground",
-                      )}
-                    />
-                    {!isCollapsed && (
-                      <span className="truncate">{item.label}</span>
-                    )}
-                  </Link>
+                  <NavSection
+                    key={index}
+                    item={item}
+                    pathname={pathname}
+                    isCollapsed={isCollapsed}
+                    isGroupActive={isGroupActive}
+                  />
                 );
               })}
             </nav>
@@ -240,5 +306,84 @@ export function AdminSidebar({
         </div>
       </div>
     </aside>
+  );
+}
+
+function NavSection({
+  item,
+  pathname,
+  isCollapsed,
+  isGroupActive,
+}: {
+  item: NavGroup;
+  pathname: string;
+  isCollapsed: boolean;
+  isGroupActive: boolean;
+}) {
+  const [isOpen, setIsOpen] = useState(isGroupActive);
+
+  if (isCollapsed) {
+    return (
+      <Collapsible open={false}>
+        <CollapsibleTrigger asChild>
+          <div
+            className={cn(
+              "flex items-center justify-center rounded-md px-3 py-2 text-sm font-medium transition-colors cursor-pointer",
+              isGroupActive
+                ? "bg-gold/10 text-gold"
+                : "text-muted-foreground hover:bg-accent hover:text-foreground",
+            )}
+            title={item.label}
+          >
+            <item.icon className="h-4 w-4 shrink-0" />
+          </div>
+        </CollapsibleTrigger>
+      </Collapsible>
+    );
+  }
+
+  return (
+    <Collapsible open={isOpen} onOpenChange={setIsOpen} className="space-y-1">
+      <CollapsibleTrigger asChild>
+        <button
+          className={cn(
+            "flex w-full items-center justify-between rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-foreground",
+            isGroupActive ? "text-gold" : "text-muted-foreground",
+          )}
+        >
+          <div className="flex items-center gap-3">
+            <item.icon className="h-4 w-4 shrink-0" />
+            <span className="truncate">{item.label}</span>
+          </div>
+          <ChevronDown
+            className={cn(
+              "h-4 w-4 transition-transform duration-200",
+              isOpen ? "rotate-0" : "-rotate-90",
+            )}
+          />
+        </button>
+      </CollapsibleTrigger>
+      <CollapsibleContent className="space-y-1 overflow-hidden transition-all data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">
+        {item.items.map((subItem) => {
+          const isSubActive = pathname === subItem.href;
+
+          return (
+            <Link
+              key={subItem.href}
+              href={subItem.href}
+              className={cn(
+                "flex items-center gap-3 rounded-md pl-10 pr-3 py-1.5 text-sm transition-colors",
+                isSubActive
+                  ? "text-gold font-medium"
+                  : "text-muted-foreground/70 hover:text-foreground hover:bg-accent/50",
+              )}
+            >
+              <subItem.icon className="h-3.5 w-3.5 shrink-0 opacity-50" />
+              <span className="truncate">{subItem.label}</span>
+            </Link>
+          );
+        })}
+      </CollapsibleContent>
+    </Collapsible>
   );
 }

@@ -14,15 +14,6 @@ export default async function AdminReviewsPage() {
 
   if (!user) redirect("/login");
 
-  // Check admin
-  const { data: admin } = await supabase
-    .from("admin_users")
-    .select("id")
-    .eq("user_id", user.id)
-    .single();
-
-  if (!admin) redirect("/");
-
   // Fetch all reviews with product info
   const { data: reviews } = await supabase
     .from("reviews")

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -52,6 +53,7 @@ export function CollectionsClient({ collections }: CollectionsClientProps) {
   );
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
+  const [deleteId, setDeleteId] = useState<string | null>(null);
 
   const handleOpen = (collection?: Collection) => {
     if (collection) {
@@ -93,7 +95,6 @@ export function CollectionsClient({ collections }: CollectionsClientProps) {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Delete this collection?")) return;
     const result = await deleteCollection(id);
     if (result.error) {
       toast.error(result.error);
@@ -101,10 +102,20 @@ export function CollectionsClient({ collections }: CollectionsClientProps) {
       toast.success("Collection deleted");
       router.refresh();
     }
+    setDeleteId(null);
   };
 
   return (
     <div className="space-y-6">
+      <ConfirmDialog
+        open={!!deleteId}
+        onOpenChange={(open) => !open && setDeleteId(null)}
+        onConfirm={() => deleteId && handleDelete(deleteId)}
+        title="Delete Collection?"
+        description="Are you sure you want to delete this collection? Products in this collection will be unlinked but not deleted."
+        variant="destructive"
+        confirmText="Delete"
+      />
       <div className="flex items-center justify-between">
         <div>
           <h1 className="font-serif text-3xl">Collections</h1>
@@ -258,7 +269,7 @@ export function CollectionsClient({ collections }: CollectionsClientProps) {
                         variant="ghost"
                         size="icon"
                         className="h-8 w-8 text-muted-foreground hover:text-destructive"
-                        onClick={() => handleDelete(col.id)}
+                        onClick={() => setDeleteId(col.id)}
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>

@@ -3,8 +3,6 @@ import { Playfair_Display, DM_Sans } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
 import { CartProvider } from "@/components/cart/cart-provider";
 import { WishlistProvider } from "@/components/wishlist/wishlist-provider";
-import { WhatsAppButton } from "@/components/store/whatsapp-button";
-import { PopupManager } from "@/components/marketing/popup-manager";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Suspense } from "react";
 import "./globals.css";
@@ -83,8 +81,6 @@ export default function RootLayout({
               <WishlistProvider>
                 {children}
                 <Toaster position="bottom-right" />
-                <WhatsAppButton />
-                <PopupManager />
               </WishlistProvider>
             </CartProvider>
           </Suspense>

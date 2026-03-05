@@ -1,21 +1,23 @@
 "use client";
 
 import { motion } from "motion/react";
-import { Instagram } from "lucide-react";
+import { BsInstagram as Instagram } from "react-icons/bs";
 import { Button } from "@/components/ui/button";
 import { SOCIALS } from "@/lib/constants";
+import { InstagramPost } from "@/lib/types/database";
+import Image from "next/image";
+import { cn } from "@/lib/utils";
 
-const INSTAGRAM_POSTS = [
-  { id: 1, color: "bg-gold/20" },
-  { id: 2, color: "bg-earth-brown/20" },
-  { id: 3, color: "bg-gold/10" },
-  { id: 4, color: "bg-earth-brown/10" },
-  { id: 5, color: "bg-gold/15" },
-  { id: 6, color: "bg-earth-brown/15" },
-];
+interface InstagramSectionProps {
+  posts: InstagramPost[];
+  limit?: number;
+}
 
-export function InstagramSection() {
+export function InstagramSection({ posts, limit = 6 }: InstagramSectionProps) {
   const instagramUrl = SOCIALS.instagram.url;
+
+  // Show only up to the limit
+  const displayPosts = posts.slice(0, limit);
 
   return (
     <section className="py-20 lg:py-28">
@@ -55,27 +57,27 @@ export function InstagramSection() {
           whileInView={{ opacity: 1 }}
           viewport={{ once: true, margin: "-50px" }}
           transition={{ duration: 0.8 }}
-          className="grid grid-cols-3 md:grid-cols-6 gap-2 sm:gap-3"
+          className={cn(
+            "grid gap-2 sm:gap-3",
+            displayPosts.length <= 3
+              ? "grid-cols-2 md:grid-cols-3"
+              : "grid-cols-3 md:grid-cols-6",
+          )}
         >
-          {INSTAGRAM_POSTS.map((post, index) => (
+          {displayPosts.map((post, index) => (
             <a
               key={post.id}
-              href={instagramUrl}
+              href={post.post_url || instagramUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="group relative aspect-square rounded-lg overflow-hidden"
+              className="group relative aspect-square rounded-lg overflow-hidden bg-accent/10"
             >
-              {/* Placeholder pattern */}
-              <div
-                className={`absolute inset-0 ${post.color} flex items-center justify-center`}
-              >
-                <div className="text-center">
-                  <Instagram className="h-6 w-6 text-foreground/20 mx-auto mb-1" />
-                  <p className="text-[8px] text-foreground/20 tracking-wider uppercase">
-                    Post {index + 1}
-                  </p>
-                </div>
-              </div>
+              <Image
+                src={post.image_url}
+                alt={`Instagram post ${index + 1}`}
+                fill
+                className="object-cover transition-transform duration-500 group-hover:scale-110"
+              />
 
               {/* Hover overlay */}
               <div className="absolute inset-0 bg-gold/0 group-hover:bg-gold/20 transition-colors duration-300 flex items-center justify-center">

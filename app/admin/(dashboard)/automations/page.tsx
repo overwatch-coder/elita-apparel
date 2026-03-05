@@ -1,4 +1,3 @@
-import { redirect } from "next/navigation";
 import { getAutomations, toggleAutomation } from "@/lib/actions/automations";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -13,6 +12,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { AutomationToggle } from "./automation-toggle";
+import { CreateAutomationDialog } from "./create-automation-dialog";
 
 export const metadata = {
   title: "Automations | Admin",
@@ -24,14 +24,17 @@ export default async function AutomationsDashboardPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-serif text-foreground">
-          Lifecycle Automations
-        </h1>
-        <p className="text-sm text-muted-foreground mt-1">
-          Configure "set-it-and-forget-it" email sequences triggered by customer
-          actions.
-        </p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-serif text-foreground">
+            Lifecycle Automations
+          </h1>
+          <p className="text-sm text-muted-foreground mt-1">
+            Configure "set-it-and-forget-it" email sequences triggered by
+            customer actions.
+          </p>
+        </div>
+        <CreateAutomationDialog />
       </div>
 
       <div className="grid grid-cols-1 gap-6">
