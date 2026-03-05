@@ -33,6 +33,18 @@ export async function createProduct(formData: FormData) {
     .single();
 
   if (error) {
+    if (error.code === "23505" && error.message.includes("products_slug_key")) {
+      const { data: existing } = await supabase
+        .from("products")
+        .select("id")
+        .eq("slug", productData.slug)
+        .single();
+
+      return {
+        error: "A product with this name/slug already exists.",
+        existingId: existing?.id,
+      };
+    }
     return { error: error.message };
   }
 
@@ -71,6 +83,12 @@ export async function updateProduct(id: string, formData: FormData) {
     .eq("id", id);
 
   if (error) {
+    if (error.code === "23505" && error.message.includes("products_slug_key")) {
+      return {
+        error:
+          "A product with this name/slug already exists. Please choose a unique name.",
+      };
+    }
     return { error: error.message };
   }
 

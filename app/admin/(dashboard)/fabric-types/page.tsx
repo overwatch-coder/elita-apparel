@@ -12,10 +12,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  Card,
-  CardContent,
-} from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -38,6 +35,8 @@ export default function FabricTypesPage() {
 
   const [newName, setNewName] = useState("");
   const [newDescription, setNewDescription] = useState("");
+
+  const [deleteId, setDeleteId] = useState<string | null>(null);
 
   const supabase = createClient();
 
@@ -86,13 +85,6 @@ export default function FabricTypesPage() {
   }
 
   async function handleDelete(id: string) {
-    if (
-      !confirm(
-        "Are you sure? This might affect products using this fabric type if not handled.",
-      )
-    )
-      return;
-
     const { error } = await supabase.from("fabric_types").delete().eq("id", id);
 
     if (error) {
@@ -101,10 +93,20 @@ export default function FabricTypesPage() {
       toast.success("Fabric type deleted");
       setFabricTypes(fabricTypes.filter((f) => f.id !== id));
     }
+    setDeleteId(null);
   }
 
   return (
     <div className="space-y-6">
+      <ConfirmDialog
+        open={!!deleteId}
+        onOpenChange={(open) => !open && setDeleteId(null)}
+        onConfirm={() => deleteId && handleDelete(deleteId)}
+        title="Delete Fabric Type?"
+        description="Are you sure? This might affect products using this fabric type if not handled."
+        variant="destructive"
+        confirmText="Delete"
+      />
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-serif text-foreground">Fabric Types</h1>
@@ -209,7 +211,7 @@ export default function FabricTypesPage() {
                         variant="ghost"
                         size="icon"
                         className="text-destructive hover:text-destructive hover:bg-destructive/10"
-                        onClick={() => handleDelete(fabric.id)}
+                        onClick={() => setDeleteId(fabric.id)}
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>

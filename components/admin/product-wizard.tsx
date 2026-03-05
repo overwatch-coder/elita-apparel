@@ -1,7 +1,9 @@
 "use client";
 
 import { useState, useTransition, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import Link from "next/link";
+import { Suspense } from "react";
 import { createProduct, updateProduct } from "@/lib/actions/products";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -62,7 +64,9 @@ export function ProductWizard({
 }: ProductWizardProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
-  const [step, setStep] = useState(1);
+  const searchParams = useSearchParams();
+  const initialStep = parseInt(searchParams.get("step") || "1");
+  const [step, setStep] = useState(initialStep);
   const [createdProductId, setCreatedProductId] = useState<string | null>(
     product?.id || null,
   );
@@ -115,7 +119,7 @@ export function ProductWizard({
     );
   };
 
-  const totalSteps = 5;
+  const totalSteps = isEditing ? 5 : 4;
 
   async function handleSave() {
     const submitData = new FormData();
@@ -123,7 +127,8 @@ export function ProductWizard({
     Object.entries(formData).forEach(([key, value]) => {
       submitData.append(key, value.toString());
     });
-    submitData.append("available_sizes", JSON.stringify(selectedSizes));
+    // Append sizes individually for formData.getAll("sizes") compatibility
+    selectedSizes.forEach((size) => submitData.append("sizes", size));
 
     startTransition(async () => {
       const result = createdProductId
@@ -131,12 +136,39 @@ export function ProductWizard({
         : await createProduct(submitData);
 
       if (result.error) {
-        toast.error(result.error);
+        if (
+          result.error.includes("duplicate key") ||
+          result.error.includes("already exists")
+        ) {
+          const existingId = (result as any).existingId;
+          toast.error(
+            <div className="flex flex-col gap-2">
+              <p>A product with this name already exists.</p>
+              {existingId && (
+                <Button
+                  asChild
+                  size="sm"
+                  variant="outline"
+                  className="w-full bg-white text-black hover:bg-white/90"
+                >
+                  <Link href={`/admin/products/${existingId}/edit?step=1`}>
+                    Edit Existing Product
+                  </Link>
+                </Button>
+              )}
+            </div>,
+            { duration: 10000 },
+          );
+        } else {
+          toast.error(result.error);
+        }
       } else {
         toast.success(createdProductId ? "Product updated" : "Product created");
         if (!createdProductId && "data" in result && result.data) {
-          setCreatedProductId(result.data.id);
-          setStep(4); // Move to Media step
+          toast.success("Product created. Moving to Media management.");
+          // Redirect to edit page step 4 (Media)
+          router.replace(`/admin/products/${result.data.id}/edit?step=4`);
+          router.refresh();
         } else if (step === totalSteps) {
           router.push("/admin/products");
           router.refresh();
@@ -154,7 +186,7 @@ export function ProductWizard({
     { title: "Identity", icon: Package },
     { title: "Economics", icon: BadgePercent },
     { title: "Taxonomy", icon: Sparkles },
-    { title: "Media", icon: ImageIcon },
+    ...(isEditing ? [{ title: "Media", icon: ImageIcon }] : []),
     { title: "Status", icon: Megaphone },
   ];
 
@@ -359,7 +391,7 @@ export function ProductWizard({
                           handleInputChange("category_id", val)
                         }
                       >
-                        <SelectTrigger>
+                        <SelectTrigger className="w-full">
                           <SelectValue placeholder="Select" />
                         </SelectTrigger>
                         <SelectContent>
@@ -379,7 +411,7 @@ export function ProductWizard({
                           handleInputChange("collection_id", val)
                         }
                       >
-                        <SelectTrigger>
+                        <SelectTrigger className="w-full">
                           <SelectValue placeholder="Select" />
                         </SelectTrigger>
                         <SelectContent>
@@ -399,7 +431,7 @@ export function ProductWizard({
                           handleInputChange("fabric_type", val)
                         }
                       >
-                        <SelectTrigger>
+                        <SelectTrigger className="w-full">
                           <SelectValue placeholder="Select" />
                         </SelectTrigger>
                         <SelectContent>
@@ -439,49 +471,8 @@ export function ProductWizard({
               </Card>
             )}
 
-            {step === 4 && (
-              <Card className="border-border/50 shadow-sm overflow-hidden text-center">
-                <CardHeader className="bg-accent/5">
-                  <CardTitle className="font-serif">Media Assets</CardTitle>
-                  <CardDescription>
-                    Product images and showcase visuals.
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="pt-8">
-                  {createdProductId ? (
-                    <ProductImageManager
-                      productId={createdProductId}
-                      initialImages={product?.product_images || []}
-                    />
-                  ) : (
-                    <div className="py-12 flex flex-col items-center gap-4">
-                      <div className="w-16 h-16 rounded-full bg-gold/5 flex items-center justify-center border border-gold/10">
-                        <ImageIcon className="h-8 w-8 text-gold/40" />
-                      </div>
-                      <div className="space-y-2">
-                        <h3 className="font-medium">Creation Required</h3>
-                        <p className="text-sm text-muted-foreground max-w-xs mx-auto">
-                          Please save the product details first to enable media
-                          uploads and gallery management.
-                        </p>
-                      </div>
-                      <Button
-                        onClick={handleSave}
-                        disabled={isPending}
-                        className="bg-gold hover:bg-gold-dark text-white mt-4"
-                      >
-                        {isPending && (
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        )}
-                        Save & Continue to Media
-                      </Button>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            )}
-
-            {step === 5 && (
+            {/* In Create mode, step 4 is Status. In Edit mode, step 4 is Media, step 5 is Status */}
+            {((!isEditing && step === 4) || (isEditing && step === 5)) && (
               <Card className="border-border/50 shadow-sm overflow-hidden">
                 <CardHeader className="bg-accent/5">
                   <CardTitle className="font-serif">Status & SEO</CardTitle>
@@ -554,6 +545,23 @@ export function ProductWizard({
                       </div>
                     </div>
                   </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {isEditing && step === 4 && (
+              <Card className="border-border/50 shadow-sm overflow-hidden text-center">
+                <CardHeader className="bg-accent/5">
+                  <CardTitle className="font-serif">Media Assets</CardTitle>
+                  <CardDescription>
+                    Product images and showcase visuals.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="pt-8">
+                  <ProductImageManager
+                    productId={createdProductId!}
+                    initialImages={product?.product_images || []}
+                  />
                 </CardContent>
               </Card>
             )}

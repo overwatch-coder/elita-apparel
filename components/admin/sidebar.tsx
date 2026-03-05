@@ -33,10 +33,10 @@ import { ModeToggle } from "@/components/layout/mode-toggle";
 
 const NAV_ITEMS = [
   { label: "Dashboard", href: "/admin", icon: LayoutDashboard },
-  { label: "Products", href: "/admin/products", icon: Package },
   { label: "Collections", href: "/admin/collections", icon: FolderOpen },
   { label: "Categories", href: "/admin/categories", icon: Tags },
   { label: "Fabric Types", href: "/admin/fabric-types", icon: Ruler },
+  { label: "Products", href: "/admin/products", icon: Package },
   { label: "Orders", href: "/admin/orders", icon: ShoppingCart },
   {
     label: "WhatsApp Orders",

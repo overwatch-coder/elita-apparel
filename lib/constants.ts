@@ -16,7 +16,7 @@ export const BRAND = {
   tagline: "Intrigue. Elegance. You.",
   motto: "Wrapped in Culture. Wrapped in Elita.",
   location: "Accra, Ghana",
-  siteUrl: "https://elitaapparel.com", // Replace with actual
+  siteUrl: "https://elitaapparel.vercel.app",
 } as const;
 
 // ── Social & Contact ────────────────────────────────────────────────
@@ -24,27 +24,27 @@ export const BRAND = {
 
 export const SOCIALS = {
   instagram: {
-    handle: "@elitaapparel",
-    url: "https://instagram.com/elitaapparel",
+    handle: "@elita_apparel",
+    url: "https://www.instagram.com/elita_apparel",
   },
   tiktok: {
-    handle: "@elitaapparel",
-    url: "https://tiktok.com/@elitaapparel",
+    handle: "@elita_apparel",
+    url: "https://www.tiktok.com/@elita_apparel",
   },
   twitter: {
-    handle: "@elitaapparel",
-    url: "https://x.com/elitaapparel",
+    handle: "@elita_apparel",
+    url: "https://x.com/elita_apparel",
   },
   facebook: {
     handle: "Elita Apparel",
-    url: "https://facebook.com/elitaapparel",
+    url: "https://www.facebook.com/elitaapparel",
   },
   whatsapp: {
-    number: "+233553663183", // Replace with actual
-    url: "https://wa.me/233553663183",
+    number: "+212777824970",
+    url: "https://wa.me/212777824970",
   },
-  email: "info@elitaapparel.com",
-  phone: "+233553663183", // Replace with actual
+  email: "bellamoner98@gmail.com",
+  phone: "+212777824970",
 } as const;
 
 export const BRAND_MESSAGES = [

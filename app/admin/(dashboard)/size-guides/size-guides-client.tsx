@@ -26,6 +26,7 @@ import {
   deleteSizeGuide,
 } from "@/app/actions/size-guides";
 import { toast } from "sonner";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
 interface SizeGuide {
   id: string;
@@ -43,6 +44,7 @@ export function SizeGuidesClient({
   const [guides, setGuides] = useState(initialGuides);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingGuide, setEditingGuide] = useState<SizeGuide | null>(null);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
 
   const [form, setForm] = useState({
     title: "",
@@ -109,7 +111,6 @@ export function SizeGuidesClient({
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Delete this size guide?")) return;
     const result = await deleteSizeGuide(id);
     if (result.success) {
       setGuides((prev) => prev.filter((g) => g.id !== id));
@@ -121,6 +122,15 @@ export function SizeGuidesClient({
 
   return (
     <div className="space-y-6">
+      <ConfirmDialog
+        open={!!deleteId}
+        onOpenChange={(open) => !open && setDeleteId(null)}
+        onConfirm={() => deleteId && handleDelete(deleteId)}
+        title="Delete Size Guide?"
+        description="Are you sure you want to delete this size guide? This action cannot be undone."
+        variant="destructive"
+        confirmText="Delete"
+      />
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold">Size Guides</h1>
@@ -177,7 +187,7 @@ export function SizeGuidesClient({
                         variant="ghost"
                         size="icon"
                         className="h-8 w-8 text-red-500 hover:bg-red-500/10"
-                        onClick={() => handleDelete(guide.id)}
+                        onClick={() => setDeleteId(guide.id)}
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>

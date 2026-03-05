@@ -19,6 +19,11 @@ const nextConfig: NextConfig = {
     "http://localhost:3001",
     "https://delta-awhirl-unvibrantly.ngrok-free.dev",
   ],
+  experimental: {
+    serverActions: {
+      bodySizeLimit: "6mb",
+    },
+  },
 };
 
 export default nextConfig;

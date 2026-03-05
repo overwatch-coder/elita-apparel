@@ -1,18 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Image from "next/image";
 import {
   Upload,
   Trash2,
   Star,
-  StarOff,
   Loader2,
-  Plus,
   ImageIcon,
+  X,
+  Plus,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import {
@@ -34,30 +33,77 @@ interface ProductImageManagerProps {
   initialImages: ProductImage[];
 }
 
+interface PendingFile {
+  file: File;
+  previewUrl: string;
+}
+
 export function ProductImageManager({
   productId,
   initialImages,
 }: ProductImageManagerProps) {
   const [images, setImages] = useState<ProductImage[]>(initialImages);
+  const [pendingFiles, setPendingFiles] = useState<PendingFile[]>([]);
   const [isUploading, setIsUploading] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    if (files.length === 0) return;
+
+    const newPending = files.map((file) => ({
+      file,
+      previewUrl: URL.createObjectURL(file),
+    }));
+
+    setPendingFiles((prev) => [...prev, ...newPending]);
+
+    // Reset input value to allow selecting same file again if needed
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
+  const removePendingFile = (index: number) => {
+    setPendingFiles((prev) => {
+      const updated = [...prev];
+      URL.revokeObjectURL(updated[index].previewUrl);
+      updated.splice(index, 1);
+      return updated;
+    });
+  };
+
+  const handleBatchUpload = async () => {
+    if (pendingFiles.length === 0) return;
 
     setIsUploading(true);
-    const formData = new FormData();
-    formData.append("file", file);
+    let successCount = 0;
+    let failCount = 0;
 
-    const result = await uploadProductImage(productId, formData);
+    for (const pending of pendingFiles) {
+      const formData = new FormData();
+      formData.append("file", pending.file);
 
-    if (result.error) {
-      toast.error(result.error);
-    } else {
-      toast.success("Image uploaded successfully");
-      window.location.reload();
+      const result = await uploadProductImage(productId, formData);
+      if (result.error) {
+        failCount++;
+        console.error(`Upload failed for ${pending.file.name}:`, result.error);
+      } else {
+        successCount++;
+      }
     }
+
+    if (successCount > 0) {
+      toast.success(`Successfully uploaded ${successCount} image(s)`);
+      // Revoke all preview URLs
+      pendingFiles.forEach((pf) => URL.revokeObjectURL(pf.previewUrl));
+      setPendingFiles([]);
+      window.location.reload(); // Refresh to get DB IDs and updated state
+    }
+
+    if (failCount > 0) {
+      toast.error(`Failed to upload ${failCount} image(s)`);
+    }
+
     setIsUploading(false);
   };
 
@@ -88,8 +134,7 @@ export function ProductImageManager({
   };
 
   return (
-    <div className="space-y-6">
-      {/* Custom Confirm Dialog */}
+    <div className="space-y-8">
       <ConfirmDialog
         open={!!deleteId}
         onOpenChange={(open) => !open && setDeleteId(null)}
@@ -100,50 +145,17 @@ export function ProductImageManager({
         confirmText="Delete"
       />
 
-      {/* Upload Area */}
-      <div className="flex items-center justify-center w-full">
-        <label
-          className={cn(
-            "flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer bg-accent/30 hover:bg-accent/50 transition-colors border-border",
-            isUploading && "opacity-50 cursor-not-allowed",
-          )}
-        >
-          <div className="flex flex-col items-center justify-center pt-5 pb-6">
-            {isUploading ? (
-              <Loader2 className="w-8 h-8 mb-3 animate-spin text-gold" />
-            ) : (
-              <Upload className="w-8 h-8 mb-3 text-muted-foreground" />
-            )}
-            <p className="mb-2 text-sm text-muted-foreground">
-              <span className="font-semibold text-gold">Click to upload</span>{" "}
-              or drag and drop
-            </p>
-            <p className="text-xs text-muted-foreground/60">
-              Primary or additional product images (MAX. 5MB)
-            </p>
-          </div>
-          <input
-            type="file"
-            className="hidden"
-            accept="image/*"
-            onChange={handleUpload}
-            disabled={isUploading}
-          />
-        </label>
-      </div>
-
-      {/* Images Grid */}
-      {images.length > 0 ? (
+      <div className="flex flex-col gap-6">
+        {/* Gallery Section */}
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+          {/* Active Gallery */}
           {images
-            .sort((a, b) =>
-              a.is_primary === b.is_primary ? 0 : a.is_primary ? -1 : 1,
-            )
+            .sort((a, b) => (a.is_primary ? -1 : b.is_primary ? 1 : 0))
             .map((image) => (
               <div
                 key={image.id}
                 className={cn(
-                  "relative group aspect-square rounded-lg overflow-hidden border-2",
+                  "relative group aspect-square rounded-xl overflow-hidden border-2 transition-all",
                   image.is_primary ? "border-gold" : "border-border/50",
                 )}
               >
@@ -153,8 +165,6 @@ export function ProductImageManager({
                   fill
                   className="object-cover"
                 />
-
-                {/* Overlay Actions */}
                 <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
                   {!image.is_primary && (
                     <Button
@@ -162,7 +172,6 @@ export function ProductImageManager({
                       variant="secondary"
                       className="h-8 w-8 rounded-full bg-white/20 hover:bg-gold text-white"
                       onClick={() => handleSetPrimary(image.id)}
-                      title="Set as Primary"
                     >
                       <Star className="h-4 w-4" />
                     </Button>
@@ -171,28 +180,123 @@ export function ProductImageManager({
                     size="icon"
                     variant="destructive"
                     className="h-8 w-8 rounded-full"
-                    onClick={() => handleDelete(image.id)}
-                    title="Delete Image"
+                    onClick={() => setDeleteId(image.id)}
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>
                 </div>
-
-                {/* Primary Badge */}
                 {image.is_primary && (
-                  <div className="absolute top-2 left-2 bg-gold text-white text-[10px] px-2 py-0.5 rounded font-bold uppercase tracking-wider">
+                  <div className="absolute top-2 left-2 bg-gold text-white text-[10px] px-2 py-0.5 rounded font-bold uppercase tracking-wider shadow-sm">
                     Primary
                   </div>
                 )}
               </div>
             ))}
+
+          {/* Pending Previews */}
+          {pendingFiles.map((pending, idx) => (
+            <div
+              key={idx}
+              className="relative aspect-square rounded-xl overflow-hidden border-2 border-dashed border-gold/50 bg-gold/5 grayscale-[0.5]"
+            >
+              <Image
+                src={pending.previewUrl}
+                alt="Preview"
+                fill
+                className="object-cover"
+              />
+              <div className="absolute inset-0 bg-gold/10 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
+                <Button
+                  size="icon"
+                  variant="destructive"
+                  className="h-8 w-8 rounded-full shadow-lg"
+                  onClick={() => removePendingFile(idx)}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+              <div className="absolute bottom-2 right-2 bg-background/80 backdrop-blur-sm text-[10px] px-2 py-0.5 rounded font-medium border border-border/50">
+                Pending
+              </div>
+            </div>
+          ))}
+
+          {/* Add Button */}
+          <label className="aspect-square rounded-xl border-2 border-dashed border-border hover:border-gold/50 hover:bg-gold/5 transition-all cursor-pointer flex flex-col items-center justify-center gap-2 text-muted-foreground hover:text-gold group">
+            <Plus className="h-8 w-8 group-hover:scale-110 transition-transform" />
+            <span className="text-xs font-medium">Add Photos</span>
+            <input
+              ref={fileInputRef}
+              type="file"
+              multiple
+              accept="image/*"
+              className="hidden"
+              onChange={handleFileSelect}
+              disabled={isUploading}
+            />
+          </label>
         </div>
-      ) : (
-        <div className="flex flex-col items-center justify-center py-10 text-center border rounded-lg bg-accent/10 border-border/50">
-          <ImageIcon className="h-10 w-10 text-muted-foreground/20 mb-3" />
-          <p className="text-sm text-muted-foreground">
-            No images uploaded yet.
-          </p>
+
+        {/* Action Bar */}
+        {pendingFiles.length > 0 && (
+          <div className="flex items-center justify-between p-4 rounded-xl border border-gold/20 bg-gold/5 animate-in fade-in slide-in-from-bottom-2">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-gold/10 flex items-center justify-center border border-gold/20">
+                <ImageIcon className="h-5 w-5 text-gold" />
+              </div>
+              <div>
+                <p className="text-sm font-bold">
+                  {pendingFiles.length} New Images Ready
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  Photos are staged but not yet uploaded to the cloud.
+                </p>
+              </div>
+            </div>
+            <div className="flex gap-3">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setPendingFiles([])}
+                disabled={isUploading}
+                className="text-muted-foreground hover:text-destructive"
+              >
+                Clear All
+              </Button>
+              <Button
+                onClick={handleBatchUpload}
+                disabled={isUploading}
+                size="sm"
+                className="bg-gold hover:bg-gold-dark text-white font-bold px-6"
+              >
+                {isUploading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Uploading...
+                  </>
+                ) : (
+                  <>
+                    <Upload className="mr-2 h-4 w-4" />
+                    Save & Upload All
+                  </>
+                )}
+              </Button>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {!images.length && !pendingFiles.length && (
+        <div className="flex flex-col items-center justify-center py-16 text-center border-2 border-dashed rounded-2xl bg-accent/10 border-border/50">
+          <div className="w-16 h-16 rounded-full bg-gold/5 flex items-center justify-center border border-gold/10 mb-4">
+            <ImageIcon className="h-8 w-8 text-gold/30" />
+          </div>
+          <div className="space-y-1">
+            <h3 className="font-serif text-lg font-medium">Gallery is Empty</h3>
+            <p className="text-sm text-muted-foreground max-w-xs">
+              Bring your product to life with high-quality cultural assets.
+            </p>
+          </div>
         </div>
       )}
     </div>

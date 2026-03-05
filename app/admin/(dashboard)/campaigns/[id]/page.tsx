@@ -29,6 +29,7 @@ import { format } from "date-fns";
 import { toast } from "sonner";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
 export default function CampaignDetailPage({
   params,
@@ -41,6 +42,8 @@ export default function CampaignDetailPage({
   const [isLoading, setIsLoading] = useState(true);
   const [isSending, setIsSending] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [showSendConfirm, setShowSendConfirm] = useState(false);
 
   useEffect(() => {
     async function loadCampaign() {
@@ -57,8 +60,6 @@ export default function CampaignDetailPage({
   }, [id, router]);
 
   const handleDelete = async () => {
-    if (!confirm("Are you sure you want to delete this campaign?")) return;
-
     setIsDeleting(true);
     const result = await deleteCampaign(id);
     if (result.error) {
@@ -71,13 +72,6 @@ export default function CampaignDetailPage({
   };
 
   const handleSend = async () => {
-    if (
-      !confirm(
-        "Ready to blast this campaign to all active subscribers? This cannot be undone.",
-      )
-    )
-      return;
-
     setIsSending(true);
     try {
       const result = await sendCampaign(id);
@@ -108,6 +102,24 @@ export default function CampaignDetailPage({
 
   return (
     <div className="space-y-6">
+      <ConfirmDialog
+        open={showDeleteConfirm}
+        onOpenChange={setShowDeleteConfirm}
+        onConfirm={handleDelete}
+        title="Delete Campaign?"
+        description="Are you sure you want to delete this campaign? This action cannot be undone."
+        variant="destructive"
+        confirmText="Delete"
+      />
+      <ConfirmDialog
+        open={showSendConfirm}
+        onOpenChange={setShowSendConfirm}
+        onConfirm={handleSend}
+        title="Blast Campaign?"
+        description="Ready to blast this campaign to all active subscribers? This cannot be undone."
+        variant="default"
+        confirmText="Send Now"
+      />
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-4">
           <Button variant="ghost" size="icon" asChild>
@@ -145,7 +157,7 @@ export default function CampaignDetailPage({
             <>
               <Button
                 variant="outline"
-                onClick={handleDelete}
+                onClick={() => setShowDeleteConfirm(true)}
                 disabled={isDeleting || isSending}
                 className="border-border text-destructive hover:bg-destructive/10 uppercase tracking-widest text-xs h-10"
               >
@@ -153,7 +165,7 @@ export default function CampaignDetailPage({
                 Delete
               </Button>
               <Button
-                onClick={handleSend}
+                onClick={() => setShowSendConfirm(true)}
                 disabled={isSending}
                 className="bg-gold hover:bg-gold-dark text-white uppercase tracking-widest text-xs h-10"
               >
