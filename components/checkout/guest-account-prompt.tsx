@@ -70,7 +70,10 @@ export function GuestAccountPrompt({ email, name }: GuestAccountPromptProps) {
       </p>
       <div className="space-y-3">
         <div>
-          <Label htmlFor="create-password" className="text-muted-foreground text-sm">
+          <Label
+            htmlFor="create-password"
+            className="text-muted-foreground text-sm"
+          >
             Choose a Password
           </Label>
           <Input
