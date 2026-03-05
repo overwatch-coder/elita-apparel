@@ -54,3 +54,5 @@ PAYMENT.md
 
 # tasks folder
 /tasks
+
+*.temp

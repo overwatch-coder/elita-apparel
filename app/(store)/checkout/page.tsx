@@ -181,7 +181,7 @@ export default function CheckoutPage() {
           setIsSubmitting(false);
         }, 2500);
       } else {
-        // Handle Card or MoMo via Paystack
+        // Handle Card or MoMo via Paystack Inline
         const response = await fetch("/api/payments/initialize", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -190,6 +190,7 @@ export default function CheckoutPage() {
             amount: finalTotal,
             orderId: result.orderId,
             name: form.name,
+            paymentMethod: paymentMethod, // Now passing this to filter channels
           }),
         });
 
@@ -199,8 +200,76 @@ export default function CheckoutPage() {
           throw new Error(data.error || "Payment initialization failed");
         }
 
-        // Redirect to Paystack
-        window.location.href = data.authorization_url;
+        if (typeof (window as any).PaystackPop === "undefined") {
+          throw new Error(
+            "Payment gateway is still loading. Please wait a moment and try again.",
+          );
+        }
+
+        const publicKey = process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY;
+        if (!publicKey) {
+          throw new Error("Payment configuration error: Public key missing.");
+        }
+
+        const handler = (window as any).PaystackPop.setup({
+          key: publicKey,
+          email: form.email,
+          amount: Math.round(finalTotal * 100),
+          currency: "GHS",
+          ref: data.reference,
+          access_code: data.access_code,
+          metadata: {
+            order_id: result.orderId,
+          },
+          onClose: () => {
+            setProcessingStatus("idle");
+            setIsSubmitting(false);
+            toast.info("Payment window closed.");
+          },
+          callback: (response: any) => {
+            // Hide the Paystack popup and show our "Verifying" modal
+            setProcessingStatus("processing");
+
+            const verifyPayment = async () => {
+              try {
+                const verifyRes = await fetch("/api/payments/verify", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({
+                    reference: response.reference,
+                    orderId: result.orderId,
+                  }),
+                });
+
+                const verifyData = await verifyRes.json();
+
+                if (verifyRes.ok && verifyData.success) {
+                  setProcessingStatus("success");
+                  clearCart();
+                  setTimeout(() => {
+                    setIsComplete(true);
+                    setProcessingStatus("idle");
+                    setIsSubmitting(false);
+                  }, 2000);
+                } else {
+                  throw new Error(verifyData.error || "Verification failed");
+                }
+              } catch (err: any) {
+                console.error("Verification error:", err);
+                toast.error(
+                  err.message ||
+                    "Could not verify payment. Please contact support.",
+                );
+                setProcessingStatus("error");
+              }
+            };
+            verifyPayment();
+          },
+        });
+
+        // Hide our loading modal before opening Paystack's popup
+        setProcessingStatus("idle");
+        handler.openIframe();
       }
     } catch (error) {
       console.error("Checkout error:", error);
@@ -299,6 +368,10 @@ export default function CheckoutPage() {
       <PaymentProcessingModal
         isOpen={processingStatus !== "idle"}
         status={processingStatus}
+        onClose={() => {
+          setProcessingStatus("idle");
+          setIsSubmitting(false);
+        }}
       />
 
       <div className="container mx-auto px-4 lg:px-8">

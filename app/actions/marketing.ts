@@ -20,7 +20,7 @@ export async function subscribeToNewsletter(
       .from("subscribers")
       .select("id, is_subscribed")
       .eq("email", email)
-      .single();
+      .maybeSingle();
 
     if (existingUser) {
       if (existingUser.is_subscribed) {
@@ -47,7 +47,13 @@ export async function subscribeToNewsletter(
       is_subscribed: true,
     });
 
-    if (insertError) throw insertError;
+    if (insertError) {
+      // If it's a conflict error (23505), someone might have just subscribed. Handle it gracefully.
+      if (insertError.code === "23505") {
+        return { success: true, message: "Thank you for subscribing!" };
+      }
+      throw insertError;
+    }
 
     revalidatePath("/admin/audience");
     return {

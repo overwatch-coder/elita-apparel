@@ -6,11 +6,13 @@ import { CheckCircle2, Loader2 } from "lucide-react";
 interface PaymentProcessingModalProps {
   isOpen: boolean;
   status: "idle" | "processing" | "success" | "error";
+  onClose?: () => void;
 }
 
 export function PaymentProcessingModal({
   isOpen,
   status,
+  onClose,
 }: PaymentProcessingModalProps) {
   const [show, setShow] = useState(false);
 
@@ -72,6 +74,33 @@ export function PaymentProcessingModal({
                 <p className="text-sm text-muted-foreground">
                   Your order has been successfully placed. Relocating you...
                 </p>
+              </div>
+            </>
+          )}
+
+          {status === "error" && (
+            <>
+              <div className="relative">
+                <div className="absolute inset-0 rounded-full blur-xl bg-red-500/20 animate-pulse" />
+                <div className="h-20 w-20 bg-red-500/10 rounded-full flex items-center justify-center relative border border-red-500/30">
+                  <span className="text-3xl">⚠️</span>
+                </div>
+              </div>
+              <div>
+                <h3 className="text-xl font-serif text-white mb-2">
+                  Something went wrong
+                </h3>
+                <p className="text-sm text-muted-foreground mb-6">
+                  We encountered an error while processing your request. Please
+                  try again or contact support.
+                </p>
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className="w-full bg-gold hover:bg-gold-dark text-white font-medium tracking-wider uppercase py-3 rounded-lg transition-colors"
+                >
+                  Close
+                </button>
               </div>
             </>
           )}

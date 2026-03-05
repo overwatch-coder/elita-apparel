@@ -45,9 +45,9 @@ export function GuestAccountPrompt({ email, name }: GuestAccountPromptProps) {
 
   if (isDone) {
     return (
-      <div className="mt-6 p-6 rounded-xl bg-gold/5 border border-gold/20 text-center">
+      <div className="mt-6 p-6 rounded-xl bg-muted/50 border border-border text-center">
         <UserPlus className="h-8 w-8 text-gold mx-auto mb-3" />
-        <p className="text-sm text-cream/80">
+        <p className="text-sm text-muted-foreground">
           Account created! Check <span className="text-gold">{email}</span> to
           verify.
         </p>
@@ -56,21 +56,21 @@ export function GuestAccountPrompt({ email, name }: GuestAccountPromptProps) {
   }
 
   return (
-    <div className="mt-6 p-6 rounded-xl bg-white/5 border border-cream/10">
+    <div className="mt-6 p-6 rounded-xl bg-muted/30 border border-border">
       <div className="flex items-center gap-3 mb-4">
         <UserPlus className="h-5 w-5 text-gold" />
-        <h3 className="font-serif text-lg text-cream">
+        <h3 className="font-serif text-lg text-foreground">
           Save your details for next time?
         </h3>
       </div>
-      <p className="text-sm text-cream/60 mb-4">
+      <p className="text-sm text-muted-foreground mb-4">
         Create an account with{" "}
         <span className="text-gold font-medium">{email}</span> to track orders
         and check out faster.
       </p>
       <div className="space-y-3">
         <div>
-          <Label htmlFor="create-password" className="text-cream/70 text-sm">
+          <Label htmlFor="create-password" className="text-muted-foreground text-sm">
             Choose a Password
           </Label>
           <Input
@@ -79,7 +79,7 @@ export function GuestAccountPrompt({ email, name }: GuestAccountPromptProps) {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="At least 6 characters"
-            className="mt-1 bg-black/20 border-cream/10 text-cream focus-visible:ring-gold/50"
+            className="mt-1 bg-background border-border text-foreground focus-visible:ring-gold/50"
           />
         </div>
         <Button

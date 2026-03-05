@@ -15,7 +15,7 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json();
-    const { email, amount, orderId, name } = body;
+    const { email, amount, orderId, name, paymentMethod } = body;
 
     if (!email || !amount || !orderId) {
       return NextResponse.json(
@@ -23,6 +23,11 @@ export async function POST(req: Request) {
         { status: 400 },
       );
     }
+
+    // Determine channels based on payment method
+    let channels = ["card", "bank", "ussd", "qr", "mobile_money"]; // default
+    if (paymentMethod === "card") channels = ["card"];
+    if (paymentMethod === "momo") channels = ["mobile_money"];
 
     // Paystack expects amount in pesewas / smallest currency unit
     const amountInPesewas = Math.round(amount * 100);
@@ -39,6 +44,7 @@ export async function POST(req: Request) {
           email,
           amount: amountInPesewas,
           currency: "GHS",
+          channels,
           callback_url: `${NEXT_PUBLIC_SITE_URL}/checkout/verify?order_id=${orderId}`,
           metadata: {
             order_id: orderId,
@@ -65,10 +71,11 @@ export async function POST(req: Request) {
       );
     }
 
-    // Return the authorization URL to the client so they can redirect the user
+    // Return the response data to the client
     return NextResponse.json({
       authorization_url: data.data.authorization_url,
       reference: data.data.reference,
+      access_code: data.data.access_code,
     });
   } catch (error) {
     console.error("Payment initialization error:", error);
