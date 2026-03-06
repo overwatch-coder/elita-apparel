@@ -11,6 +11,7 @@ import {
   TrendingUp,
   ShoppingBag,
   Award,
+  ShieldCheck,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CustomerDashboardCharts } from "@/components/account/dashboard-charts";
@@ -54,6 +55,12 @@ export default async function AccountOverviewPage() {
     .eq("user_id", user.id)
     .order("created_at", { ascending: false })
     .limit(5);
+
+  // Fetch saved addresses count
+  const { count: addressCount } = await supabase
+    .from("addresses")
+    .select("*", { count: "exact", head: true })
+    .eq("user_id", user.id);
 
   // Stats calculation
   const totalOrders = allOrders?.length || 0;
@@ -209,7 +216,7 @@ export default async function AccountOverviewPage() {
               Saved Addresses
             </p>
             <h3 className="text-2xl font-serif text-foreground">
-              {profile?.phone ? 2 : 1} Locations
+              {addressCount || 0} Locations
             </h3>
           </CardContent>
         </Card>
@@ -331,22 +338,36 @@ export default async function AccountOverviewPage() {
 
         {/* Quick Access Column */}
         <div className="space-y-6">
-          <div className="bg-gold/5 border border-gold/20 rounded-xl p-6 relative overflow-hidden group">
-            <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform">
-              <Award className="h-20 w-20 text-gold" />
+          <div className="bg-background border border-border/80 rounded-xl p-6 relative overflow-hidden group shadow-sm">
+            <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:scale-110 transition-all duration-500">
+              <ShieldCheck className="h-20 w-20 text-foreground" />
             </div>
-            <h3 className="text-sm font-serif text-gold mb-2">
-              Member Privilege
-            </h3>
-            <p className="text-xs text-muted-foreground mb-4 leading-relaxed">
-              As an {accountLevel} Member, you have access to exclusive drops
-              and personalized tailoring advice.
+            <div className="flex items-center gap-2 mb-3 text-gold">
+              <ShieldCheck className="h-4 w-4" />
+              <h3 className="text-xs font-bold uppercase tracking-widest">
+                Security Overview
+              </h3>
+            </div>
+            <p className="text-[11px] text-muted-foreground mb-4 leading-relaxed">
+              Your account security is our priority. Ensure your password is
+              robust and your recovery details are up to date.
             </p>
+            <div className="space-y-2 mb-6 text-[10px] font-medium text-muted-foreground uppercase tracking-widest">
+              <div className="flex items-center justify-between border-b border-border/40 pb-2">
+                <span>Account Status</span>
+                <span className="text-green-500">Protected</span>
+              </div>
+              <div className="flex items-center justify-between border-b border-border/40 pb-2">
+                <span>2FA Status</span>
+                <span className="text-ghana-red">Disabled</span>
+              </div>
+            </div>
             <Button
+              asChild
               variant="outline"
-              className="w-full border-gold/30 text-gold hover:bg-gold hover:text-white text-[10px] font-bold uppercase tracking-widest h-10"
+              className="w-full border-border hover:bg-gold/5 hover:text-gold hover:border-gold/30 text-[10px] font-bold uppercase tracking-widest h-10 transition-all"
             >
-              View Benefits
+              <Link href="/account/profile">Manage Security</Link>
             </Button>
           </div>
 

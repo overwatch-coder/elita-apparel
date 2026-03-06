@@ -19,9 +19,9 @@ import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { logoutAction } from "@/lib/actions/auth";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Separator } from "@/components/ui/separator";
 import { ModeToggle } from "@/components/layout/mode-toggle";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
 
 const menuGroups = [
   {
@@ -96,7 +96,7 @@ export function AccountSidebar({
       {/* Header / Brand */}
       <div
         className={cn(
-          "flex h-20 items-center overflow-hidden transition-all border-b border-border/50",
+          "flex h-20 items-center overflow-hidden transition-all border-b border-border/50 shrink-0",
           isCollapsed ? "px-2 justify-center" : "px-6",
         )}
       >
@@ -116,9 +116,10 @@ export function AccountSidebar({
         </Link>
       </div>
 
-      <div className="flex-1 min-h-0 py-6">
-        <ScrollArea className="h-full px-3">
-          <div className="space-y-6">
+      {/* Navigation Area - Scrollable */}
+      <div className="flex-1 overflow-hidden">
+        <ScrollArea className="h-full">
+          <div className="space-y-6 py-6 px-3">
             <Link
               href="/"
               className={cn(
@@ -149,10 +150,10 @@ export function AccountSidebar({
                         key={item.href}
                         href={item.href}
                         className={cn(
-                          "flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition-all",
+                          "flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition-all group",
                           isActive
                             ? "bg-gold text-white shadow-md shadow-gold/20"
-                            : "text-muted-foreground hover:bg-accent/50 hover:text-foreground",
+                            : "text-muted-foreground hover:bg-gold/10 hover:text-gold",
                           isCollapsed && "justify-center px-0",
                         )}
                         title={isCollapsed ? item.title : undefined}
@@ -162,7 +163,7 @@ export function AccountSidebar({
                             "h-4 w-4 shrink-0",
                             isActive
                               ? "text-white"
-                              : "text-gold/80 group-hover:text-gold",
+                              : "text-gold/80 group-hover:text-gold transition-colors",
                           )}
                         />
                         {!isCollapsed && <span>{item.title}</span>}
@@ -174,91 +175,91 @@ export function AccountSidebar({
             ))}
           </div>
         </ScrollArea>
+      </div>
 
-        {/* Footer - Matched with Admin Sidebar */}
-        <div className="border-t border-border/50 p-4 space-y-4 bg-muted/20">
-          <div
-            className={cn(
-              "flex items-center gap-2 px-2",
-              isCollapsed && "flex-col",
-            )}
-          >
-            <ModeToggle />
-            {!isCollapsed && (
-              <span className="text-[10px] uppercase font-bold tracking-widest text-muted-foreground">
-                Appearance
-              </span>
-            )}
+      {/* Footer - Fixed at bottom */}
+      <div className="border-t border-border/50 p-4 space-y-4 bg-muted/5 shrink-0">
+        <div
+          className={cn(
+            "flex items-center gap-2 px-2",
+            isCollapsed && "flex-col",
+          )}
+        >
+          <ModeToggle />
+          {!isCollapsed && (
+            <span className="text-[10px] uppercase font-bold tracking-widest text-muted-foreground">
+              Appearance
+            </span>
+          )}
+        </div>
+
+        <Separator className="bg-border/30" />
+
+        {/* User Profile Info */}
+        <Link
+          href="/account/profile"
+          className={cn(
+            "flex items-center gap-3 p-2 rounded-md hover:bg-gold/5 transition-colors overflow-hidden border border-transparent hover:border-gold/20",
+            isCollapsed && "justify-center px-0",
+          )}
+        >
+          <div className="h-8 w-8 rounded-full bg-gold/10 flex items-center justify-center shrink-0 border border-gold/20">
+            <Users className="h-4 w-4 text-gold" />
           </div>
+          {!isCollapsed && (
+            <div className="flex flex-col min-w-0">
+              <span className="text-sm font-medium text-foreground truncate">
+                {user.name}
+              </span>
+              <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-bold">
+                {user.role}
+              </span>
+            </div>
+          )}
+        </Link>
 
-          <Separator className="bg-border/50" />
-
-          {/* User Profile Info */}
-          <Link
-            href="/account/profile"
+        {/* View Store & Logout Group */}
+        <div className="space-y-1">
+          <Button
+            asChild
+            variant="ghost"
+            size="sm"
             className={cn(
-              "flex items-center gap-3 p-2 rounded-md hover:bg-accent transition-colors overflow-hidden",
+              "w-full justify-start text-muted-foreground hover:bg-gold/5 hover:text-gold",
               isCollapsed && "justify-center px-0",
             )}
           >
-            <div className="h-8 w-8 rounded-full bg-gold/10 flex items-center justify-center shrink-0 border border-gold/20">
-              <Users className="h-4 w-4 text-gold" />
-            </div>
-            {!isCollapsed && (
-              <div className="flex flex-col min-w-0">
-                <span className="text-sm font-medium text-foreground truncate">
-                  {user.name}
+            <Link href="/" title={isCollapsed ? "View Store" : undefined}>
+              {!isCollapsed ? (
+                <span className="flex items-center gap-2 text-[10px] uppercase tracking-widest font-bold">
+                  <ShoppingCart className="h-4 w-4" />
+                  View Store
                 </span>
-                <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-bold">
-                  {user.role}
-                </span>
-              </div>
-            )}
-          </Link>
+              ) : (
+                <ShoppingCart className="h-4 w-4" />
+              )}
+            </Link>
+          </Button>
 
-          {/* View Store & Logout Group */}
-          <div className="space-y-1">
+          <form action={() => logoutAction("/login")} className="w-full">
             <Button
-              asChild
+              type="submit"
               variant="ghost"
               size="sm"
               className={cn(
-                "w-full justify-start text-muted-foreground hover:bg-accent hover:text-foreground",
+                "w-full justify-start text-muted-foreground hover:text-destructive hover:bg-destructive/10",
                 isCollapsed && "justify-center px-0",
               )}
+              title={isCollapsed ? "Sign Out" : undefined}
             >
-              <Link href="/" title={isCollapsed ? "View Store" : undefined}>
-                {!isCollapsed ? (
-                  <span className="flex items-center gap-2 text-xs uppercase tracking-widest font-bold">
-                    <ShoppingCart className="h-4 w-4 text-gold" />
-                    View Store
-                  </span>
-                ) : (
-                  <ShoppingCart className="h-4 w-4 text-gold" />
-                )}
-              </Link>
+              <LogOut className="h-4 w-4 shrink-0 text-ghana-red" />
+              {!isCollapsed && (
+                <span className="ml-2 text-[10px] uppercase tracking-widest font-bold text-ghana-red">
+                  Sign Out
+                </span>
+              )}
             </Button>
-
-            <form action={() => logoutAction("/login")} className="w-full">
-              <Button
-                type="submit"
-                variant="ghost"
-                size="sm"
-                className={cn(
-                  "w-full justify-start text-muted-foreground hover:text-destructive hover:bg-destructive/10",
-                  isCollapsed && "justify-center px-0",
-                )}
-                title={isCollapsed ? "Sign Out" : undefined}
-              >
-                <LogOut className="h-4 w-4 shrink-0 text-ghana-red" />
-                {!isCollapsed && (
-                  <span className="ml-2 text-xs uppercase tracking-widest font-bold text-ghana-red">
-                    Sign Out
-                  </span>
-                )}
-              </Button>
-            </form>
-          </div>
+          </form>
         </div>
       </div>
     </aside>

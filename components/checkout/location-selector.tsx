@@ -108,6 +108,10 @@ export function LocationSelector({
       } else {
         setShowOtherCity(false);
       }
+    } else {
+      setSelectedStateCode("");
+      setCities([]);
+      setShowOtherCity(false);
     }
   };
 
@@ -150,15 +154,21 @@ export function LocationSelector({
           onValueChange={handleStateChange}
           disabled={!selectedCountryCode || states.length === 0}
         >
-          <SelectTrigger className="mt-1.5 bg-background border-border text-foreground h-12 w-full focus:ring-gold/50">
+          <SelectTrigger
+            id="state-trigger"
+            className="mt-1.5 bg-background border-border text-foreground h-12 w-full focus:ring-gold/50"
+          >
             <SelectValue placeholder="Select Region/State" />
           </SelectTrigger>
           <SelectContent>
-            {states.map((s) => (
-              <SelectItem key={s.isoCode} value={s.name}>
-                {s.name}
-              </SelectItem>
-            ))}
+            <SelectGroup>
+              <SelectLabel>Regions/States</SelectLabel>
+              {states.map((s) => (
+                <SelectItem key={s.isoCode} value={s.name}>
+                  {s.name}
+                </SelectItem>
+              ))}
+            </SelectGroup>
           </SelectContent>
         </Select>
       </div>

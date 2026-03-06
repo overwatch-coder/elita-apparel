@@ -12,7 +12,10 @@ import {
   Heart,
   User,
   ChevronLeft,
+  Users,
 } from "lucide-react";
+import { ModeToggle } from "../layout/mode-toggle";
+import { Separator } from "../ui/separator";
 import {
   Sheet,
   SheetContent,
@@ -35,7 +38,11 @@ const NAV_ITEMS = [
   { label: "Profile Settings", href: "/account/profile", icon: User },
 ];
 
-export function AccountMobileNav() {
+export function AccountMobileNav({
+  user,
+}: {
+  user: { name: string; email: string; role: string };
+}) {
   const pathname = usePathname();
 
   return (
@@ -92,16 +99,42 @@ export function AccountMobileNav() {
               </nav>
             </ScrollArea>
           </div>
-          <div className="mt-auto border-t border-border p-4 bg-card">
-            <form action={() => logoutAction()} className="mt-8">
+          <div className="mt-auto border-t border-border p-4 bg-muted/5 space-y-4">
+            <div className="flex items-center gap-2 px-2">
+              <ModeToggle />
+              <span className="text-[10px] uppercase font-bold tracking-widest text-muted-foreground">
+                Appearance
+              </span>
+            </div>
+
+            <Separator className="bg-border/30" />
+
+            {/* User Profile Info */}
+            <div className="flex items-center gap-3 p-2 rounded-md bg-gold/5 border border-gold/10 transition-colors overflow-hidden">
+              <div className="h-8 w-8 rounded-full bg-gold/10 flex items-center justify-center shrink-0 border border-gold/20">
+                <Users className="h-4 w-4 text-gold" />
+              </div>
+              <div className="flex flex-col min-w-0">
+                <span className="text-sm font-medium text-foreground truncate">
+                  {user.name}
+                </span>
+                <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-bold">
+                  {user.role}
+                </span>
+              </div>
+            </div>
+
+            <form action={() => logoutAction("/login")} className="w-full">
               <Button
                 type="submit"
                 variant="ghost"
                 size="sm"
                 className="w-full justify-start text-muted-foreground hover:text-destructive hover:bg-destructive/10"
               >
-                <LogOut className="h-4 w-4 mr-2" />
-                Sign Out
+                <LogOut className="h-4 w-4 shrink-0 text-ghana-red" />
+                <span className="ml-2 text-[10px] uppercase tracking-widest font-bold text-ghana-red">
+                  Sign Out
+                </span>
               </Button>
             </form>
           </div>
