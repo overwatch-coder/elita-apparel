@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { Loader2, Trash2, CheckCircle2 } from "lucide-react";
+import { Loader2, Trash2, CheckCircle2, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { AddressFormDialog } from "./address-form-dialog";
 import {
   deleteAddressAction,
   setDefaultAddressAction,
@@ -84,6 +85,20 @@ export function AddressList({ addresses }: AddressListProps) {
           </div>
 
           <div className="flex items-center gap-3 pt-4 border-t border-border">
+            <AddressFormDialog
+              address={address}
+              trigger={
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-xs text-muted-foreground hover:text-gold hover:bg-gold/10"
+                >
+                  <Pencil className="mr-2 h-3.5 w-3.5" />
+                  Edit
+                </Button>
+              }
+            />
+
             {!address.is_default && (
               <Button
                 variant="ghost"

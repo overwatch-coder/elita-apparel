@@ -41,10 +41,7 @@ export function PasswordForm() {
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
       <div className="space-y-2">
-        <Label
-          htmlFor="password"
-          className="text-muted-foreground text-sm font-medium"
-        >
+        <Label htmlFor="password" className="text-muted-foreground text-sm">
           New Password
         </Label>
         <div className="relative">
@@ -55,7 +52,7 @@ export function PasswordForm() {
             required
             autoComplete="new-password"
             placeholder="••••••••"
-            className="h-12 bg-background border-border text-foreground placeholder:text-muted-foreground/30 focus-visible:ring-gold/50 pr-12"
+            className="h-12 bg-card border-border text-foreground placeholder:text-muted-foreground/50 focus-visible:ring-gold/50 pr-12"
           />
           <Button
             type="button"
@@ -71,7 +68,7 @@ export function PasswordForm() {
             )}
           </Button>
         </div>
-        <p className="text-[10px] text-muted-foreground/60 uppercase tracking-wider">
+        <p className="text-xs text-muted-foreground/60">
           Must be at least 6 characters.
         </p>
       </div>
@@ -79,7 +76,7 @@ export function PasswordForm() {
       <div className="space-y-2">
         <Label
           htmlFor="confirmPassword"
-          className="text-muted-foreground text-sm font-medium"
+          className="text-muted-foreground text-sm"
         >
           Confirm New Password
         </Label>
@@ -90,14 +87,14 @@ export function PasswordForm() {
           required
           autoComplete="new-password"
           placeholder="••••••••"
-          className="h-12 bg-background border-border text-foreground placeholder:text-muted-foreground/30 focus-visible:ring-gold/50"
+          className="h-12 bg-card border-border text-foreground placeholder:text-muted-foreground/50 focus-visible:ring-gold/50"
         />
       </div>
 
       <Button
         type="submit"
         disabled={isPending}
-        className="h-11 bg-gold hover:bg-gold-dark text-white font-medium uppercase tracking-widest text-[10px] px-8"
+        className="h-11 bg-gold hover:bg-gold-dark text-white font-medium"
       >
         {isPending ? (
           <>

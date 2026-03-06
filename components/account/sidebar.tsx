@@ -11,6 +11,9 @@ import {
   Heart,
   ChevronLeft,
   ChevronRight,
+  LayoutDashboard,
+  ShoppingCart,
+  Users,
 } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -20,36 +23,41 @@ import { ModeToggle } from "@/components/layout/mode-toggle";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 
-const navItems = [
+const menuGroups = [
   {
-    title: "Back to Store",
-    href: "/",
-    icon: ChevronLeft,
+    label: "Main Menu",
+    items: [
+      {
+        title: "Overview",
+        href: "/account",
+        icon: LayoutDashboard,
+      },
+      {
+        title: "Order History",
+        href: "/account/orders",
+        icon: ShoppingBag,
+      },
+    ],
   },
   {
-    title: "Overview",
-    href: "/account",
-    icon: User,
-  },
-  {
-    title: "Order History",
-    href: "/account/orders",
-    icon: ShoppingBag,
-  },
-  {
-    title: "Addresses",
-    href: "/account/addresses",
-    icon: MapPin,
-  },
-  {
-    title: "Wishlist",
-    href: "/account/wishlist",
-    icon: Heart,
-  },
-  {
-    title: "Profile Settings",
-    href: "/account/profile",
-    icon: User,
+    label: "Account Settings",
+    items: [
+      {
+        title: "Addresses",
+        href: "/account/addresses",
+        icon: MapPin,
+      },
+      {
+        title: "Wishlist",
+        href: "/account/wishlist",
+        icon: Heart,
+      },
+      {
+        title: "Profile & Security",
+        href: "/account/profile",
+        icon: User,
+      },
+    ],
   },
 ];
 
@@ -110,44 +118,76 @@ export function AccountSidebar({
 
       <div className="flex-1 min-h-0 py-6">
         <ScrollArea className="h-full px-3">
-          <nav className="space-y-1">
-            {navItems.map((item) => {
-              const isActive = pathname === item.href;
+          <div className="space-y-6">
+            <Link
+              href="/"
+              className={cn(
+                "flex items-center gap-3 rounded-md px-3 py-2 text-xs font-semibold uppercase tracking-widest text-muted-foreground hover:text-gold transition-colors mb-4",
+                isCollapsed && "justify-center px-0",
+              )}
+            >
+              <ChevronLeft className="h-4 w-4 shrink-0" />
+              {!isCollapsed && <span>Back to Store</span>}
+            </Link>
 
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={cn(
-                    "flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition-colors",
-                    isActive
-                      ? "bg-gold text-white shadow-sm"
-                      : "text-muted-foreground hover:bg-accent hover:text-foreground",
-                    isCollapsed && "justify-center px-0",
-                  )}
-                  title={isCollapsed ? item.title : undefined}
-                >
-                  <item.icon
-                    className={cn(
-                      "h-4 w-4 shrink-0",
-                      isActive ? "text-white" : "text-gold",
-                    )}
-                  />
-                  {!isCollapsed && <span>{item.title}</span>}
-                </Link>
-              );
-            })}
-          </nav>
+            {menuGroups.map((group, idx) => (
+              <div key={idx} className="space-y-2">
+                {!isCollapsed && (
+                  <p className="px-3 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/50">
+                    {group.label}
+                  </p>
+                )}
+                <nav className="space-y-1">
+                  {group.items.map((item) => {
+                    const isActive =
+                      pathname === item.href ||
+                      (item.href !== "/account" &&
+                        pathname.startsWith(item.href));
+
+                    return (
+                      <Link
+                        key={item.href}
+                        href={item.href}
+                        className={cn(
+                          "flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition-all",
+                          isActive
+                            ? "bg-gold text-white shadow-md shadow-gold/20"
+                            : "text-muted-foreground hover:bg-accent/50 hover:text-foreground",
+                          isCollapsed && "justify-center px-0",
+                        )}
+                        title={isCollapsed ? item.title : undefined}
+                      >
+                        <item.icon
+                          className={cn(
+                            "h-4 w-4 shrink-0",
+                            isActive
+                              ? "text-white"
+                              : "text-gold/80 group-hover:text-gold",
+                          )}
+                        />
+                        {!isCollapsed && <span>{item.title}</span>}
+                      </Link>
+                    );
+                  })}
+                </nav>
+              </div>
+            ))}
+          </div>
         </ScrollArea>
 
-        {/* User / Footer Section */}
-        <div className="p-4 mt-auto border-t border-border/50 space-y-4">
+        {/* Footer - Matched with Admin Sidebar */}
+        <div className="border-t border-border/50 p-4 space-y-4 bg-muted/20">
           <div
-            className={cn("flex items-center gap-2", isCollapsed && "flex-col")}
+            className={cn(
+              "flex items-center gap-2 px-2",
+              isCollapsed && "flex-col",
+            )}
           >
             <ModeToggle />
             {!isCollapsed && (
-              <span className="text-xs text-muted-foreground">Appearance</span>
+              <span className="text-[10px] uppercase font-bold tracking-widest text-muted-foreground">
+                Appearance
+              </span>
             )}
           </div>
 
@@ -161,34 +201,64 @@ export function AccountSidebar({
               isCollapsed && "justify-center px-0",
             )}
           >
-            <div className="h-8 w-8 rounded-full bg-gold/10 flex items-center justify-center shrink-0">
-              <User className="h-4 w-4 text-gold" />
+            <div className="h-8 w-8 rounded-full bg-gold/10 flex items-center justify-center shrink-0 border border-gold/20">
+              <Users className="h-4 w-4 text-gold" />
             </div>
             {!isCollapsed && (
               <div className="flex flex-col min-w-0">
                 <span className="text-sm font-medium text-foreground truncate">
                   {user.name}
                 </span>
-                <span className="text-[10px] text-muted-foreground uppercase tracking-wider">
+                <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-bold">
                   {user.role}
                 </span>
               </div>
             )}
           </Link>
 
-          <form action={() => logoutAction("/login")}>
-            <button
-              type="submit"
+          {/* View Store & Logout Group */}
+          <div className="space-y-1">
+            <Button
+              asChild
+              variant="ghost"
+              size="sm"
               className={cn(
-                "flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-destructive hover:bg-destructive/10 transition-colors",
+                "w-full justify-start text-muted-foreground hover:bg-accent hover:text-foreground",
                 isCollapsed && "justify-center px-0",
               )}
-              title={isCollapsed ? "Sign Out" : undefined}
             >
-              <LogOut className="h-4 w-4 shrink-0" />
-              {!isCollapsed && <span>Sign Out</span>}
-            </button>
-          </form>
+              <Link href="/" title={isCollapsed ? "View Store" : undefined}>
+                {!isCollapsed ? (
+                  <span className="flex items-center gap-2 text-xs uppercase tracking-widest font-bold">
+                    <ShoppingCart className="h-4 w-4 text-gold" />
+                    View Store
+                  </span>
+                ) : (
+                  <ShoppingCart className="h-4 w-4 text-gold" />
+                )}
+              </Link>
+            </Button>
+
+            <form action={() => logoutAction("/login")} className="w-full">
+              <Button
+                type="submit"
+                variant="ghost"
+                size="sm"
+                className={cn(
+                  "w-full justify-start text-muted-foreground hover:text-destructive hover:bg-destructive/10",
+                  isCollapsed && "justify-center px-0",
+                )}
+                title={isCollapsed ? "Sign Out" : undefined}
+              >
+                <LogOut className="h-4 w-4 shrink-0 text-ghana-red" />
+                {!isCollapsed && (
+                  <span className="ml-2 text-xs uppercase tracking-widest font-bold text-ghana-red">
+                    Sign Out
+                  </span>
+                )}
+              </Button>
+            </form>
+          </div>
         </div>
       </div>
     </aside>

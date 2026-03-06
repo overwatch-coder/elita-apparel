@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { Loader2, Plus } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Loader2, Plus, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -14,25 +14,88 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { addAddressAction } from "@/lib/actions/address";
+import { addAddressAction, updateAddressAction } from "@/lib/actions/address";
 import { toast } from "sonner";
+import { LocationSelector } from "@/components/checkout/location-selector";
+import type { Address } from "@/lib/types/database";
 
-export function AddressFormDialog() {
+interface AddressFormDialogProps {
+  address?: Address;
+  trigger?: React.ReactNode;
+}
+
+export function AddressFormDialog({
+  address,
+  trigger,
+}: AddressFormDialogProps) {
   const [open, setOpen] = useState(false);
   const [isPending, setIsPending] = useState(false);
+  const isEditing = !!address;
+
+  const [formData, setFormData] = useState({
+    fullName: address?.full_name || "",
+    phone: address?.phone || "",
+    addressLine1: address?.address_line_1 || "",
+    addressLine2: address?.address_line_2 || "",
+    city: address?.city || "",
+    region: address?.region || "",
+    country: address?.country || "Ghana",
+    isDefault: address?.is_default || false,
+  });
+
+  // Update effect if address changes (for editing)
+  useEffect(() => {
+    if (address) {
+      setFormData({
+        fullName: address.full_name || "",
+        phone: address.phone || "",
+        addressLine1: address.address_line_1 || "",
+        addressLine2: address.address_line_2 || "",
+        city: address.city || "",
+        region: address.region || "",
+        country: address.country || "Ghana",
+        isDefault: address.is_default || false,
+      });
+    }
+  }, [address]);
+
+  const handleLocationChange = (key: string, value: string) => {
+    setFormData((prev) => ({ ...prev, [key]: value }));
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsPending(true);
 
-    const formData = new FormData(e.currentTarget);
-    const result = await addAddressAction(formData);
+    const data = new FormData(e.currentTarget);
+    // Ensure hidden location fields are correctly populated if needed,
+    // but here we can just use the state directly if the action supports it,
+    // or ensure inputs are present.
+
+    let result;
+    if (isEditing && address) {
+      result = await updateAddressAction(address.id, data);
+    } else {
+      result = await addAddressAction(data);
+    }
 
     if (result?.error) {
       toast.error(result.error);
     } else if (result?.success) {
       toast.success(result.success);
       setOpen(false);
+      if (!isEditing) {
+        setFormData({
+          fullName: "",
+          phone: "",
+          addressLine1: "",
+          addressLine2: "",
+          city: "",
+          region: "",
+          country: "Ghana",
+          isDefault: false,
+        });
+      }
     }
 
     setIsPending(false);
@@ -41,27 +104,31 @@ export function AddressFormDialog() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="bg-gold hover:bg-gold-dark text-white font-medium gap-2">
-          <Plus className="h-4 w-4" />
-          Add New Address
-        </Button>
+        {trigger || (
+          <Button className="bg-gold hover:bg-gold-dark text-white font-medium gap-2 uppercase tracking-widest text-[10px] px-6 h-11">
+            <Plus className="h-4 w-4" />
+            Add New Address
+          </Button>
+        )}
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px] bg-background text-foreground border-border">
+      <DialogContent className="sm:max-w-[500px] bg-background text-foreground border-border max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="font-serif text-xl text-foreground">
-            Add Shipping Address
+          <DialogTitle className="font-serif text-2xl text-foreground">
+            {isEditing ? "Edit Address" : "Add Shipping Address"}
           </DialogTitle>
-          <DialogDescription className="text-muted-foreground">
-            Enter your delivery details. We currently ship within Ghana.
+          <DialogDescription className="text-muted-foreground text-sm">
+            {isEditing
+              ? "Update your delivery details below."
+              : "Enter your delivery details. We currently ship within Ghana and select international locations."}
           </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-4 pt-4">
-          <div className="grid grid-cols-2 gap-4">
+        <form onSubmit={handleSubmit} className="space-y-6 pt-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <div className="space-y-2">
               <Label
                 htmlFor="fullName"
-                className="text-muted-foreground text-xs"
+                className="text-muted-foreground text-[10px] uppercase tracking-widest font-bold"
               >
                 Full Name
               </Label>
@@ -69,18 +136,29 @@ export function AddressFormDialog() {
                 id="fullName"
                 name="fullName"
                 required
-                className="bg-card border-border text-foreground h-10"
+                value={formData.fullName}
+                onChange={(e) =>
+                  setFormData({ ...formData, fullName: e.target.value })
+                }
+                className="bg-background border-border text-foreground h-12 focus-visible:ring-gold/50"
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="phone" className="text-muted-foreground text-xs">
+              <Label
+                htmlFor="phone"
+                className="text-muted-foreground text-[10px] uppercase tracking-widest font-bold"
+              >
                 Phone Number
               </Label>
               <Input
                 id="phone"
                 name="phone"
                 required
-                className="bg-card border-border text-foreground h-10"
+                value={formData.phone}
+                onChange={(e) =>
+                  setFormData({ ...formData, phone: e.target.value })
+                }
+                className="bg-background border-border text-foreground h-12 focus-visible:ring-gold/50"
               />
             </div>
           </div>
@@ -88,7 +166,7 @@ export function AddressFormDialog() {
           <div className="space-y-2">
             <Label
               htmlFor="addressLine1"
-              className="text-muted-foreground text-xs"
+              className="text-muted-foreground text-[10px] uppercase tracking-widest font-bold"
             >
               Street Address
             </Label>
@@ -97,95 +175,90 @@ export function AddressFormDialog() {
               name="addressLine1"
               required
               placeholder="House No, Street name"
-              className="bg-card border-border text-foreground h-10"
+              value={formData.addressLine1}
+              onChange={(e) =>
+                setFormData({ ...formData, addressLine1: e.target.value })
+              }
+              className="bg-background border-border text-foreground h-12 focus-visible:ring-gold/50"
             />
           </div>
 
           <div className="space-y-2">
             <Label
               htmlFor="addressLine2"
-              className="text-muted-foreground text-xs"
+              className="text-muted-foreground text-[10px] uppercase tracking-widest font-bold"
             >
               Apartment, suite, etc. (Optional)
             </Label>
             <Input
               id="addressLine2"
               name="addressLine2"
-              className="bg-card border-border text-foreground h-10"
+              value={formData.addressLine2}
+              onChange={(e) =>
+                setFormData({ ...formData, addressLine2: e.target.value })
+              }
+              className="bg-background border-border text-foreground h-12 focus-visible:ring-gold/50"
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="city" className="text-muted-foreground text-xs">
-                City
-              </Label>
-              <Input
-                id="city"
-                name="city"
-                required
-                className="bg-card border-border text-foreground h-10"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="region" className="text-muted-foreground text-xs">
-                Region
-              </Label>
-              <Input
-                id="region"
-                name="region"
-                required
-                placeholder="Greater Accra"
-                className="bg-card border-border text-foreground h-10"
-              />
-            </div>
-          </div>
-
-          <div className="space-y-2 hidden">
-            <Label htmlFor="country" className="text-cream/70 text-xs">
-              Country
-            </Label>
-            <Input
-              id="country"
-              name="country"
-              defaultValue="Ghana"
-              required
-              className="bg-white/5 border-cream/10 text-cream h-10"
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            <LocationSelector
+              country={formData.country}
+              state={formData.region}
+              city={formData.city}
+              onLocationChange={handleLocationChange}
             />
           </div>
 
-          <div className="flex items-center space-x-2 pt-2 pb-4 border-b border-border">
+          {/* Hidden inputs to ensure controlled components values are sent with FormData */}
+          <input type="hidden" name="country" value={formData.country} />
+          <input type="hidden" name="region" value={formData.region} />
+          <input type="hidden" name="city" value={formData.city} />
+          <input
+            type="hidden"
+            name="isDefault"
+            value={formData.isDefault ? "on" : "off"}
+          />
+
+          <div className="flex items-center space-x-3 pt-2 pb-6 border-b border-border/50">
             <Checkbox
               id="isDefault"
               name="isDefault"
-              className="border-border data-[state=checked]:bg-gold data-[state=checked]:text-white"
+              checked={formData.isDefault}
+              onCheckedChange={(checked) =>
+                setFormData({ ...formData, isDefault: !!checked })
+              }
+              className="border-border data-[state=checked]:bg-gold data-[state=checked]:border-gold h-5 w-5"
             />
             <label
               htmlFor="isDefault"
-              className="text-sm font-medium leading-none text-muted-foreground peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+              className="text-sm font-medium leading-none text-muted-foreground cursor-pointer select-none"
             >
               Set as default shipping address
             </label>
           </div>
 
-          <div className="flex justify-end pt-2 gap-3">
+          <div className="flex justify-end pt-2 gap-4">
             <Button
               type="button"
               variant="ghost"
               onClick={() => setOpen(false)}
-              className="text-muted-foreground hover:text-foreground hover:bg-accent/5"
+              className="text-muted-foreground hover:text-foreground hover:bg-accent/10 uppercase tracking-widest text-[10px] h-11 px-6"
             >
               Cancel
             </Button>
             <Button
               type="submit"
               disabled={isPending}
-              className="bg-gold hover:bg-gold-dark text-white"
+              className="bg-gold hover:bg-gold-dark text-white uppercase tracking-widest text-[10px] h-11 px-8 min-w-[140px]"
             >
               {isPending ? (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              ) : null}
-              Save Address
+              ) : isEditing ? (
+                "Update Address"
+              ) : (
+                "Save Address"
+              )}
             </Button>
           </div>
         </form>

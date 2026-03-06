@@ -4,13 +4,12 @@ import Link from "next/link";
 import { ArrowLeft, Package, Truck, CheckCircle2, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-interface OrderPageProps {
-  params: {
-    id: string;
-  };
-}
-
-export default async function OrderDetailPage({ params }: OrderPageProps) {
+export default async function OrderDetailPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
   const supabase = await createClient();
 
   const {
@@ -23,8 +22,8 @@ export default async function OrderDetailPage({ params }: OrderPageProps) {
 
   const { data: order } = await supabase
     .from("orders")
-    .select("*, order_items(*)")
-    .eq("id", params.id)
+    .select("*, order_items(*, product:products(*, product_images(*)))")
+    .eq("id", id)
     .eq("user_id", user.id)
     .single();
 
@@ -78,7 +77,7 @@ export default async function OrderDetailPage({ params }: OrderPageProps) {
             Back to Orders
           </Link>
           <h1 className="text-2xl font-serif text-foreground">
-            Order #{order.id.slice(0, 8).toUpperCase()}
+            Order #{id.slice(0, 8).toUpperCase()}
           </h1>
           <p className="text-muted-foreground text-sm mt-1">
             Placed on {new Date(order.created_at).toLocaleDateString()} at{" "}
@@ -196,8 +195,20 @@ export default async function OrderDetailPage({ params }: OrderPageProps) {
                 key={item.id}
                 className="p-4 sm:p-6 flex flex-col sm:flex-row sm:items-center gap-4"
               >
-                <div className="h-20 w-16 bg-accent/5 rounded-md flex items-center justify-center shrink-0 border border-border">
-                  <Package className="h-6 w-6 text-muted-foreground/20" />
+                <div className="h-20 w-16 bg-accent/5 rounded-md overflow-hidden flex items-center justify-center shrink-0 border border-border">
+                  {item.product?.product_images?.[0]?.image_url ? (
+                    <img
+                      src={
+                        item.product.product_images.find(
+                          (img: any) => img.is_primary,
+                        )?.image_url || item.product.product_images[0].image_url
+                      }
+                      alt={item.product_name}
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <Package className="h-6 w-6 text-muted-foreground/20" />
+                  )}
                 </div>
                 <div className="flex-1 space-y-1">
                   <h4 className="text-base font-medium text-foreground">
