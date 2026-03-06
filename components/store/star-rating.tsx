@@ -46,7 +46,7 @@ export function StarRating({
               className={cn(
                 sizeClass,
                 "transition-colors duration-200",
-                isFilled ? "fill-gold text-gold" : "text-cream/20",
+                isFilled ? "fill-gold text-gold" : "text-muted-foreground/30",
                 interactive && !isFilled && "hover:text-gold/50",
               )}
             />

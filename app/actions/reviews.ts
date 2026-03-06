@@ -16,19 +16,18 @@ export async function submitReview(data: {
 
   if (!user) return { success: false, error: "Not authenticated" };
 
-  // Check verified purchaser
+  // Check if user has an order for this product
   const { data: purchaseCheck } = await supabase
     .from("order_items")
-    .select("id, orders!inner(user_id, payment_verified)")
+    .select("id, orders!inner(user_id)")
     .eq("product_id", data.product_id)
     .eq("orders.user_id", user.id)
-    .eq("orders.payment_verified", true)
     .limit(1);
 
   if (!purchaseCheck || purchaseCheck.length === 0) {
     return {
       success: false,
-      error: "Only verified purchasers can leave reviews",
+      error: "You must have purchased this product to leave a review",
     };
   }
 
