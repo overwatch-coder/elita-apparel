@@ -11,6 +11,9 @@ import { Badge } from "@/components/ui/badge";
 import { formatPrice, ORDER_STATUSES } from "@/lib/constants";
 import type { Metadata } from "next";
 import { OrderStatusSelect } from "@/components/admin/order-status-select";
+import { Button } from "@/components/ui/button";
+import { Eye } from "lucide-react";
+import Link from "next/link";
 
 export const metadata: Metadata = { title: "Orders | Admin" };
 
@@ -39,6 +42,7 @@ export default async function AdminOrdersPage() {
               <TableHead>Total</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Date</TableHead>
+              <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -75,11 +79,22 @@ export default async function AdminOrdersPage() {
                       dateStyle: "medium",
                     })}
                   </TableCell>
+                  <TableCell className="text-right">
+                    <Button variant="ghost" size="sm" asChild>
+                      <Link
+                        href={`/admin/orders/${order.id}`}
+                        className="text-gold hover:text-gold-dark"
+                      >
+                        <Eye className="h-4 w-4 mr-1" />
+                        View
+                      </Link>
+                    </Button>
+                  </TableCell>
                 </TableRow>
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={6} className="text-center py-12">
+                <TableCell colSpan={7} className="text-center py-12">
                   <p className="text-muted-foreground">No orders yet</p>
                 </TableCell>
               </TableRow>

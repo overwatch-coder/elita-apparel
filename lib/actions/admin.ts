@@ -147,20 +147,23 @@ export async function updateOrderStatus(id: string, status: string) {
   // Fetch current order to validate payment rules
   const { data: order } = await supabase
     .from("orders")
-    .select("payment_method, payment_status")
+    .select("status, payment_method, payment_status")
     .eq("id", id)
     .single();
 
   if (order) {
     const isDigitalPayment =
       order.payment_method === "card" || order.payment_method === "momo";
-    const isAdvancing =
-      status === "processing" ||
-      status === "shipped" ||
-      status === "out for delivery" ||
-      status === "delivered";
+    const isAdvancing = [
+      "processing",
+      "shipped",
+      "out_for_delivery",
+      "delivered",
+    ].includes(status);
 
-    if (isDigitalPayment && isAdvancing && order.payment_status !== "paid") {
+    const isPaid = order.payment_status === "paid" || order.status === "paid";
+
+    if (isDigitalPayment && isAdvancing && !isPaid) {
       return {
         error: "Digital orders (Card/MoMo) cannot be processed until paid.",
       };

@@ -12,20 +12,23 @@ import { PaymentStatusSelect } from "@/components/admin/payment-status-select";
 export const metadata: Metadata = { title: "Order Details | Admin" };
 
 interface AdminOrderDetailPageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 export default async function AdminOrderDetailPage({
   params,
 }: AdminOrderDetailPageProps) {
+  const { id } = await params;
   const supabase = await createClient();
 
   const { data: order } = await supabase
     .from("orders")
-    .select("*, order_items(*)")
-    .eq("id", params.id)
+    .select(
+      "*, order_items(*, product:products(product_images(image_url, is_primary)))",
+    )
+    .eq("id", id)
     .single();
 
   if (!order) {
@@ -58,22 +61,48 @@ export default async function AdminOrderDetailPage({
           <div className="bg-card rounded-lg border border-border/50 p-6">
             <h2 className="text-lg font-medium mb-4">Items</h2>
             <div className="divide-y divide-border/50">
-              {order.order_items.map((item: any) => (
-                <div
-                  key={item.id}
-                  className="py-4 first:pt-0 last:pb-0 flex justify-between items-center"
-                >
-                  <div>
-                    <p className="font-medium text-sm">{item.product_name}</p>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      Size: {item.size} × {item.quantity}
+              {order.order_items.map((item: any) => {
+                const primaryImage =
+                  item.product?.product_images?.find(
+                    (img: any) => img.is_primary,
+                  )?.image_url || item.product?.product_images?.[0]?.image_url;
+
+                return (
+                  <div
+                    key={item.id}
+                    className="py-4 first:pt-0 last:pb-0 flex justify-between items-center"
+                  >
+                    <div className="flex items-center gap-4">
+                      {primaryImage ? (
+                        <div className="h-16 w-16 rounded-md overflow-hidden border border-border/50 bg-secondary/30 shrink-0">
+                          <img
+                            src={primaryImage}
+                            alt={item.product_name}
+                            className="h-full w-full object-cover"
+                          />
+                        </div>
+                      ) : (
+                        <div className="h-16 w-16 rounded-md border border-dashed border-border/50 bg-secondary/10 flex items-center justify-center shrink-0">
+                          <span className="text-[10px] text-muted-foreground uppercase">
+                            No Image
+                          </span>
+                        </div>
+                      )}
+                      <div>
+                        <p className="font-medium text-sm">
+                          {item.product_name}
+                        </p>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          Size: {item.size} × {item.quantity}
+                        </p>
+                      </div>
+                    </div>
+                    <p className="font-medium text-sm">
+                      {formatPrice(item.price * item.quantity)}
                     </p>
                   </div>
-                  <p className="font-medium text-sm">
-                    {formatPrice(item.price * item.quantity)}
-                  </p>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
 
@@ -83,7 +112,15 @@ export default async function AdminOrderDetailPage({
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Subtotal</span>
-                <span>{formatPrice(order.total_amount)}</span>
+                <span>
+                  {formatPrice(
+                    order.order_items.reduce(
+                      (sum: number, item: any) =>
+                        sum + item.price * item.quantity,
+                      0,
+                    ),
+                  )}
+                </span>
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Shipping</span>

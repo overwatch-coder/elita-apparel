@@ -4,7 +4,13 @@ import { ProfileForm as AdminProfileForm } from "./profile-form";
 import { PasswordForm as AdminPasswordForm } from "./password-form";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { User, ShieldCheck, Bell } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 export default async function AdminSettingsPage() {
   const supabase = await createClient();
@@ -37,51 +43,47 @@ export default async function AdminSettingsPage() {
       </div>
 
       <Tabs defaultValue="profile" className="w-full">
-        <TabsList className="grid w-full grid-cols-3 bg-muted/50 p-1 mb-8">
-          <TabsTrigger
-            value="profile"
-            className="uppercase tracking-widest text-[10px] font-medium py-3 data-[state=active]:bg-background data-[state=active]:text-gold data-[state=active]:shadow-sm"
-          >
-            Profile Details
-          </TabsTrigger>
-          <TabsTrigger
-            value="security"
-            className="uppercase tracking-widest text-[10px] font-medium py-3 data-[state=active]:bg-background data-[state=active]:text-blue-500 data-[state=active]:shadow-sm"
-          >
-            Security
-          </TabsTrigger>
-          <TabsTrigger
-            value="preferences"
-            className="uppercase tracking-widest text-[10px] font-medium py-3 data-[state=active]:bg-background data-[state=active]:text-green-500 data-[state=active]:shadow-sm"
-          >
-            Preferences
-          </TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="profile" className="space-y-6">
-          <div className="border-b border-border/40 pb-4 mb-6">
-            <h2 className="text-sm font-bold uppercase tracking-widest text-gold mb-2">
+        <div className="flex justify-center mb-10">
+          <TabsList className="inline-flex h-auto p-1 bg-muted/30 rounded-xl border border-border/50 font-serif">
+            <TabsTrigger
+              value="profile"
+              className="px-6 py-2.5 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all data-[state=active]:bg-background data-[state=active]:text-gold data-[state=active]:shadow-sm"
+            >
               Profile Details
-            </h2>
-            <p className="text-xs text-muted-foreground leading-relaxed">
-              Your name and contact information displayed in admin logs.
-            </p>
-          </div>
+            </TabsTrigger>
+            <TabsTrigger
+              value="security"
+              className="px-6 py-2.5 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all data-[state=active]:bg-background data-[state=active]:text-blue-500 data-[state=active]:shadow-sm"
+            >
+              Security
+            </TabsTrigger>
+            <TabsTrigger
+              value="preferences"
+              className="px-6 py-2.5 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all data-[state=active]:bg-background data-[state=active]:text-green-500 data-[state=active]:shadow-sm"
+            >
+              Preferences
+            </TabsTrigger>
+          </TabsList>
+        </div>
 
-          <Card className="border-border/40 shadow-sm">
-            <CardHeader className="bg-muted/30 border-b border-border/10 pb-6 mb-2">
-              <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-full bg-gold/10 flex items-center justify-center text-gold">
-                  <User className="h-5 w-5" />
+        <TabsContent value="profile" className="space-y-6 outline-none">
+          <Card className="border-border/40 shadow-sm rounded-xl overflow-hidden">
+            <CardHeader className="bg-muted/10 border-b border-border/20 pb-8 font-serif">
+              <div className="flex items-start gap-4 text-foreground">
+                <div className="h-12 w-12 rounded-xl bg-gold/10 flex items-center justify-center text-gold shrink-0 border border-gold/20">
+                  <User className="h-6 w-6" />
                 </div>
-                <div>
-                  <CardTitle className="text-base font-medium">
+                <div className="space-y-1">
+                  <CardTitle className="text-lg font-serif">
                     Personal Information
                   </CardTitle>
+                  <CardDescription className="text-xs text-muted-foreground leading-relaxed">
+                    Your name and contact information displayed in admin logs.
+                  </CardDescription>
                 </div>
               </div>
             </CardHeader>
-            <CardContent className="pt-6">
+            <CardContent className="pt-8">
               <AdminProfileForm
                 initialData={{
                   fullName: profile?.full_name || "",
@@ -93,62 +95,51 @@ export default async function AdminSettingsPage() {
           </Card>
         </TabsContent>
 
-        <TabsContent value="security" className="space-y-6">
-          <div className="border-b border-border/40 pb-4 mb-6">
-            <h2 className="text-sm font-bold uppercase tracking-widest text-blue-500 mb-2">
-              Security
-            </h2>
-            <p className="text-xs text-muted-foreground leading-relaxed">
-              Enforce strong authentication for administrative access.
-            </p>
-          </div>
-
-          <Card className="border-border/40 shadow-sm">
-            <CardHeader className="bg-muted/30 border-b border-border/10 pb-6 mb-2">
-              <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-500">
-                  <ShieldCheck className="h-5 w-5" />
+        <TabsContent value="security" className="space-y-6 outline-none">
+          <Card className="border-border/40 shadow-sm rounded-xl overflow-hidden">
+            <CardHeader className="bg-muted/10 border-b border-border/20 pb-8 font-serif">
+              <div className="flex items-start gap-4 text-foreground">
+                <div className="h-12 w-12 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-500 shrink-0 border border-blue-500/20">
+                  <ShieldCheck className="h-6 w-6" />
                 </div>
-                <div>
-                  <CardTitle className="text-base font-medium">
+                <div className="space-y-1">
+                  <CardTitle className="text-lg font-serif">
                     Access Control
                   </CardTitle>
+                  <CardDescription className="text-xs text-muted-foreground leading-relaxed">
+                    Enforce strong authentication for administrative access.
+                  </CardDescription>
                 </div>
               </div>
             </CardHeader>
-            <CardContent className="pt-6">
+            <CardContent className="pt-8">
               <AdminPasswordForm />
             </CardContent>
           </Card>
         </TabsContent>
 
-        <TabsContent value="preferences" className="space-y-6">
-          <div className="border-b border-border/40 pb-4 mb-6">
-            <h2 className="text-sm font-bold uppercase tracking-widest text-green-500 mb-2">
-              Preferences
-            </h2>
-            <p className="text-xs text-muted-foreground leading-relaxed">
-              Manage your dashboard metrics and executive notifications.
-            </p>
-          </div>
-
-          <Card className="border-border/40 shadow-sm border-dashed opacity-50 grayscale">
-            <CardHeader>
-              <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-full bg-border flex items-center justify-center text-muted-foreground">
-                  <Bell className="h-5 w-5" />
+        <TabsContent value="preferences" className="space-y-6 outline-none">
+          <Card className="border-border/40 shadow-sm rounded-xl overflow-hidden border-dashed opacity-70 grayscale">
+            <CardHeader className="bg-muted/10 border-b border-border/20 pb-8 font-serif">
+              <div className="flex items-start gap-4 text-foreground">
+                <div className="h-12 w-12 rounded-xl bg-muted flex items-center justify-center text-muted-foreground shrink-0 border border-border/50">
+                  <Bell className="h-6 w-6" />
                 </div>
-                <CardTitle className="text-base font-medium">
-                  Notifications
-                </CardTitle>
+                <div className="space-y-1">
+                  <CardTitle className="text-lg font-serif">
+                    Notifications
+                  </CardTitle>
+                  <CardDescription className="text-xs text-muted-foreground leading-relaxed">
+                    Manage your dashboard metrics and executive notifications.
+                  </CardDescription>
+                </div>
               </div>
             </CardHeader>
-            <CardContent>
-              <div className="flex items-center justify-center py-12">
-                <p className="text-sm text-muted-foreground italic">
-                  Notification preferences will be available in a future update.
-                </p>
-              </div>
+            <CardContent className="py-20 flex flex-col items-center justify-center">
+              <Bell className="h-10 w-10 text-muted-foreground/20 mb-4" />
+              <p className="text-sm text-muted-foreground italic font-serif">
+                Notification preferences will be available in a future update.
+              </p>
             </CardContent>
           </Card>
         </TabsContent>

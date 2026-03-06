@@ -38,7 +38,10 @@ export function ProfileForm({ initialData }: ProfileFormProps) {
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
       <div className="space-y-2">
-        <Label htmlFor="fullName" className="text-cream/70 text-sm">
+        <Label
+          htmlFor="fullName"
+          className="text-muted-foreground text-sm font-medium"
+        >
           Full Name
         </Label>
         <Input
@@ -47,12 +50,15 @@ export function ProfileForm({ initialData }: ProfileFormProps) {
           type="text"
           defaultValue={initialData.fullName}
           required
-          className="h-12 bg-black/20 border-cream/10 text-cream focus-visible:ring-gold/50"
+          className="h-12 bg-background border-border text-foreground focus-visible:ring-gold/50"
         />
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="email" className="text-cream/70 text-sm">
+        <Label
+          htmlFor="email"
+          className="text-muted-foreground text-sm font-medium"
+        >
           Email Address
         </Label>
         <Input
@@ -61,13 +67,18 @@ export function ProfileForm({ initialData }: ProfileFormProps) {
           type="email"
           defaultValue={initialData.email}
           disabled
-          className="h-12 bg-black/40 border-cream/5 text-cream/50 cursor-not-allowed"
+          className="h-12 bg-muted/30 border-border text-muted-foreground cursor-not-allowed"
         />
-        <p className="text-xs text-cream/40">Email cannot be changed.</p>
+        <p className="text-[10px] text-muted-foreground/60 uppercase tracking-wider">
+          Email cannot be changed.
+        </p>
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="phone" className="text-cream/70 text-sm">
+        <Label
+          htmlFor="phone"
+          className="text-muted-foreground text-sm font-medium"
+        >
           Phone Number
         </Label>
         <Input
@@ -76,14 +87,14 @@ export function ProfileForm({ initialData }: ProfileFormProps) {
           type="tel"
           defaultValue={initialData.phone}
           placeholder="+233..."
-          className="h-12 bg-black/20 border-cream/10 text-cream focus-visible:ring-gold/50"
+          className="h-12 bg-background border-border text-foreground focus-visible:ring-gold/50"
         />
       </div>
 
       <Button
         type="submit"
         disabled={isPending}
-        className="h-11 bg-gold hover:bg-gold-dark text-white font-medium"
+        className="h-11 bg-gold hover:bg-gold-dark text-white font-medium uppercase tracking-widest text-[10px] px-8"
       >
         {isPending ? (
           <>

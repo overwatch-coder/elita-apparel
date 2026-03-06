@@ -198,25 +198,35 @@ export default function CartPage() {
                     />
                   </Link>
 
-                  <div className="flex-1 flex flex-col justify-between">
-                    <div>
-                      <Link
-                        href={`/shop/${item.slug}`}
-                        className="font-serif text-base sm:text-lg hover:text-gold transition-colors"
+                  <div className="flex-1 flex flex-col">
+                    <div className="flex justify-between items-start gap-4">
+                      <div>
+                        <Link
+                          href={`/shop/${item.slug}`}
+                          className="font-serif text-base sm:text-lg hover:text-gold transition-colors block"
+                        >
+                          {item.name}
+                        </Link>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          Size: {item.size}
+                        </p>
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 text-muted-foreground hover:text-destructive shrink-0"
+                        onClick={() => removeItem(item.product_id, item.size)}
                       >
-                        {item.name}
-                      </Link>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        Size: {item.size}
-                      </p>
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
                     </div>
 
-                    <div className="flex items-end justify-between mt-4">
+                    <div className="mt-auto pt-4 flex flex-col xs:flex-row xs:items-end justify-between gap-4">
                       <div className="flex items-center gap-2">
                         <Button
                           variant="outline"
                           size="icon"
-                          className="h-8 w-8"
+                          className="h-7 w-7 sm:h-8 sm:w-8"
                           onClick={() =>
                             updateQuantity(
                               item.product_id,
@@ -233,7 +243,7 @@ export default function CartPage() {
                         <Button
                           variant="outline"
                           size="icon"
-                          className="h-8 w-8"
+                          className="h-7 w-7 sm:h-8 sm:w-8"
                           onClick={() =>
                             updateQuantity(
                               item.product_id,
@@ -244,22 +254,14 @@ export default function CartPage() {
                         >
                           <Plus className="h-3 w-3" />
                         </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-8 w-8 text-muted-foreground hover:text-destructive ml-2"
-                          onClick={() => removeItem(item.product_id, item.size)}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
                       </div>
 
-                      <div className="text-right">
-                        <span className="font-semibold text-gold">
+                      <div className="text-right shrink-0">
+                        <span className="font-semibold text-gold block sm:inline">
                           {formatPrice(discountedPrice * item.quantity)}
                         </span>
                         {item.discount_percentage > 0 && (
-                          <p className="text-xs text-muted-foreground line-through">
+                          <p className="text-[10px] sm:text-xs text-muted-foreground line-through">
                             {formatPrice(item.price * item.quantity)}
                           </p>
                         )}

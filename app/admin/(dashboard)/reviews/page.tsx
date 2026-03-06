@@ -15,7 +15,7 @@ export default async function AdminReviewsPage() {
   if (!user) redirect("/login");
 
   // Fetch all reviews with product info
-  const { data: reviews } = await supabase
+  const { data: reviews, error: reviewsError } = await supabase
     .from("reviews")
     .select(
       `
@@ -30,6 +30,10 @@ export default async function AdminReviewsPage() {
     `,
     )
     .order("created_at", { ascending: false });
+
+  if (reviewsError) {
+    console.error("Error fetching reviews:", reviewsError);
+  }
 
   // Fetch user names for the reviews
   const userIds = [...new Set((reviews || []).map((r: any) => r.user_id))];
