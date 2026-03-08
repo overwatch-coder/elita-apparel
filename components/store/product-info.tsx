@@ -8,7 +8,7 @@ import {
   Plus,
   ShoppingBag,
   Truck,
-  Heart,
+  Check,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -29,12 +29,22 @@ import {
   encodeWhatsAppUrl,
   generateOrderRef,
 } from "@/lib/whatsapp";
+import { cn } from "@/lib/utils";
+import type { ColorVariant } from "./product-detail-wrapper";
 
 interface ProductInfoProps {
   product: ProductWithImages;
+  colorVariants?: ColorVariant[];
+  selectedColor?: ColorVariant | null;
+  onColorSelect?: (color: ColorVariant | null) => void;
 }
 
-export function ProductInfo({ product }: ProductInfoProps) {
+export function ProductInfo({
+  product,
+  colorVariants = [],
+  selectedColor = null,
+  onColorSelect,
+}: ProductInfoProps) {
   const [selectedSize, setSelectedSize] = useState("");
   const [quantity, setQuantity] = useState(1);
   const { addItem } = useCart();
@@ -48,8 +58,25 @@ export function ProductInfo({ product }: ProductInfoProps) {
   const imageUrl =
     primaryImage?.image_url || product.product_images[0]?.image_url || "";
 
+  // If a color is selected and has linked images, use the first of those as the cart image
+  const cartImageUrl =
+    selectedColor && selectedColor.image_ids.length > 0
+      ? (product.product_images.find(
+          (img) => img.id === selectedColor.image_ids[0],
+        )?.image_url ?? imageUrl)
+      : imageUrl;
+
   const isInStock = product.stock_quantity > 0;
   const isLowStock = product.stock_quantity > 0 && product.stock_quantity <= 5;
+
+  // Parse features
+  const features: { id: string; text: string }[] = Array.isArray(
+    product.features,
+  )
+    ? (product.features as any[]).map((f: any) =>
+        typeof f === "string" ? { id: f, text: f } : f,
+      )
+    : [];
 
   const handleAddToCart = () => {
     if (!selectedSize) return;
@@ -60,8 +87,11 @@ export function ProductInfo({ product }: ProductInfoProps) {
       slug: product.slug,
       price: product.price,
       discount_percentage: product.discount_percentage,
-      image_url: imageUrl,
+      image_url: cartImageUrl,
       size: selectedSize,
+      color: selectedColor
+        ? `${selectedColor.name} (${selectedColor.hex})`
+        : undefined,
       quantity,
       stock_quantity: product.stock_quantity,
     });
@@ -70,8 +100,9 @@ export function ProductInfo({ product }: ProductInfoProps) {
   const handleWhatsAppOrder = () => {
     if (!selectedSize) return;
 
+    const colorNote = selectedColor ? ` | Color: ${selectedColor.name}` : "";
     const message = generateSingleProductMessage({
-      productName: product.name,
+      productName: product.name + colorNote,
       price: discountedPrice,
       size: selectedSize,
       url: `${BRAND.siteUrl}/product/${product.slug}`,
@@ -144,7 +175,58 @@ export function ProductInfo({ product }: ProductInfoProps) {
         </p>
       )}
 
+      {/* Features list */}
+      {features.length > 0 && (
+        <ul className="space-y-1.5">
+          {features.map((feat) => (
+            <li
+              key={feat.id}
+              className="flex items-start gap-2 text-sm text-foreground/80"
+            >
+              <Check className="h-4 w-4 text-gold shrink-0 mt-0.5" />
+              <span>{feat.text}</span>
+            </li>
+          ))}
+        </ul>
+      )}
+
       <Separator />
+
+      {/* Color swatches */}
+      {colorVariants.length > 0 && (
+        <div className="space-y-3">
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-medium">Color</span>
+            {selectedColor && (
+              <span className="text-sm text-muted-foreground">
+                — {selectedColor.name}
+              </span>
+            )}
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {colorVariants.map((color) => {
+              const isSelected = selectedColor?.id === color.id;
+              return (
+                <button
+                  key={color.id}
+                  type="button"
+                  title={color.name}
+                  onClick={() => onColorSelect?.(isSelected ? null : color)}
+                  className={cn(
+                    "h-9 w-9 rounded-full border-2 transition-all shadow-sm hover:scale-110 focus:outline-none",
+                    isSelected
+                      ? "border-gold ring-2 ring-gold/40 scale-110"
+                      : "border-border/50 hover:border-gold/50",
+                  )}
+                  style={{ backgroundColor: color.hex }}
+                  aria-pressed={isSelected}
+                  aria-label={color.name}
+                />
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       {/* Size selector */}
       <SizeSelector

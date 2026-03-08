@@ -88,6 +88,8 @@ export interface Database {
           collection_id: string | null;
           fabric_type: string | null;
           available_sizes: string[];
+          features: Json | null;
+          color_variants: Json | null;
           is_featured: boolean;
           is_new: boolean;
           early_bird_eligible: boolean;
@@ -111,6 +113,8 @@ export interface Database {
           collection_id?: string | null;
           fabric_type?: string | null;
           available_sizes?: string[];
+          features?: Json | null;
+          color_variants?: Json | null;
           is_featured?: boolean;
           is_new?: boolean;
           early_bird_eligible?: boolean;
@@ -134,6 +138,8 @@ export interface Database {
           collection_id?: string | null;
           fabric_type?: string | null;
           available_sizes?: string[];
+          features?: Json | null;
+          color_variants?: Json | null;
           is_featured?: boolean;
           is_new?: boolean;
           early_bird_eligible?: boolean;
@@ -318,6 +324,7 @@ export interface Database {
           product_name: string;
           quantity: number;
           size: string;
+          color: string | null;
           price: number;
         };
         Insert: {
@@ -327,6 +334,7 @@ export interface Database {
           product_name: string;
           quantity?: number;
           size: string;
+          color?: string | null;
           price: number;
         };
         Update: {
@@ -336,6 +344,7 @@ export interface Database {
           product_name?: string;
           quantity?: number;
           size?: string;
+          color?: string | null;
           price?: number;
         };
         Relationships: [
@@ -1124,6 +1133,7 @@ export interface CartItem {
   discount_percentage: number;
   image_url: string;
   size: string;
+  color?: string; // e.g. "Midnight Blue (#1a237e)"
   quantity: number;
   stock_quantity: number;
 }

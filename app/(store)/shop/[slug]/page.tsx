@@ -1,7 +1,6 @@
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { ProductGallery } from "@/components/store/product-gallery";
-import { ProductInfo } from "@/components/store/product-info";
+import { ProductDetailWrapper } from "@/components/store/product-detail-wrapper";
 import { ProductReviews } from "@/components/store/product-reviews";
 import { FeaturedSection } from "@/components/store/featured-section";
 import { WhatsAppButton } from "@/components/store/whatsapp-button";
@@ -124,17 +123,8 @@ export default async function ProductPage({ params }: ProductPageProps) {
             </ol>
           </nav>
 
-          {/* Product layout */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16">
-            {/* Gallery */}
-            <ProductGallery
-              images={product.product_images}
-              productName={product.name}
-            />
-
-            {/* Info */}
-            <ProductInfo product={product} />
-          </div>
+          {/* Product layout — gallery + info share color state via wrapper */}
+          <ProductDetailWrapper product={product} />
 
           {/* Reviews */}
           <div className="mt-16">

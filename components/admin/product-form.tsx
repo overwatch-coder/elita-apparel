@@ -1,13 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   Select,
   SelectContent,
@@ -23,7 +22,16 @@ import {
   CardTitle,
   CardDescription,
 } from "@/components/ui/card";
-import { Loader2, Package } from "lucide-react";
+import {
+  Loader2,
+  Package,
+  Plus,
+  Trash2,
+  GripVertical,
+  Palette,
+  Check,
+  X,
+} from "lucide-react";
 import { createProduct, updateProduct } from "@/lib/actions/products";
 import { ProductImageManager } from "./product-image-manager";
 import { createClient } from "@/lib/supabase/client";
@@ -35,8 +43,310 @@ import type {
   Collection,
   FabricType,
   ProductWithImages,
+  ProductImage,
 } from "@/lib/types/database";
 import { cn } from "@/lib/utils";
+
+// ── Shared types ─────────────────────────────────────────────────────
+
+export interface ProductFeature {
+  id: string;
+  text: string;
+}
+
+export interface ColorVariant {
+  id: string;
+  name: string;
+  hex: string;
+  image_ids: string[];
+}
+
+// ── Features Editor ──────────────────────────────────────────────────
+
+function FeaturesEditor({
+  features,
+  onChange,
+}: {
+  features: ProductFeature[];
+  onChange: (features: ProductFeature[]) => void;
+}) {
+  const [newText, setNewText] = useState("");
+  const [dragIndex, setDragIndex] = useState<number | null>(null);
+  const [overIndex, setOverIndex] = useState<number | null>(null);
+
+  const addFeature = () => {
+    if (!newText.trim()) return;
+    onChange([...features, { id: `feat-${Date.now()}`, text: newText.trim() }]);
+    setNewText("");
+  };
+
+  const removeFeature = (id: string) => {
+    onChange(features.filter((f) => f.id !== id));
+  };
+
+  const handleDragStart = (index: number) => setDragIndex(index);
+  const handleDragOver = (e: React.DragEvent, index: number) => {
+    e.preventDefault();
+    setOverIndex(index);
+  };
+  const handleDrop = () => {
+    if (dragIndex === null || overIndex === null || dragIndex === overIndex) {
+      setDragIndex(null);
+      setOverIndex(null);
+      return;
+    }
+    const reordered = [...features];
+    const [removed] = reordered.splice(dragIndex, 1);
+    reordered.splice(overIndex, 0, removed);
+    onChange(reordered);
+    setDragIndex(null);
+    setOverIndex(null);
+  };
+
+  return (
+    <div className="space-y-3">
+      <ul className="space-y-2">
+        {features.map((feat, idx) => (
+          <li
+            key={feat.id}
+            draggable
+            onDragStart={() => handleDragStart(idx)}
+            onDragOver={(e) => handleDragOver(e, idx)}
+            onDrop={handleDrop}
+            onDragEnd={() => {
+              setDragIndex(null);
+              setOverIndex(null);
+            }}
+            className={cn(
+              "flex items-center gap-2 p-2 rounded-lg border bg-background transition-all cursor-grab active:cursor-grabbing",
+              overIndex === idx && dragIndex !== idx
+                ? "border-gold bg-gold/5"
+                : "border-border/50",
+            )}
+          >
+            <GripVertical className="h-4 w-4 text-muted-foreground shrink-0" />
+            <span className="flex-1 text-sm">{feat.text}</span>
+            <button
+              type="button"
+              onClick={() => removeFeature(feat.id)}
+              className="text-muted-foreground hover:text-destructive transition-colors"
+            >
+              <Trash2 className="h-3.5 w-3.5" />
+            </button>
+          </li>
+        ))}
+      </ul>
+      <div className="flex gap-2">
+        <Input
+          value={newText}
+          onChange={(e) => setNewText(e.target.value)}
+          placeholder="e.g. 100% hand-woven Kente fabric"
+          className="text-sm"
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              addFeature();
+            }
+          }}
+        />
+        <Button type="button" onClick={addFeature} size="sm" variant="outline">
+          <Plus className="h-4 w-4" />
+        </Button>
+      </div>
+      {features.length === 0 && (
+        <p className="text-xs text-muted-foreground text-center py-2">
+          No features yet. Add bullet points like fabric, fit, or care details.
+        </p>
+      )}
+    </div>
+  );
+}
+
+// ── Colors Editor ────────────────────────────────────────────────────
+
+function ColorsEditor({
+  colors,
+  images,
+  onChange,
+}: {
+  colors: ColorVariant[];
+  images: ProductImage[];
+  onChange: (colors: ColorVariant[]) => void;
+}) {
+  const [name, setName] = useState("");
+  const [hex, setHex] = useState("#C6A75E");
+  const [editingId, setEditingId] = useState<string | null>(null);
+
+  const addColor = () => {
+    if (!name.trim()) return;
+    onChange([
+      ...colors,
+      { id: `color-${Date.now()}`, name: name.trim(), hex, image_ids: [] },
+    ]);
+    setName("");
+    setHex("#C6A75E");
+  };
+
+  const removeColor = (id: string) => {
+    onChange(colors.filter((c) => c.id !== id));
+    if (editingId === id) setEditingId(null);
+  };
+
+  const toggleImage = (colorId: string, imageId: string) => {
+    onChange(
+      colors.map((c) =>
+        c.id === colorId
+          ? {
+              ...c,
+              image_ids: c.image_ids.includes(imageId)
+                ? c.image_ids.filter((id) => id !== imageId)
+                : [...c.image_ids, imageId],
+            }
+          : c,
+      ),
+    );
+  };
+
+  const sortedImages = [...images].sort((a, b) => {
+    if (a.is_primary) return -1;
+    if (b.is_primary) return 1;
+    return a.position - b.position;
+  });
+
+  return (
+    <div className="space-y-4">
+      {/* Color list */}
+      <div className="space-y-3">
+        {colors.map((color) => (
+          <div
+            key={color.id}
+            className="rounded-lg border border-border/50 overflow-hidden"
+          >
+            {/* Color header */}
+            <div className="flex items-center gap-3 p-3 bg-accent/20">
+              <div
+                className="h-6 w-6 rounded-full border border-border/50 shrink-0"
+                style={{ backgroundColor: color.hex }}
+              />
+              <span className="flex-1 text-sm font-medium">{color.name}</span>
+              <span className="text-xs text-muted-foreground">
+                {color.image_ids.length} images
+              </span>
+              <button
+                type="button"
+                onClick={() =>
+                  setEditingId(editingId === color.id ? null : color.id)
+                }
+                className="text-xs text-gold hover:text-gold-dark"
+              >
+                {editingId === color.id ? "Done" : "Edit"}
+              </button>
+              <button
+                type="button"
+                onClick={() => removeColor(color.id)}
+                className="text-muted-foreground hover:text-destructive transition-colors"
+              >
+                <Trash2 className="h-3.5 w-3.5" />
+              </button>
+            </div>
+
+            {/* Image picker (when editing) */}
+            {editingId === color.id && (
+              <div className="p-3 border-t border-border/50">
+                <p className="text-xs text-muted-foreground mb-2">
+                  Select the images that belong to this color:
+                </p>
+                {sortedImages.length === 0 ? (
+                  <p className="text-xs text-muted-foreground italic">
+                    Upload product images first, then link them to colors.
+                  </p>
+                ) : (
+                  <div className="grid grid-cols-4 gap-2">
+                    {sortedImages.map((img) => {
+                      const selected = color.image_ids.includes(img.id);
+                      return (
+                        <button
+                          key={img.id}
+                          type="button"
+                          onClick={() => toggleImage(color.id, img.id)}
+                          className={cn(
+                            "relative aspect-square rounded-md overflow-hidden border-2 transition-all",
+                            selected
+                              ? "border-gold"
+                              : "border-transparent opacity-60 hover:opacity-100",
+                          )}
+                        >
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                            src={img.image_url}
+                            alt=""
+                            className="w-full h-full object-cover"
+                          />
+                          {selected && (
+                            <div className="absolute inset-0 bg-gold/20 flex items-center justify-center">
+                              <Check className="h-4 w-4 text-white drop-shadow" />
+                            </div>
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+
+      {/* Add new color */}
+      <div className="flex gap-2 items-end">
+        <div className="flex-1 space-y-1">
+          <Label className="text-xs">Color Name</Label>
+          <Input
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="e.g. Midnight Blue"
+            className="text-sm"
+          />
+        </div>
+        <div className="space-y-1">
+          <Label className="text-xs">Hex</Label>
+          <div className="flex items-center gap-1.5">
+            <input
+              type="color"
+              value={hex}
+              onChange={(e) => setHex(e.target.value)}
+              className="h-10 w-10 rounded cursor-pointer border border-border/50 p-0.5 bg-background"
+            />
+            <Input
+              value={hex}
+              onChange={(e) => setHex(e.target.value)}
+              className="w-24 text-sm font-mono"
+              maxLength={7}
+            />
+          </div>
+        </div>
+        <Button
+          type="button"
+          onClick={addColor}
+          size="sm"
+          variant="outline"
+          className="h-10"
+        >
+          <Plus className="h-4 w-4 mr-1" /> Add
+        </Button>
+      </div>
+
+      {colors.length === 0 && (
+        <p className="text-xs text-muted-foreground text-center py-2">
+          No color variants yet. Add colors and link them to product images.
+        </p>
+      )}
+    </div>
+  );
+}
+
+// ── Main Form ────────────────────────────────────────────────────────
 
 interface ProductFormProps {
   product?: ProductWithImages;
@@ -62,6 +372,19 @@ export function ProductForm({
   const [slug, setSlug] = useState(product?.slug || "");
   const [selectedSizes, setSelectedSizes] = useState<string[]>(
     product?.available_sizes || [],
+  );
+  const [features, setFeatures] = useState<ProductFeature[]>(
+    Array.isArray(product?.features)
+      ? (product.features as any[]).map((f: any) => ({
+          id: f.id || `feat-${Math.random()}`,
+          text: f.text || f,
+        }))
+      : [],
+  );
+  const [colorVariants, setColorVariants] = useState<ColorVariant[]>(
+    Array.isArray(product?.color_variants)
+      ? (product.color_variants as unknown as ColorVariant[])
+      : [],
   );
 
   const isEditing = !!product;
@@ -101,6 +424,10 @@ export function ProductForm({
     // Add sizes
     formData.delete("sizes");
     selectedSizes.forEach((size) => formData.append("sizes", size));
+
+    // Add features and color variants as JSON
+    formData.set("features", JSON.stringify(features));
+    formData.set("color_variants", JSON.stringify(colorVariants));
 
     try {
       const result = isEditing
@@ -234,7 +561,46 @@ export function ProductForm({
               </CardContent>
             </Card>
 
-            {/* Product Images (only in edit mode or bottom) */}
+            {/* Features */}
+            <Card className="border-border/50 shadow-sm">
+              <CardHeader>
+                <CardTitle className="font-serif text-xl">
+                  Product Features
+                </CardTitle>
+                <CardDescription>
+                  Bullet-point highlights shown on the product page. Drag to
+                  reorder.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <FeaturesEditor features={features} onChange={setFeatures} />
+              </CardContent>
+            </Card>
+
+            {/* Color Variants */}
+            <Card className="border-border/50 shadow-sm">
+              <CardHeader>
+                <CardTitle className="font-serif text-xl flex items-center gap-2">
+                  <Palette className="h-5 w-5 text-gold" />
+                  Color Variants
+                </CardTitle>
+                <CardDescription>
+                  Define colors and link each to specific product images for
+                  swatching.
+                  {!isEditing &&
+                    " Upload images after creating the product to link them."}
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ColorsEditor
+                  colors={colorVariants}
+                  images={product?.product_images || []}
+                  onChange={setColorVariants}
+                />
+              </CardContent>
+            </Card>
+
+            {/* Product Images (only in edit mode) */}
             <Card className="border-border/50 shadow-sm">
               <CardHeader>
                 <CardTitle className="font-serif text-xl text-gold">
@@ -438,7 +804,7 @@ export function ProductForm({
           </div>
         </div>
 
-        {/* Persistent Submit Bar Alternative (standard bottom placement but clean) */}
+        {/* Submit */}
         <div className="flex items-center justify-end gap-4 pt-6 border-t border-border/50">
           <Button
             type="button"

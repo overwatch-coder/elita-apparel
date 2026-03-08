@@ -17,6 +17,10 @@ export async function createProduct(formData: FormData) {
     collection_id: (formData.get("collection_id") as string) || null,
     fabric_type: (formData.get("fabric_type") as string) || null,
     available_sizes: formData.getAll("sizes") as string[],
+    features: JSON.parse((formData.get("features") as string) || "[]"),
+    color_variants: JSON.parse(
+      (formData.get("color_variants") as string) || "[]",
+    ),
     is_featured: formData.get("is_featured") === "true",
     is_new: formData.get("is_new") === "true",
     early_bird_eligible: formData.get("early_bird_eligible") === "true",
@@ -68,6 +72,10 @@ export async function updateProduct(id: string, formData: FormData) {
     collection_id: (formData.get("collection_id") as string) || null,
     fabric_type: (formData.get("fabric_type") as string) || null,
     available_sizes: formData.getAll("sizes") as string[],
+    features: JSON.parse((formData.get("features") as string) || "[]"),
+    color_variants: JSON.parse(
+      (formData.get("color_variants") as string) || "[]",
+    ),
     is_featured: formData.get("is_featured") === "true",
     is_new: formData.get("is_new") === "true",
     early_bird_eligible: formData.get("early_bird_eligible") === "true",

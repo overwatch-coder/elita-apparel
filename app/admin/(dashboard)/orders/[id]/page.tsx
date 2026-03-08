@@ -93,7 +93,9 @@ export default async function AdminOrderDetailPage({
                           {item.product_name}
                         </p>
                         <p className="text-xs text-muted-foreground mt-1">
-                          Size: {item.size} × {item.quantity}
+                          Size: {item.size}{" "}
+                          {item.color ? ` | Color: ${item.color}` : ""} ×{" "}
+                          {item.quantity}
                         </p>
                       </div>
                     </div>

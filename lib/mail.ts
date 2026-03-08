@@ -76,7 +76,7 @@ export async function sendOrderConfirmation(order: any, items: any[]) {
               <div class="item-row">
                 <div class="item-info">
                   <div>${item.product_name}</div>
-                  <span>Size: ${item.size} &times; ${item.quantity}</span>
+                  <span>Size: ${item.size}${item.color ? ` &bull; Color: ${item.color}` : ""} &times; ${item.quantity}</span>
                 </div>
                 <div class="item-price">${formatPrice(item.price * item.quantity)}</div>
               </div>

@@ -57,6 +57,7 @@ export async function createOrder(
     product_name: item.name,
     quantity: item.quantity,
     size: item.size,
+    color: item.color || null,
     price: calculateDiscountedPrice(item.price, item.discount_percentage),
   }));
 
