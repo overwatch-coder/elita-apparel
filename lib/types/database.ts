@@ -227,7 +227,7 @@ export interface Database {
           estimated_delivery: string | null;
           notes: string | null;
           user_id: string | null;
-          payment_method: "cod" | "card" | "momo" | null;
+          payment_method: "cod" | "card" | "momo" | "manual_momo" | null;
           paystack_reference: string | null;
           paid_at: string | null;
           payment_verified: boolean;
@@ -238,6 +238,7 @@ export interface Database {
           campaign_id: string | null;
           discount_code_used: string | null; // DEPRECATED: Use discount_code instead
           source: string | null;
+          payment_proof_url: string | null;
         };
         Insert: {
           id?: string;
@@ -265,7 +266,7 @@ export interface Database {
           estimated_delivery?: string | null;
           notes?: string | null;
           user_id?: string | null;
-          payment_method?: "cod" | "card" | "momo" | null;
+          payment_method?: "cod" | "card" | "momo" | "manual_momo" | null;
           paystack_reference?: string | null;
           paid_at?: string | null;
           payment_verified?: boolean;
@@ -276,6 +277,7 @@ export interface Database {
           campaign_id?: string | null;
           discount_code_used?: string | null;
           source?: string | null;
+          payment_proof_url?: string | null;
         };
         Update: {
           id?: string;
@@ -303,7 +305,7 @@ export interface Database {
           estimated_delivery?: string | null;
           notes?: string | null;
           user_id?: string | null;
-          payment_method?: "cod" | "card" | "momo" | null;
+          payment_method?: "cod" | "card" | "momo" | "manual_momo" | null;
           paystack_reference?: string | null;
           paid_at?: string | null;
           payment_verified?: boolean;
@@ -313,6 +315,7 @@ export interface Database {
           campaign_id?: string | null;
           discount_code_used?: string | null;
           source?: string | null;
+          payment_proof_url?: string | null;
         };
         Relationships: [];
       };

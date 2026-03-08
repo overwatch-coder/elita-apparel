@@ -1,24 +1,40 @@
 import {
   getMarketingStats,
   getSubscriberGrowthData,
+  getTopCampaigns,
+  AnalyticsPeriod,
 } from "@/lib/actions/marketing-analytics";
 import { AnalyticsCharts } from "@/components/admin/analytics-charts";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import {
   Users,
   Megaphone,
   DollarSign,
   TrendingUp,
-  Calendar,
   ArrowUpRight,
 } from "lucide-react";
 import { formatPrice } from "@/lib/constants";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { PeriodSelector } from "@/components/admin/period-selector";
 
-export default async function MarketingAnalyticsPage() {
-  const stats = await getMarketingStats();
-  const growthData = await getSubscriberGrowthData();
+export default async function MarketingAnalyticsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ period?: string }>;
+}) {
+  const params = await searchParams;
+  const period = (params.period as AnalyticsPeriod) || "30d";
+
+  const stats = await getMarketingStats(period);
+  const growthData = await getSubscriberGrowthData(period);
+  const topCampaigns = await getTopCampaigns(period);
 
   return (
     <div className="space-y-8 pb-10">
@@ -29,10 +45,7 @@ export default async function MarketingAnalyticsPage() {
             Track your campaign performance and audience growth.
           </p>
         </div>
-        <div className="flex items-center gap-2 text-sm text-muted-foreground bg-accent/20 px-3 py-1.5 rounded-full border border-border">
-          <Calendar className="h-4 w-4" />
-          <span>Last 30 Days</span>
-        </div>
+        <PeriodSelector />
       </div>
 
       {/* Stats Overview */}
@@ -49,13 +62,13 @@ export default async function MarketingAnalyticsPage() {
             <div className="flex items-center gap-1 mt-2">
               <Badge
                 variant="secondary"
-                className="bg-ghana-green/10 text-ghana-green hover:bg-ghana-green/20 border-none text-[10px] h-5"
+                className="bg-ghana-green/10 text-ghana-green border-none text-[10px] h-5"
               >
                 <ArrowUpRight className="h-3 w-3 mr-0.5" />
-                {stats.subscribersLast30Days} new
+                {stats.subscribersInPeriod} new
               </Badge>
               <span className="text-[10px] text-muted-foreground">
-                this month
+                in {period === "all" ? "total" : period}
               </span>
             </div>
           </CardContent>
@@ -71,7 +84,7 @@ export default async function MarketingAnalyticsPage() {
           <CardContent>
             <div className="text-3xl font-bold">{stats.sentCampaigns}</div>
             <p className="text-[10px] text-muted-foreground mt-2.5">
-              Total campaigns delivered
+              Sent in {period === "all" ? "total" : period}
             </p>
           </CardContent>
         </Card>
@@ -88,7 +101,7 @@ export default async function MarketingAnalyticsPage() {
               {formatPrice(stats.totalCampaignRevenue)}
             </div>
             <p className="text-[10px] text-muted-foreground mt-2.5">
-              Revenue from email attribution
+              Revenue from email attribution ({period})
             </p>
           </CardContent>
         </Card>
@@ -96,14 +109,20 @@ export default async function MarketingAnalyticsPage() {
         <Card className="border-border/50 shadow-sm">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">
-              Engagement Rate
+              Avg. Revenue/Campaign
             </CardTitle>
             <TrendingUp className="h-4 w-4 text-gold" />
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">12.4%</div>
+            <div className="text-3xl font-bold">
+              {formatPrice(
+                stats.sentCampaigns > 0
+                  ? stats.totalCampaignRevenue / stats.sentCampaigns
+                  : 0,
+              )}
+            </div>
             <p className="text-[10px] text-muted-foreground mt-2.5">
-              Average click-through rate
+              Performance per campaign
             </p>
           </CardContent>
         </Card>
@@ -121,18 +140,20 @@ export default async function MarketingAnalyticsPage() {
                 Audience evolution over the analyzed period
               </CardDescription>
             </div>
-            <div className="flex items-center gap-1 text-[10px] bg-gold/10 text-gold px-2 py-0.5 rounded font-bold uppercase tracking-widest">
-              <TrendingUp className="h-3 w-3" />
-              <span>Up 12%</span>
-            </div>
           </CardHeader>
           <CardContent>
-            <AnalyticsCharts 
-              growthData={(growthData.data || []).map(d => ({
-                period: d.date,
-                subscribers: d.count
-              }))} 
-            />
+            {growthData.data && growthData.data.length > 0 ? (
+              <AnalyticsCharts
+                growthData={growthData.data.map((d) => ({
+                  period: d.date,
+                  subscribers: d.count,
+                }))}
+              />
+            ) : (
+              <div className="h-[300px] flex items-center justify-center text-muted-foreground text-sm italic">
+                No growth data for this period
+              </div>
+            )}
           </CardContent>
         </Card>
 
@@ -140,37 +161,37 @@ export default async function MarketingAnalyticsPage() {
         <Card className="border-border/50 shadow-sm">
           <CardHeader>
             <CardTitle className="font-serif text-xl">Top Campaigns</CardTitle>
+            <CardDescription className="text-xs">
+              By revenue in {period}
+            </CardDescription>
           </CardHeader>
           <CardContent className="p-0">
-            <div className="divide-y divide-border/40">
-              {[
-                {
-                  name: "Summer Collection Launch",
-                  revenue: 4500,
-                  rate: "18%",
-                },
-                { name: "Early Bird Exclusive", revenue: 2800, rate: "22%" },
-                { name: "Kente Heritage Series", revenue: 1950, rate: "14%" },
-                { name: "Weekend Flash Sale", revenue: 1200, rate: "25%" },
-              ].map((campaign) => (
-                <div
-                  key={campaign.name}
-                  className="px-6 py-4 flex items-center justify-between"
-                >
-                  <div className="space-y-0.5">
-                    <p className="text-sm font-medium truncate max-w-[150px]">
-                      {campaign.name}
-                    </p>
-                    <p className="text-[10px] text-muted-foreground">
-                      {campaign.rate} CTR
+            {topCampaigns.length > 0 ? (
+              <div className="divide-y divide-border/40">
+                {topCampaigns.map((campaign) => (
+                  <div
+                    key={campaign.id}
+                    className="px-6 py-4 flex items-center justify-between"
+                  >
+                    <div className="space-y-0.5">
+                      <p className="text-sm font-medium truncate max-w-[150px]">
+                        {campaign.name}
+                      </p>
+                      <p className="text-[10px] text-muted-foreground">
+                        {campaign.rate} CTR (est)
+                      </p>
+                    </div>
+                    <p className="text-sm font-semibold text-gold">
+                      {formatPrice(campaign.revenue)}
                     </p>
                   </div>
-                  <p className="text-sm font-semibold text-gold">
-                    {formatPrice(campaign.revenue)}
-                  </p>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            ) : (
+              <div className="p-12 text-center text-muted-foreground text-sm italic">
+                No campaign data found
+              </div>
+            )}
             <div className="p-6 pt-0 mt-4">
               <Button
                 variant="ghost"

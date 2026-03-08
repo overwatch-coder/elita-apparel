@@ -36,6 +36,9 @@ import { createProduct, updateProduct } from "@/lib/actions/products";
 import { ProductImageManager } from "./product-image-manager";
 import { createClient } from "@/lib/supabase/client";
 import { SIZES } from "@/lib/constants";
+import { RichTextEditor } from "@/components/ui/rich-text-editor";
+import { AIGeneratorButton } from "@/components/admin/ai-generator-button";
+import { AIRewriteButton } from "@/components/admin/ai-rewrite-button";
 import { toast } from "sonner";
 import type {
   Product,
@@ -386,6 +389,14 @@ export function ProductForm({
       ? (product.color_variants as unknown as ColorVariant[])
       : [],
   );
+  const [description, setDescription] = useState(product?.description || "");
+  const [culturalStory, setCulturalStory] = useState(
+    product?.cultural_story || "",
+  );
+  const [seoTitle, setSeoTitle] = useState(product?.seo_title || "");
+  const [seoDescription, setSeoDescription] = useState(
+    product?.seo_description || "",
+  );
 
   const isEditing = !!product;
   const [fabricTypes, setFabricTypes] = useState<FabricType[]>([]);
@@ -428,6 +439,12 @@ export function ProductForm({
     // Add features and color variants as JSON
     formData.set("features", JSON.stringify(features));
     formData.set("color_variants", JSON.stringify(colorVariants));
+
+    // Add controlled editor/input values
+    formData.set("description", description);
+    formData.set("cultural_story", culturalStory);
+    formData.set("seo_title", seoTitle);
+    formData.set("seo_description", seoDescription);
 
     try {
       const result = isEditing
@@ -487,25 +504,39 @@ export function ProductForm({
                       placeholder="kente-royal-dress"
                     />
                   </div>
-                  <div>
-                    <Label htmlFor="description">Description</Label>
-                    <Textarea
-                      id="description"
-                      name="description"
-                      defaultValue={product?.description || ""}
-                      className="mt-1.5"
-                      rows={5}
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <Label htmlFor="description">Description</Label>
+                      <div className="flex items-center gap-2">
+                        <AIGeneratorButton
+                          type="product_description"
+                          input={{ name }}
+                          onGenerated={setDescription}
+                          label="Generate"
+                        />
+                      </div>
+                    </div>
+                    <RichTextEditor
+                      value={description}
+                      onChange={setDescription}
                       placeholder="Describe the product, its fit, and details..."
                     />
                   </div>
-                  <div>
-                    <Label htmlFor="cultural_story">Cultural Story</Label>
-                    <Textarea
-                      id="cultural_story"
-                      name="cultural_story"
-                      defaultValue={product?.cultural_story || ""}
-                      className="mt-1.5"
-                      rows={4}
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <Label htmlFor="cultural_story">Cultural Story</Label>
+                      <div className="flex items-center gap-2">
+                        <AIGeneratorButton
+                          type="cultural_story"
+                          input={{ name }}
+                          onGenerated={setCulturalStory}
+                          label="Generate"
+                        />
+                      </div>
+                    </div>
+                    <RichTextEditor
+                      value={culturalStory}
+                      onChange={setCulturalStory}
                       placeholder="Share the heritage and story behind this piece..."
                     />
                   </div>
@@ -637,23 +668,61 @@ export function ProductForm({
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div>
-                  <Label htmlFor="seo_title">SEO Title</Label>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="seo_title">SEO Title</Label>
+                    <div className="flex items-center gap-2">
+                      <AIGeneratorButton
+                        type="seo"
+                        label="Optimized Title"
+                        input={{ name, description }}
+                        onGenerated={(text) => {
+                          const title =
+                            text.match(/Title:\s*(.*)/i)?.[1] || text;
+                          setSeoTitle(title);
+                        }}
+                      />
+                      <AIRewriteButton
+                        text={seoTitle}
+                        onRewrite={setSeoTitle}
+                      />
+                    </div>
+                  </div>
                   <Input
                     id="seo_title"
                     name="seo_title"
-                    defaultValue={product?.seo_title || ""}
-                    className="mt-1.5"
+                    value={seoTitle}
+                    onChange={(e) => setSeoTitle(e.target.value)}
+                    placeholder="e.g. Kente Royal Dress | Elita Apparel"
                   />
                 </div>
-                <div>
-                  <Label htmlFor="seo_description">SEO Description</Label>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="seo_description">SEO Description</Label>
+                    <div className="flex items-center gap-2">
+                      <AIGeneratorButton
+                        type="seo"
+                        label="Optimized Desc"
+                        input={{ name, description }}
+                        onGenerated={(text) => {
+                          const desc =
+                            text.match(/Description:\s*(.*)/i)?.[1] || text;
+                          setSeoDescription(desc);
+                        }}
+                      />
+                      <AIRewriteButton
+                        text={seoDescription}
+                        onRewrite={setSeoDescription}
+                      />
+                    </div>
+                  </div>
                   <Textarea
                     id="seo_description"
                     name="seo_description"
-                    defaultValue={product?.seo_description || ""}
-                    className="mt-1.5"
+                    value={seoDescription}
+                    onChange={(e) => setSeoDescription(e.target.value)}
                     rows={3}
+                    placeholder="Brief summary for search engines..."
                   />
                 </div>
               </CardContent>

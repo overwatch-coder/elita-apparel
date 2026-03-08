@@ -12,6 +12,7 @@ interface AIGeneratorButtonProps {
   onGenerated: (text: string) => void;
   label?: string;
   className?: string;
+  size?: "default" | "sm" | "lg" | "icon";
 }
 
 export function AIGeneratorButton({
@@ -20,6 +21,7 @@ export function AIGeneratorButton({
   onGenerated,
   label = "Generate with AI",
   className,
+  size = "sm",
 }: AIGeneratorButtonProps) {
   const [isGenerating, setIsGenerating] = useState(false);
 
@@ -62,7 +64,7 @@ export function AIGeneratorButton({
     <Button
       type="button"
       variant="outline"
-      size="sm"
+      size={size}
       disabled={isGenerating}
       onClick={handleGenerate}
       className={className}

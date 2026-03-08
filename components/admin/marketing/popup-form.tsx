@@ -21,6 +21,7 @@ import { Loader2, ArrowLeft, Save, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { RichTextEditor } from "@/components/ui/rich-text-editor";
 import { AIGeneratorButton } from "@/components/admin/ai-generator-button";
+import { AIRewriteButton } from "@/components/admin/ai-rewrite-button";
 
 interface PopupFormProps {
   initialData?: any;
@@ -119,20 +120,28 @@ export function PopupForm({ initialData, discountCodes }: PopupFormProps) {
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <Label htmlFor="title">Display Title</Label>
-                  <AIGeneratorButton
-                    type="popup"
-                    label="Generate Headline"
-                    input={{
-                      target: formData.type,
-                      offer: formData.name,
-                    }}
-                    onGenerated={(text) => {
-                      // Extract headline from AI response if it's structured
-                      const headline =
-                        text.match(/Headline:\s*(.*)/i)?.[1] || text;
-                      setFormData((prev) => ({ ...prev, title: headline }));
-                    }}
-                  />
+                  <div className="flex items-center gap-2">
+                    <AIGeneratorButton
+                      type="popup"
+                      label="Generate Headline"
+                      input={{
+                        target: formData.type,
+                        offer: formData.name,
+                      }}
+                      onGenerated={(text) => {
+                        // Extract headline from AI response if it's structured
+                        const headline =
+                          text.match(/Headline:\s*(.*)/i)?.[1] || text;
+                        setFormData((prev) => ({ ...prev, title: headline }));
+                      }}
+                    />
+                    <AIRewriteButton
+                      text={formData.title}
+                      onRewrite={(text) =>
+                        setFormData((prev) => ({ ...prev, title: text }))
+                      }
+                    />
+                  </div>
                 </div>
                 <Input
                   id="title"

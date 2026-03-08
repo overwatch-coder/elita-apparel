@@ -9,7 +9,8 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
+import { RichTextEditor } from "@/components/ui/rich-text-editor";
+import { AIGeneratorButton } from "@/components/admin/ai-generator-button";
 import {
   Card,
   CardContent,
@@ -298,16 +299,32 @@ export default function AutomationDetailPage({
                         </div>
                       </div>
                       <div className="space-y-2 pt-2">
-                        <Label className="text-xs uppercase tracking-wider text-muted-foreground font-semibold">
-                          Email Content (HTML)
-                        </Label>
-                        <Textarea
+                        <div className="flex items-center justify-between">
+                          <Label className="text-xs uppercase tracking-wider text-muted-foreground font-semibold">
+                            Email Content
+                          </Label>
+                          <div className="flex items-center gap-2">
+                            <AIGeneratorButton
+                              type="email"
+                              input={{
+                                automation_name: automation.name,
+                                trigger: automation.trigger_event,
+                                subject: email.subject_line,
+                              }}
+                              onGenerated={(text) =>
+                                updateEmail(idx, { content_html: text })
+                              }
+                              label="Generate"
+                              size="sm"
+                            />
+                          </div>
+                        </div>
+                        <RichTextEditor
                           value={email.content_html}
-                          onChange={(e) =>
-                            updateEmail(idx, { content_html: e.target.value })
+                          onChange={(text) =>
+                            updateEmail(idx, { content_html: text })
                           }
-                          className="bg-background border-border font-mono text-xs min-h-[300px] leading-relaxed"
-                          placeholder="Use {{NAME}} for personalization."
+                          placeholder="Compose your automated email..."
                         />
                         <div className="bg-muted/30 rounded-md p-3 border border-border/40">
                           <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-widest mb-2 flex items-center">

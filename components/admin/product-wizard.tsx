@@ -42,6 +42,7 @@ import { cn } from "@/lib/utils";
 import { ProductImageManager } from "@/components/admin/product-image-manager";
 import { RichTextEditor } from "@/components/ui/rich-text-editor";
 import { AIGeneratorButton } from "@/components/admin/ai-generator-button";
+import { AIRewriteButton } from "@/components/admin/ai-rewrite-button";
 import {
   Category,
   Collection,
@@ -293,28 +294,30 @@ export function ProductWizard({
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
                       <Label htmlFor="description">Short Description</Label>
-                      <AIGeneratorButton
-                        type="product_description"
-                        input={{
-                          name: formData.name,
-                          fabric:
-                            fabricTypes.find(
-                              (f) => f.slug === formData.fabric_type,
-                            )?.name || "Premium fabric",
-                          fit: "Standard fit", // Default or could a separate field
-                          audience:
-                            categories.find(
-                              (c) => c.id === formData.category_id,
-                            )?.name || "Fashion enthusiasts",
-                          occasion:
-                            collections.find(
-                              (c) => c.id === formData.collection_id,
-                            )?.name || "Various occasions",
-                        }}
-                        onGenerated={(text) =>
-                          handleInputChange("description", text)
-                        }
-                      />
+                      <div className="flex items-center gap-2">
+                        <AIGeneratorButton
+                          type="product_description"
+                          input={{
+                            name: formData.name,
+                            fabric:
+                              fabricTypes.find(
+                                (f) => f.slug === formData.fabric_type,
+                              )?.name || "Premium fabric",
+                            fit: "Standard fit", // Default or could a separate field
+                            audience:
+                              categories.find(
+                                (c) => c.id === formData.category_id,
+                              )?.name || "Fashion enthusiasts",
+                            occasion:
+                              collections.find(
+                                (c) => c.id === formData.collection_id,
+                              )?.name || "Various occasions",
+                          }}
+                          onGenerated={(text) =>
+                            handleInputChange("description", text)
+                          }
+                        />
+                      </div>
                     </div>
                     <RichTextEditor
                       value={formData.description}
@@ -327,18 +330,20 @@ export function ProductWizard({
                       <Label htmlFor="cultural_story">
                         The Cultural Narrative
                       </Label>
-                      <AIGeneratorButton
-                        type="cultural_story"
-                        label="Generate Narrative"
-                        input={{
-                          name: formData.name,
-                          theme: formData.name, // Use name as theme context
-                          heritage: "African heritage",
-                        }}
-                        onGenerated={(text) =>
-                          handleInputChange("cultural_story", text)
-                        }
-                      />
+                      <div className="flex items-center gap-2">
+                        <AIGeneratorButton
+                          type="cultural_story"
+                          label="Generate Narrative"
+                          input={{
+                            name: formData.name,
+                            theme: formData.name, // Use name as theme context
+                            heritage: "African heritage",
+                          }}
+                          onGenerated={(text) =>
+                            handleInputChange("cultural_story", text)
+                          }
+                        />
+                      </div>
                     </div>
                     <RichTextEditor
                       value={formData.cultural_story}
@@ -557,17 +562,67 @@ export function ProductWizard({
                     </Label>
                     <div className="space-y-4">
                       <div className="space-y-2">
-                        <Label htmlFor="seo_title">SEO Title</Label>
+                        <div className="flex items-center justify-between">
+                          <Label htmlFor="seo_title">SEO Title</Label>
+                          <div className="flex items-center gap-2">
+                            <AIGeneratorButton
+                              type="seo"
+                              label="Generate"
+                              input={{
+                                name: formData.name,
+                                description: formData.description,
+                              }}
+                              onGenerated={(text) => {
+                                const title =
+                                  text.match(/Title:\s*(.*)/i)?.[1] || text;
+                                handleInputChange("seo_title", title);
+                              }}
+                            />
+                            <AIRewriteButton
+                              text={formData.seo_title}
+                              onRewrite={(text) =>
+                                handleInputChange("seo_title", text)
+                              }
+                            />
+                          </div>
+                        </div>
                         <Input
                           id="seo_title"
                           value={formData.seo_title}
                           onChange={(e) =>
                             handleInputChange("seo_title", e.target.value)
                           }
+                          placeholder="e.g. Kente Royal Dress | Elita Apparel"
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="seo_description">SEO Description</Label>
+                        <div className="flex items-center justify-between">
+                          <Label htmlFor="seo_description">
+                            SEO Description
+                          </Label>
+                          <div className="flex items-center gap-2">
+                            <AIGeneratorButton
+                              type="seo"
+                              label="Generate"
+                              input={{
+                                name: formData.name,
+                                description: formData.description,
+                              }}
+                              onGenerated={(text) => {
+                                const desc =
+                                  text.match(/Description:\s*(.*)/i)?.[1] ||
+                                  text;
+                                handleInputChange("seo_description", desc);
+                              }}
+                            />
+                            <AIRewriteButton
+                              text={formData.seo_description}
+                              onRewrite={(text) =>
+                                handleInputChange("seo_description", text)
+                              }
+                            />
+                          </div>
+                        </div>
                         <Textarea
                           id="seo_description"
                           value={formData.seo_description}
@@ -575,6 +630,7 @@ export function ProductWizard({
                             handleInputChange("seo_description", e.target.value)
                           }
                           rows={2}
+                          placeholder="Brief summary for search engines..."
                         />
                       </div>
                     </div>

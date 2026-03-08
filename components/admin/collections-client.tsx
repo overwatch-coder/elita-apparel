@@ -2,13 +2,20 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Plus, Trash2 } from "lucide-react";
+import { Plus, Trash2, Eye, EyeOff, MoreHorizontal, Edit } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   Dialog,
   DialogContent,
@@ -26,10 +33,13 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { SingleImageUpload } from "@/components/admin/single-image-upload";
+import { RichTextEditor } from "@/components/ui/rich-text-editor";
+import { AIGeneratorButton } from "@/components/admin/ai-generator-button";
 import {
   createCollection,
   updateCollection,
   deleteCollection,
+  toggleCollectionPublish,
 } from "@/lib/actions/admin";
 import { toast } from "sonner";
 import type { Collection } from "@/lib/types/database";
@@ -53,6 +63,9 @@ export function CollectionsClient({ collections }: CollectionsClientProps) {
   );
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
+  const [description, setDescription] = useState("");
+  const [culturalStory, setCulturalStory] = useState("");
+  const [isPublished, setIsPublished] = useState(true);
   const [deleteId, setDeleteId] = useState<string | null>(null);
 
   const handleOpen = (collection?: Collection) => {
@@ -60,10 +73,16 @@ export function CollectionsClient({ collections }: CollectionsClientProps) {
       setEditingCollection(collection);
       setName(collection.name);
       setSlug(collection.slug);
+      setDescription(collection.description || "");
+      setCulturalStory(collection.cultural_story || "");
+      setIsPublished(!!collection.is_published);
     } else {
       setEditingCollection(null);
       setName("");
       setSlug("");
+      setDescription("");
+      setCulturalStory("");
+      setIsPublished(true);
     }
     setOpen(true);
   };
@@ -78,6 +97,9 @@ export function CollectionsClient({ collections }: CollectionsClientProps) {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
+    formData.set("description", description);
+    formData.set("cultural_story", culturalStory);
+    formData.set("is_published", isPublished ? "true" : "false");
 
     const result = editingCollection
       ? await updateCollection(editingCollection.id, formData)
@@ -103,6 +125,18 @@ export function CollectionsClient({ collections }: CollectionsClientProps) {
       router.refresh();
     }
     setDeleteId(null);
+  };
+
+  const handleTogglePublish = async (id: string, currentStatus: boolean) => {
+    const result = await toggleCollectionPublish(id, !currentStatus);
+    if (result.error) {
+      toast.error(result.error);
+    } else {
+      toast.success(
+        currentStatus ? "Collection unpublished" : "Collection published",
+      );
+      router.refresh();
+    }
   };
 
   return (
@@ -169,34 +203,49 @@ export function CollectionsClient({ collections }: CollectionsClientProps) {
                   className="mt-1.5"
                 />
               </div>
-              <div>
-                <Label htmlFor="col-desc">Description</Label>
-                <Textarea
-                  id="col-desc"
-                  name="description"
-                  defaultValue={editingCollection?.description || ""}
-                  className="mt-1.5"
-                  rows={3}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="col-desc">Description</Label>
+                  <div className="flex items-center gap-2">
+                    <AIGeneratorButton
+                      type="collection_description"
+                      input={{ name }}
+                      onGenerated={setDescription}
+                      label="Generate"
+                    />
+                  </div>
+                </div>
+                <RichTextEditor
+                  value={description}
+                  onChange={setDescription}
+                  placeholder="Describe this collection..."
                 />
               </div>
-              <div>
-                <Label htmlFor="col-story">Cultural Story</Label>
-                <Textarea
-                  id="col-story"
-                  name="cultural_story"
-                  defaultValue={editingCollection?.cultural_story || ""}
-                  className="mt-1.5"
-                  rows={3}
+
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="col-story">Cultural Story</Label>
+                  <div className="flex items-center gap-2">
+                    <AIGeneratorButton
+                      type="cultural_story"
+                      input={{ name }}
+                      onGenerated={setCulturalStory}
+                      label="Generate"
+                    />
+                  </div>
+                </div>
+                <RichTextEditor
+                  value={culturalStory}
+                  onChange={setCulturalStory}
+                  placeholder="The heritage behind this collection..."
                 />
               </div>
               <div className="flex items-center justify-between rounded-md border p-3">
                 <Label htmlFor="col-published">Published</Label>
-                <input type="hidden" name="is_published" value="false" />
                 <Switch
                   id="col-published"
-                  name="is_published"
-                  defaultChecked={editingCollection?.is_published ?? true}
-                  value="true"
+                  checked={isPublished}
+                  onCheckedChange={setIsPublished}
                 />
               </div>
               <Button
@@ -257,23 +306,45 @@ export function CollectionsClient({ collections }: CollectionsClientProps) {
                     </Badge>
                   </TableCell>
                   <TableCell className="text-right">
-                    <div className="flex items-center justify-end gap-1">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleOpen(col)}
-                      >
-                        Edit
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8 text-muted-foreground hover:text-destructive"
-                        onClick={() => setDeleteId(col.id)}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon" className="h-8 w-8">
+                          <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="w-48">
+                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                        <DropdownMenuItem onClick={() => handleOpen(col)}>
+                          <Edit className="h-4 w-4 mr-2" />
+                          Edit
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() =>
+                            handleTogglePublish(col.id, !!col.is_published)
+                          }
+                        >
+                          {col.is_published ? (
+                            <>
+                              <EyeOff className="h-4 w-4 mr-2" />
+                              Unpublish
+                            </>
+                          ) : (
+                            <>
+                              <Eye className="h-4 w-4 mr-2" />
+                              Publish
+                            </>
+                          )}
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem
+                          onClick={() => setDeleteId(col.id)}
+                          className="text-destructive focus:text-destructive"
+                        >
+                          <Trash2 className="h-4 w-4 mr-2" />
+                          Delete
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </TableCell>
                 </TableRow>
               ))

@@ -8,6 +8,16 @@ import { CODToggle } from "@/components/admin/cod-toggle";
 import type { Metadata } from "next";
 import { TrackingNoteForm } from "@/components/admin/tracking-note-form";
 import { PaymentStatusSelect } from "@/components/admin/payment-status-select";
+import { Database } from "@/lib/types/database";
+
+type OrderItem = Database["public"]["Tables"]["order_items"]["Row"] & {
+  product: {
+    product_images: {
+      image_url: string;
+      is_primary: boolean;
+    }[];
+  } | null;
+};
 
 export const metadata: Metadata = { title: "Order Details | Admin" };
 
@@ -61,11 +71,14 @@ export default async function AdminOrderDetailPage({
           <div className="bg-card rounded-lg border border-border/50 p-6">
             <h2 className="text-lg font-medium mb-4">Items</h2>
             <div className="divide-y divide-border/50">
-              {order.order_items.map((item: any) => {
+              {order.order_items.map((item: OrderItem) => {
                 const primaryImage =
                   item.product?.product_images?.find(
-                    (img: any) => img.is_primary,
-                  )?.image_url || item.product?.product_images?.[0]?.image_url;
+                    (img: { image_url: string; is_primary: boolean }) =>
+                      img.is_primary,
+                  )?.image_url ||
+                  (item.product?.product_images?.[0] as { image_url: string })
+                    ?.image_url;
 
                 return (
                   <div
@@ -117,7 +130,7 @@ export default async function AdminOrderDetailPage({
                 <span>
                   {formatPrice(
                     order.order_items.reduce(
-                      (sum: number, item: any) =>
+                      (sum: number, item: OrderItem) =>
                         sum + item.price * item.quantity,
                       0,
                     ),
@@ -171,6 +184,31 @@ export default async function AdminOrderDetailPage({
                     orderId={order.id}
                     initialCollected={order.delivery_payment_collected}
                   />
+                )}
+
+                {order.payment_proof_url && (
+                  <div className="pt-4 mt-4 border-t border-border/50 space-y-3">
+                    <div className="flex justify-between items-center text-sm mb-1">
+                      <span className="text-muted-foreground">
+                        Payment Proof
+                      </span>
+                      <a
+                        href={order.payment_proof_url}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-xs text-gold hover:underline"
+                      >
+                        View Full Size
+                      </a>
+                    </div>
+                    <div className="relative aspect-video rounded-lg overflow-hidden border border-border/50 bg-secondary/10">
+                      <img
+                        src={order.payment_proof_url}
+                        alt="Payment Proof"
+                        className="w-full h-full object-contain"
+                      />
+                    </div>
+                  </div>
                 )}
               </div>
             </div>

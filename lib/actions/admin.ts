@@ -77,6 +77,24 @@ export async function deleteCollection(id: string) {
   return { success: true };
 }
 
+export async function toggleCollectionPublish(
+  id: string,
+  isPublished: boolean,
+) {
+  const supabase = await createClient();
+
+  const { error } = await supabase
+    .from("collections")
+    .update({ is_published: isPublished })
+    .eq("id", id);
+
+  if (error) return { error: error.message };
+
+  revalidatePath("/admin/collections");
+  revalidatePath("/");
+  return { success: true };
+}
+
 export async function createCategory(formData: FormData) {
   const supabase = await createClient();
 

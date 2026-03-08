@@ -16,9 +16,9 @@ import {
   Undo,
   Redo,
   Type,
-  Wand2,
 } from "lucide-react";
 import { AIRewriteButton } from "@/components/admin/ai-rewrite-button";
+import { useEffect } from "react";
 
 interface RichTextEditorProps {
   value: string;
@@ -96,6 +96,12 @@ export function RichTextEditor({
     },
     immediatelyRender: false,
   });
+
+  useEffect(() => {
+    if (editor && value !== editor.getHTML()) {
+      editor.commands.setContent(value);
+    }
+  }, [value, editor]);
 
   if (!editor) {
     return null;

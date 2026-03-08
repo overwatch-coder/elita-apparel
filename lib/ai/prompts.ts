@@ -8,11 +8,15 @@ export type GenerationType =
   | "email"
   | "popup"
   | "seo"
-  | "rewrite";
+  | "rewrite"
+  | "collection_description"
+  | "marketing_content"
+  | "marketing_subject"
+  | "marketing_preview";
 
 interface PromptConfig {
   system: string;
-  prompt: (input: any, brandVoice: string) => string;
+  prompt: (input: Record<string, unknown>, brandVoice: string) => string;
 }
 
 export const PROMPTS: Record<GenerationType, PromptConfig> = {
@@ -102,6 +106,53 @@ export const PROMPTS: Record<GenerationType, PromptConfig> = {
       Brand Voice: ${voice}
 
       Rewrite the text accordingly.
+      Do not use HTML.
+    `,
+  },
+  collection_description: {
+    system:
+      "You are a luxury fashion copywriter. Write elegant and inviting descriptions for curated fashion collections.",
+    prompt: (input, voice) => `
+      Collection Name: ${input.name}
+      Brand Voice: ${voice}
+
+      Write a sophisticated description (2-3 paragraphs) for this collection. Make it sound exclusive and culturally rich.
+      Do not use HTML.
+    `,
+  },
+  marketing_content: {
+    system:
+      "You are a direct response marketing expert for a luxury fashion brand. Write high-converting body copy for marketing campaigns.",
+    prompt: (input, voice) => `
+      Campaign: ${input.campaign_name}
+      Subject: ${input.subject}
+      Brand Voice: ${voice}
+
+      Write 2-3 short, persuasive paragraphs for the main body of this marketing email.
+      Do not use HTML.
+    `,
+  },
+  marketing_subject: {
+    system:
+      "You are a master of email subject lines and open-rate optimization. Write catchy, engaging, and high-open-rate subject lines for a luxury fashion brand.",
+    prompt: (input, voice) => `
+      Campaign: ${input.campaign_name}
+      Main Content: ${input.content}
+      Brand Voice: ${voice}
+
+      Generate 3 highly engaging subject line options. Keep them under 60 characters. Use emojis sparingly but effectively.
+      Do not use HTML.
+    `,
+  },
+  marketing_preview: {
+    system:
+      "You are an expert in email preview text. Write compelling hooks that complement the subject line and drive clicks.",
+    prompt: (input, voice) => `
+      Campaign: ${input.campaign_name}
+      Subject: ${input.subject}
+      Brand Voice: ${voice}
+
+      Generate a compelling 1-sentence preview text hook that creates curiosity or urgency. Max 90 characters.
       Do not use HTML.
     `,
   },

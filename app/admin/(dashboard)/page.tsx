@@ -23,7 +23,7 @@ import {
 import { formatPrice } from "@/lib/constants";
 import type { Metadata } from "next";
 import { DashboardCharts } from "@/components/admin/dashboard-charts";
-import { subDays, format, startOfDay } from "date-fns";
+import { subDays, format } from "date-fns";
 
 export const metadata: Metadata = {
   title: "Admin Dashboard",
@@ -46,7 +46,7 @@ export default async function AdminDashboard() {
   ] = await Promise.all([
     supabase.from("products").select("*", { count: "exact", head: true }),
     supabase.from("orders").select("*", { count: "exact", head: true }),
-    supabase.from("orders").select("total_amount").eq("status", "paid"),
+    supabase.from("orders").select("total_amount").eq("payment_status", "paid"),
     supabase
       .from("products")
       .select("*", { count: "exact", head: true })
@@ -62,12 +62,17 @@ export default async function AdminDashboard() {
     supabase
       .from("orders")
       .select("created_at, total_amount")
+      .eq("payment_status", "paid")
       .gte("created_at", subDays(new Date(), 30).toISOString())
       .order("created_at", { ascending: true }),
   ]);
 
   const totalRevenue =
-    revenueData?.reduce((sum, o) => sum + Number(o.total_amount), 0) || 0;
+    revenueData?.reduce(
+      (sum: number, o: { total_amount: number | string }) =>
+        sum + Number(o.total_amount),
+      0,
+    ) || 0;
 
   // Process sales data for charts
   const salesByDay: Record<string, { revenue: number; orders: number }> = {};
@@ -78,13 +83,15 @@ export default async function AdminDashboard() {
     salesByDay[dateStr] = { revenue: 0, orders: 0 };
   }
 
-  recentSalesData?.forEach((order) => {
-    const dateStr = format(new Date(order.created_at), "MMM dd");
-    if (salesByDay[dateStr]) {
-      salesByDay[dateStr].revenue += Number(order.total_amount);
-      salesByDay[dateStr].orders += 1;
-    }
-  });
+  recentSalesData?.forEach(
+    (order: { created_at: string; total_amount: number | string }) => {
+      const dateStr = format(new Date(order.created_at), "MMM dd");
+      if (salesByDay[dateStr]) {
+        salesByDay[dateStr].revenue += Number(order.total_amount);
+        salesByDay[dateStr].orders += 1;
+      }
+    },
+  );
 
   const chartData = Object.entries(salesByDay).map(([date, data]) => ({
     date,
@@ -237,7 +244,7 @@ export default async function AdminDashboard() {
           <CardContent>
             {recentOrders && recentOrders.length > 0 ? (
               <div className="space-y-1">
-                {recentOrders.map((order) => (
+                {recentOrders.map((order: any) => (
                   <div
                     key={order.id}
                     className="flex items-center justify-between p-3 rounded-lg hover:bg-muted/30 transition-colors border-b border-border/10 last:border-0"

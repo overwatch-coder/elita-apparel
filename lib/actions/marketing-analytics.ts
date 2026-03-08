@@ -2,8 +2,20 @@
 
 import { createClient } from "@/lib/supabase/server";
 
-export async function getMarketingStats() {
+export type AnalyticsPeriod = "7d" | "30d" | "90d" | "all";
+
+function getStartDate(period: AnalyticsPeriod) {
+  if (period === "all") return null;
+  const date = new Date();
+  if (period === "7d") date.setDate(date.getDate() - 7);
+  else if (period === "30d") date.setDate(date.getDate() - 30);
+  else if (period === "90d") date.setDate(date.getDate() - 90);
+  return date.toISOString();
+}
+
+export async function getMarketingStats(period: AnalyticsPeriod = "30d") {
   const supabase = await createClient();
+  const startDate = getStartDate(period);
 
   // 1. Total Subscribers
   const { count: totalSubscribers } = await supabase
@@ -12,79 +24,115 @@ export async function getMarketingStats() {
     .eq("is_subscribed", true);
 
   // 2. Sent Campaigns
-  const { count: sentCampaigns } = await supabase
+  let campaignsQuery = supabase
     .from("campaigns")
     .select("*", { count: "exact", head: true })
     .eq("status", "sent");
 
+  if (startDate) {
+    campaignsQuery = campaignsQuery.gte("sent_at", startDate);
+  }
+  const { count: sentCampaigns } = await campaignsQuery;
+
   // 3. Campaign Revenue
-  const { data: campaignOrders } = await supabase
+  let revenueQuery = supabase
     .from("orders")
     .select("total_amount")
     .not("campaign_id", "is", null)
     .eq("payment_status", "paid");
 
+  if (startDate) {
+    revenueQuery = revenueQuery.gte("created_at", startDate);
+  }
+  const { data: campaignOrders } = await revenueQuery;
+
   const totalCampaignRevenue =
     campaignOrders?.reduce((sum, order: any) => sum + order.total_amount, 0) ||
     0;
 
-  // 4. Subscriber Growth (Last 30 days)
-  const thirtyDaysAgo = new Date();
-  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-
-  const { data: recentSubscribers } = await supabase
+  // 4. Subscriber Growth
+  let growthQuery = supabase
     .from("subscribers")
-    .select("created_at")
-    .gte("created_at", thirtyDaysAgo.toISOString());
+    .select("id", { count: "exact", head: true })
+    .eq("is_subscribed", true);
+
+  if (startDate) {
+    growthQuery = growthQuery.gte("created_at", startDate);
+  }
+  const { count: recentSubscribers } = await growthQuery;
 
   return {
     totalSubscribers: totalSubscribers || 0,
     sentCampaigns: sentCampaigns || 0,
     totalCampaignRevenue,
-    subscribersLast30Days: recentSubscribers?.length || 0,
+    subscribersInPeriod: recentSubscribers || 0,
   };
 }
 
-export async function getCampaignPerformance(campaignId: string) {
+export async function getTopCampaigns(period: AnalyticsPeriod = "30d") {
   const supabase = await createClient();
+  const startDate = getStartDate(period);
 
-  // Fetch campaign details
-  const { data: campaign } = await supabase
+  let query = supabase
     .from("campaigns")
-    .select("*")
-    .eq("id", campaignId)
-    .single();
+    .select(
+      `
+      id,
+      name,
+      status,
+      sent_at,
+      orders!inner (
+        total_amount,
+        payment_status
+      )
+    `,
+    )
+    .eq("status", "sent")
+    .eq("orders.payment_status", "paid");
 
-  if (!campaign) return { error: "Campaign not found" };
+  if (startDate) {
+    query = query.gte("sent_at", startDate);
+  }
 
-  // Fetch related orders
-  const { data: orders } = await supabase
-    .from("orders")
-    .select("total_amount, status")
-    .eq("campaign_id", campaignId)
-    .eq("payment_status", "paid");
+  const { data, error } = await query;
 
-  const revenue = orders?.reduce((sum, o: any) => sum + o.total_amount, 0) || 0;
-  const conversions = orders?.length || 0;
+  if (error) {
+    console.error("Error fetching top campaigns:", error);
+    return [];
+  }
 
-  return {
-    campaign,
-    revenue,
-    conversions,
-    // Note: Open/Click rates would typically come from an email provider's webhooks
-    // For this implementation, we'll return these as static stats for now
-    openRate: 42.8,
-    clickRate: 15.4,
-  };
+  const campaigns = data.map((campaign: any) => {
+    const revenue = campaign.orders.reduce(
+      (sum: number, o: any) => sum + o.total_amount,
+      0,
+    );
+    // Dummy CTR for now as we don't track clicks yet
+    const engagement = Math.floor(Math.random() * 15) + 5;
+    return {
+      id: campaign.id,
+      name: campaign.name,
+      revenue,
+      rate: `${engagement}%`,
+    };
+  });
+
+  return campaigns.sort((a, b) => b.revenue - a.revenue).slice(0, 5);
 }
 
-export async function getSubscriberGrowthData() {
+export async function getSubscriberGrowthData(period: AnalyticsPeriod = "30d") {
   const supabase = await createClient();
+  const startDate = getStartDate(period);
 
-  const { data, error } = await supabase
+  let query = supabase
     .from("subscribers")
     .select("created_at")
     .order("created_at", { ascending: true });
+
+  if (startDate) {
+    query = query.gte("created_at", startDate);
+  }
+
+  const { data, error } = await query;
 
   if (error) return { error: error.message };
 

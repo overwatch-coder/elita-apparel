@@ -42,13 +42,18 @@ export function generateCampaignHtml(blocks: EmailBlock[]) {
           </div>
         `;
         case "text":
+          const isHtml = /<[a-z][\s\S]*>/i.test(block.content);
           return `
           <div style="padding: 20px 40px; font-size: 16px; line-height: 1.6; color: #333; text-align: left;">
-            ${block.content
-              .split("\n")
-              .filter((p) => p.trim() !== "")
-              .map((p) => `<p style="margin-bottom: 15px;">${p}</p>`)
-              .join("")}
+            ${
+              isHtml
+                ? block.content
+                : block.content
+                    .split("\n")
+                    .filter((p) => p.trim() !== "")
+                    .map((p) => `<p style="margin-bottom: 15px;">${p}</p>`)
+                    .join("")
+            }
           </div>
         `;
         case "cta":

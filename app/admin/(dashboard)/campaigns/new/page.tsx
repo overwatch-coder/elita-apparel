@@ -13,6 +13,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { RichTextEditor } from "@/components/ui/rich-text-editor";
+import { AIGeneratorButton } from "@/components/admin/ai-generator-button";
 import {
   Layout,
   Type,
@@ -24,7 +26,13 @@ import {
   Eye,
   Trash2,
   ArrowLeft,
+  ChevronUp,
+  ChevronDown,
+  Monitor,
+  Smartphone,
+  RotateCcw,
 } from "lucide-react";
+import { AIRewriteButton } from "@/components/admin/ai-rewrite-button";
 import {
   generateCampaignHtml,
   type EmailBlock,
@@ -54,6 +62,9 @@ export default function NewCampaignPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [previewHtml, setPreviewHtml] = useState("");
   const [availableProducts, setAvailableProducts] = useState<any[]>([]);
+  const [previewMode, setPreviewMode] = useState<"desktop" | "mobile">(
+    "desktop",
+  );
 
   const [settings, setSettings] = useState({
     name: "",
@@ -118,6 +129,17 @@ export default function NewCampaignPage() {
         setBlocks([...blocks, { type: "product_grid", productIds: [] }]);
         break;
     }
+  };
+
+  const moveBlock = (index: number, direction: "up" | "down") => {
+    const newBlocks = [...blocks];
+    const newIdx = direction === "up" ? index - 1 : index + 1;
+    if (newIdx < 0 || newIdx >= blocks.length) return;
+    [newBlocks[index], newBlocks[newIdx]] = [
+      newBlocks[newIdx],
+      newBlocks[index],
+    ];
+    setBlocks(newBlocks);
   };
 
   const removeBlock = (index: number) => {
@@ -215,7 +237,37 @@ export default function NewCampaignPage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="subject">Subject Line</Label>
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="subject">Subject Line</Label>
+                  <div className="flex items-center gap-2">
+                    <AIGeneratorButton
+                      type="marketing_subject"
+                      input={{
+                        campaign_name: settings.name,
+                        content: blocks
+                          .filter((b) => b.type === "text")
+                          .map((b: any) => b.content)
+                          .join(" "),
+                      }}
+                      onGenerated={(text) => {
+                        // Extract first line if multiple options given
+                        const subject = text
+                          .split("\n")[0]
+                          .replace(/^\d\.\s*/, "")
+                          .replace(/^["']|["']$/g, "");
+                        setSettings({ ...settings, subject_line: subject });
+                      }}
+                      label="AI Subject"
+                      size="sm"
+                    />
+                    <AIRewriteButton
+                      text={settings.subject_line}
+                      onRewrite={(text) =>
+                        setSettings({ ...settings, subject_line: text })
+                      }
+                    />
+                  </div>
+                </div>
                 <Input
                   id="subject"
                   placeholder="Discover our new spring collection ✨"
@@ -227,7 +279,29 @@ export default function NewCampaignPage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="preview">Preview Text (Optional)</Label>
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="preview">Preview Text (Optional)</Label>
+                  <div className="flex items-center gap-2">
+                    <AIGeneratorButton
+                      type="marketing_preview"
+                      input={{
+                        campaign_name: settings.name,
+                        subject: settings.subject_line,
+                      }}
+                      onGenerated={(text) =>
+                        setSettings({ ...settings, preview_text: text })
+                      }
+                      label="AI Preview"
+                      size="sm"
+                    />
+                    <AIRewriteButton
+                      text={settings.preview_text}
+                      onRewrite={(text) =>
+                        setSettings({ ...settings, preview_text: text })
+                      }
+                    />
+                  </div>
+                </div>
                 <Input
                   id="preview"
                   placeholder="Elevate your style with Elita's latest..."
@@ -301,39 +375,85 @@ export default function NewCampaignPage() {
                   key={idx}
                   className="bg-card border-border shadow-sm group"
                 >
-                  <div className="absolute right-2 top-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => removeBlock(idx)}
-                      className="h-8 w-8 text-destructive hover:bg-destructive/10"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
-                  <CardContent className="p-4 space-y-3">
-                    <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2">
-                      {block.type === "header" && (
-                        <Layout className="h-3 w-3" />
-                      )}
-                      {block.type === "text" && <Type className="h-3 w-3" />}
-                      {block.type === "hero" && (
-                        <ImageIcon className="h-3 w-3" />
-                      )}
-                      {block.type === "cta" && (
-                        <MousePointer2 className="h-3 w-3" />
-                      )}
-                      {block.type}
+                  <CardHeader className="p-3 pb-0 border-b-0">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2 text-xs font-semibold text-muted-foreground uppercase tracking-widest">
+                        {block.type === "header" && (
+                          <Layout className="h-3 w-3" />
+                        )}
+                        {block.type === "text" && <Type className="h-3 w-3" />}
+                        {block.type === "hero" && (
+                          <ImageIcon className="h-3 w-3" />
+                        )}
+                        {block.type === "cta" && (
+                          <MousePointer2 className="h-3 w-3" />
+                        )}
+                        {block.type === "product_grid" && (
+                          <Layout className="h-3 w-3" />
+                        )}
+                        {block.type}
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => moveBlock(idx, "up")}
+                          disabled={idx === 0}
+                          className="h-7 w-7 text-muted-foreground"
+                        >
+                          <ChevronUp className="h-3.5 w-3.5" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => moveBlock(idx, "down")}
+                          disabled={idx === blocks.length - 1}
+                          className="h-7 w-7 text-muted-foreground"
+                        >
+                          <ChevronDown className="h-3.5 w-3.5" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => removeBlock(idx)}
+                          className="h-7 w-7 text-destructive hover:bg-destructive/10"
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </Button>
+                      </div>
                     </div>
-
+                  </CardHeader>
+                  <CardContent className="p-4 pt-3 space-y-4">
                     {block.type === "text" && (
-                      <Textarea
-                        value={block.content}
-                        onChange={(e) =>
-                          updateBlock(idx, { content: e.target.value })
-                        }
-                        className="bg-background border-border min-h-[100px]"
-                      />
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-end gap-2">
+                          <AIGeneratorButton
+                            type="marketing_content"
+                            input={{
+                              campaign_name: settings.name,
+                              subject: settings.subject_line,
+                            }}
+                            onGenerated={(text) =>
+                              updateBlock(idx, { content: text })
+                            }
+                            label="Generate"
+                            size="sm"
+                          />
+                          <AIRewriteButton
+                            text={block.content}
+                            onRewrite={(text) =>
+                              updateBlock(idx, { content: text })
+                            }
+                          />
+                        </div>
+                        <RichTextEditor
+                          value={block.content}
+                          onChange={(text) =>
+                            updateBlock(idx, { content: text })
+                          }
+                          placeholder="Write your email content..."
+                        />
+                      </div>
                     )}
 
                     {block.type === "hero" && (
@@ -533,24 +653,56 @@ export default function NewCampaignPage() {
         </div>
 
         {/* Preview Side */}
-        <div className="bg-white border-border border rounded-lg shadow-inner overflow-hidden flex flex-col min-h-[800px]">
+        <div className="bg-white border-border border rounded-lg shadow-inner overflow-hidden flex flex-col min-h-[800px] sticky top-6">
           <div className="bg-muted/30 border-b border-border p-3 flex items-center justify-between">
             <div className="flex gap-1.5">
-              <div className="w-3 h-3 rounded-full bg-red-400/50" />
-              <div className="w-3 h-3 rounded-full bg-amber-400/50" />
-              <div className="w-3 h-3 rounded-full bg-emerald-400/50" />
+              <div className="w-3 h-3 rounded-full bg-red-400" />
+              <div className="w-3 h-3 rounded-full bg-amber-400" />
+              <div className="w-3 h-3 rounded-full bg-emerald-400" />
             </div>
-            <span className="text-xs text-muted-foreground font-medium">
-              Email Preview
-            </span>
-            <div className="w-10"></div>
+            <div className="flex bg-muted/50 p-1 rounded-md border border-border">
+              <Button
+                variant={previewMode === "desktop" ? "secondary" : "ghost"}
+                size="sm"
+                className="h-7 text-[10px] uppercase tracking-wider px-3"
+                onClick={() => setPreviewMode("desktop")}
+              >
+                <Monitor className="h-3 w-3 mr-1.5" />
+                Desktop
+              </Button>
+              <Button
+                variant={previewMode === "mobile" ? "secondary" : "ghost"}
+                size="sm"
+                className="h-7 text-[10px] uppercase tracking-wider px-3"
+                onClick={() => setPreviewMode("mobile")}
+              >
+                <Smartphone className="h-3 w-3 mr-1.5" />
+                Mobile
+              </Button>
+            </div>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 text-muted-foreground"
+              onClick={() => setPreviewHtml(generateCampaignHtml(blocks))}
+              title="Refresh Preview"
+            >
+              <RotateCcw className="h-4 w-4" />
+            </Button>
           </div>
-          <div className="flex-1 overflow-y-auto bg-slate-50 p-4">
+          <div className="flex-1 overflow-y-auto bg-slate-50 p-8 custom-scrollbar">
             <div
-              className="bg-white mx-auto shadow-sm"
-              style={{ width: "100%", maxWidth: "600px" }}
-              dangerouslySetInnerHTML={{ __html: previewHtml }}
-            />
+              className={cn(
+                "bg-white mx-auto shadow-2xl transition-all duration-300",
+                previewMode === "mobile" ? "max-w-[375px]" : "max-w-[600px]",
+              )}
+              style={{ width: "100%" }}
+            >
+              <div
+                className="bg-white p-0 pointer-events-none select-none overflow-hidden"
+                dangerouslySetInnerHTML={{ __html: previewHtml }}
+              />
+            </div>
           </div>
         </div>
       </div>
