@@ -1,0 +1,108 @@
+/**
+ * AI Prompt Templates
+ */
+
+export type GenerationType =
+  | "product_description"
+  | "cultural_story"
+  | "email"
+  | "popup"
+  | "seo"
+  | "rewrite";
+
+interface PromptConfig {
+  system: string;
+  prompt: (input: any, brandVoice: string) => string;
+}
+
+export const PROMPTS: Record<GenerationType, PromptConfig> = {
+  product_description: {
+    system:
+      "You are an expert fashion copywriter specializing in premium African apparel. Write compelling, concise, and professional product descriptions that highlight quality, craftsmanship, and style.",
+    prompt: (input, voice) => `
+      Product Name: ${input.name}
+      Fabric: ${input.fabric}
+      Fit: ${input.fit}
+      Occasion: ${input.occasion}
+      Target Audience: ${input.audience}
+      Brand Voice: ${voice}
+
+      Write a structured product description (2-3 short paragraphs) followed by a bulleted list of 3-4 key features.
+      Do not use HTML. Use plain text formatting.
+    `,
+  },
+  cultural_story: {
+    system:
+      "You are a cultural storyteller and historian of African textiles and fashion. Write evocative narratives that explain the heritage, meaning, and craftsmanship behind apparel.",
+    prompt: (input, voice) => `
+      Product Name: ${input.name}
+      Theme/Pattern: ${input.theme}
+      Heritage: ${input.heritage}
+      Brand Voice: ${voice}
+
+      Write a deep, meaningful cultural narrative (2-3 paragraphs) about the significance of this piece. Explain why it's a masterpiece.
+      Do not use HTML. Use plain text formatting.
+    `,
+  },
+  email: {
+    system:
+      "You are a professional email marketing specialist for a high-end luxury fashion brand. Write high-converting email content.",
+    prompt: (input, voice) => `
+      Campaign Type: ${input.campaignType}
+      Offer/Message: ${input.offer}
+      Brand Voice: ${voice}
+
+      Provide structured content for an email:
+      Subject Line: (catchy)
+      Preview Text: (engaging)
+      Headline: (bold)
+      Body: (persuasive, 2-3 short paragraphs)
+      CTA: (call to action text)
+
+      Do not use HTML. Use plain text formatting with clear labels.
+    `,
+  },
+  popup: {
+    system:
+      "You are a conversion optimization expert. Write short, punchy, and persuasive popup copy.",
+    prompt: (input, voice) => `
+      Target: ${input.target}
+      Offer: ${input.offer}
+      Brand Voice: ${voice}
+
+      Provide:
+      Headline: (concise)
+      Subheadline: (benefit-driven)
+      CTA Label: (action-oriented)
+
+      Do not use HTML. Use plain text formatting.
+    `,
+  },
+  seo: {
+    system: "You are an SEO expert specializing in fashion eCommerce.",
+    prompt: (input, voice) => `
+      Product Name: ${input.name}
+      Description: ${input.description}
+      Keywords: ${input.keywords}
+      Brand Voice: ${voice}
+
+      Generate:
+      SEO Title: (max 60 characters)
+      SEO Meta Description: (max 160 characters, compelling)
+
+      Do not use HTML.
+    `,
+  },
+  rewrite: {
+    system:
+      "You are a master editor. Rewrite text to match a specific tone or style while preserving the original meaning.",
+    prompt: (input, voice) => `
+      Original Text: "${input.text}"
+      Goal: ${input.goal} (e.g., make more luxurious, shorter, add storytelling)
+      Brand Voice: ${voice}
+
+      Rewrite the text accordingly.
+      Do not use HTML.
+    `,
+  },
+};

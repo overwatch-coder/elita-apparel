@@ -1063,6 +1063,57 @@ export interface Database {
           },
         ];
       };
+      brand_settings: {
+        Row: {
+          id: string;
+          brand_voice: string;
+          ai_model_preference: string;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          brand_voice?: string;
+          ai_model_preference?: string;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          brand_voice?: string;
+          ai_model_preference?: string;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      ai_generations: {
+        Row: {
+          id: string;
+          type: string;
+          input_data: Json | null;
+          output_text: string | null;
+          model_used: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          type: string;
+          input_data?: Json | null;
+          output_text?: string | null;
+          model_used?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          type?: string;
+          input_data?: Json | null;
+          output_text?: string | null;
+          model_used?: string | null;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
     };
     Views: {
       [_ in never]: never;
@@ -1098,6 +1149,8 @@ export type DiscountCode = Tables["discount_codes"]["Row"];
 export type AdminUser = Tables["admin_users"]["Row"];
 export type Profile = Tables["profiles"]["Row"];
 export type Address = Tables["addresses"]["Row"];
+export type BrandSettings = Tables["brand_settings"]["Row"];
+export type AIGeneration = Tables["ai_generations"]["Row"];
 export type ContactMessage = Tables["contact_messages"]["Row"];
 export type WhatsAppOrder = Tables["whatsapp_orders"]["Row"];
 export type FabricType = Tables["fabric_types"]["Row"];

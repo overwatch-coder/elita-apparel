@@ -3,7 +3,9 @@ import { redirect } from "next/navigation";
 import { ProfileForm as AdminProfileForm } from "./profile-form";
 import { PasswordForm as AdminPasswordForm } from "./password-form";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { User, ShieldCheck, Bell } from "lucide-react";
+import { User, ShieldCheck, Bell, Palette } from "lucide-react";
+import { BrandSettingsForm } from "./brand-settings-form";
+import { getBrandSettings } from "@/lib/actions/brand-settings";
 import {
   Card,
   CardContent,
@@ -24,11 +26,10 @@ export default async function AdminSettingsPage() {
   }
 
   // Fetch profile
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("*")
-    .eq("id", user.id)
-    .single();
+  const [{ data: profile }, { settings: brandSettings }] = await Promise.all([
+    supabase.from("profiles").select("*").eq("id", user.id).single(),
+    getBrandSettings(),
+  ]);
 
   return (
     <div className="space-y-10 max-w-5xl mx-auto">
@@ -62,6 +63,12 @@ export default async function AdminSettingsPage() {
               className="px-6 py-2.5 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all data-[state=active]:bg-background data-[state=active]:text-green-500 data-[state=active]:shadow-sm"
             >
               Preferences
+            </TabsTrigger>
+            <TabsTrigger
+              value="brand"
+              className="px-6 py-2.5 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all data-[state=active]:bg-background data-[state=active]:text-gold data-[state=active]:shadow-sm"
+            >
+              Brand & AI
             </TabsTrigger>
           </TabsList>
         </div>
@@ -140,6 +147,36 @@ export default async function AdminSettingsPage() {
               <p className="text-sm text-muted-foreground italic font-serif">
                 Notification preferences will be available in a future update.
               </p>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="brand" className="space-y-6 outline-none">
+          <Card className="border-border/40 shadow-sm rounded-xl overflow-hidden">
+            <CardHeader className="bg-muted/10 border-b border-border/20 pb-8 font-serif">
+              <div className="flex items-start gap-4 text-foreground">
+                <div className="h-12 w-12 rounded-xl bg-gold/10 flex items-center justify-center text-gold shrink-0 border border-gold/20">
+                  <Palette className="h-6 w-6" />
+                </div>
+                <div className="space-y-1">
+                  <CardTitle className="text-lg font-serif">
+                    Brand Identity & AI
+                  </CardTitle>
+                  <CardDescription className="text-xs text-muted-foreground leading-relaxed">
+                    Define your brand voice and configure AI content generation
+                    preferences.
+                  </CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="pt-8">
+              <BrandSettingsForm
+                initialData={{
+                  brand_voice: brandSettings?.brand_voice || "Luxury",
+                  ai_model_preference:
+                    brandSettings?.ai_model_preference || "openai",
+                }}
+              />
             </CardContent>
           </Card>
         </TabsContent>

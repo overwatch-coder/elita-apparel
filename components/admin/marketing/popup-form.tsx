@@ -17,8 +17,10 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { createPopup, updatePopup } from "@/lib/actions/marketing-popups";
 import { toast } from "sonner";
-import { Loader2, ArrowLeft, Save } from "lucide-react";
+import { Loader2, ArrowLeft, Save, Sparkles } from "lucide-react";
 import Link from "next/link";
+import { RichTextEditor } from "@/components/ui/rich-text-editor";
+import { AIGeneratorButton } from "@/components/admin/ai-generator-button";
 
 interface PopupFormProps {
   initialData?: any;
@@ -115,7 +117,23 @@ export function PopupForm({ initialData, discountCodes }: PopupFormProps) {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="title">Display Title</Label>
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="title">Display Title</Label>
+                  <AIGeneratorButton
+                    type="popup"
+                    label="Generate Headline"
+                    input={{
+                      target: formData.type,
+                      offer: formData.name,
+                    }}
+                    onGenerated={(text) => {
+                      // Extract headline from AI response if it's structured
+                      const headline =
+                        text.match(/Headline:\s*(.*)/i)?.[1] || text;
+                      setFormData((prev) => ({ ...prev, title: headline }));
+                    }}
+                  />
+                </div>
                 <Input
                   id="title"
                   placeholder="e.g. Get 20% Off Your First Order"
@@ -128,15 +146,27 @@ export function PopupForm({ initialData, discountCodes }: PopupFormProps) {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="content">Content / Description</Label>
-                <Textarea
-                  id="content"
-                  placeholder="e.g. Subscribe to our newsletter and unlock a special discount code..."
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="content">Content / Description</Label>
+                  <AIGeneratorButton
+                    type="popup"
+                    label="Generate Content"
+                    input={{
+                      target: formData.type,
+                      offer: formData.title || formData.name,
+                    }}
+                    onGenerated={(text) => {
+                      // Extract subheadline/content from AI response
+                      const content =
+                        text.match(/Subheadline:\s*(.*)/i)?.[1] || text;
+                      setFormData((prev) => ({ ...prev, content }));
+                    }}
+                  />
+                </div>
+                <RichTextEditor
                   value={formData.content}
-                  onChange={(e) =>
-                    setFormData({ ...formData, content: e.target.value })
-                  }
-                  rows={4}
+                  onChange={(val) => setFormData({ ...formData, content: val })}
+                  placeholder="e.g. Subscribe to our newsletter and unlock a special discount code..."
                 />
               </div>
 

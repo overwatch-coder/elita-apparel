@@ -40,6 +40,8 @@ import {
 import { motion, AnimatePresence } from "motion/react";
 import { cn } from "@/lib/utils";
 import { ProductImageManager } from "@/components/admin/product-image-manager";
+import { RichTextEditor } from "@/components/ui/rich-text-editor";
+import { AIGeneratorButton } from "@/components/admin/ai-generator-button";
 import {
   Category,
   Collection,
@@ -289,29 +291,61 @@ export function ProductWizard({
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="description">Short Description</Label>
-                    <Textarea
-                      id="description"
+                    <div className="flex items-center justify-between">
+                      <Label htmlFor="description">Short Description</Label>
+                      <AIGeneratorButton
+                        type="product_description"
+                        input={{
+                          name: formData.name,
+                          fabric:
+                            fabricTypes.find(
+                              (f) => f.slug === formData.fabric_type,
+                            )?.name || "Premium fabric",
+                          fit: "Standard fit", // Default or could a separate field
+                          audience:
+                            categories.find(
+                              (c) => c.id === formData.category_id,
+                            )?.name || "Fashion enthusiasts",
+                          occasion:
+                            collections.find(
+                              (c) => c.id === formData.collection_id,
+                            )?.name || "Various occasions",
+                        }}
+                        onGenerated={(text) =>
+                          handleInputChange("description", text)
+                        }
+                      />
+                    </div>
+                    <RichTextEditor
                       value={formData.description}
-                      onChange={(e) =>
-                        handleInputChange("description", e.target.value)
-                      }
+                      onChange={(val) => handleInputChange("description", val)}
                       placeholder="Key features and fit..."
-                      rows={3}
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="cultural_story">
-                      The Cultural Narrative
-                    </Label>
-                    <Textarea
-                      id="cultural_story"
+                    <div className="flex items-center justify-between">
+                      <Label htmlFor="cultural_story">
+                        The Cultural Narrative
+                      </Label>
+                      <AIGeneratorButton
+                        type="cultural_story"
+                        label="Generate Narrative"
+                        input={{
+                          name: formData.name,
+                          theme: formData.name, // Use name as theme context
+                          heritage: "African heritage",
+                        }}
+                        onGenerated={(text) =>
+                          handleInputChange("cultural_story", text)
+                        }
+                      />
+                    </div>
+                    <RichTextEditor
                       value={formData.cultural_story}
-                      onChange={(e) =>
-                        handleInputChange("cultural_story", e.target.value)
+                      onChange={(val) =>
+                        handleInputChange("cultural_story", val)
                       }
                       placeholder="The heritage and significance..."
-                      rows={4}
                     />
                   </div>
                 </CardContent>
