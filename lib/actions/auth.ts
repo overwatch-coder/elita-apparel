@@ -229,7 +229,14 @@ export async function confirmEmailChange(otp: string) {
   if (fetchError || !codeData)
     return { error: "Invalid or expired verification code" };
 
-  const newEmail = codeData.metadata.new_email;
+  if (!codeData.metadata || typeof codeData.metadata !== "object") {
+    return { error: "Invalid verification data" };
+  }
+
+  const metadata = codeData.metadata as { new_email?: string };
+  const newEmail = metadata.new_email;
+
+  if (!newEmail) return { error: "Missing new email in verification" };
 
   // 2. Update user email in Auth
   const { error: updateError } = await supabase.auth.updateUser({

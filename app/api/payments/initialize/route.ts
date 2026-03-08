@@ -24,6 +24,9 @@ export async function POST(req: Request) {
       );
     }
 
+    // Dynamically get the site URL from headers to handle local ports (3000/3001) correctly
+    const origin = req.headers.get("origin") || NEXT_PUBLIC_SITE_URL;
+
     // Determine channels based on payment method
     let channels = ["card", "bank", "ussd", "qr", "mobile_money"]; // default
     if (paymentMethod === "card") channels = ["card"];
@@ -45,7 +48,7 @@ export async function POST(req: Request) {
           amount: amountInPesewas,
           currency: "GHS",
           channels,
-          callback_url: `${NEXT_PUBLIC_SITE_URL}/checkout/verify?order_id=${orderId}`,
+          callback_url: `${origin}/checkout/verify?order_id=${orderId}`,
           metadata: {
             order_id: orderId,
             customer_name: name,

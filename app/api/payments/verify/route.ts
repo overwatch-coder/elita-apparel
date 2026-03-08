@@ -46,6 +46,18 @@ export async function POST(req: Request) {
         SUPABASE_SERVICE_ROLE_KEY,
       );
 
+      // Map Paystack channel to our payment method label
+      const paystackChannel = data.data.channel as string; // e.g. "card", "mobile_money", "bank"
+      const paymentMethodMap: Record<string, string> = {
+        card: "card",
+        mobile_money: "momo",
+        bank: "bank",
+        ussd: "ussd",
+        qr: "qr",
+      };
+      const resolvedPaymentMethod =
+        paymentMethodMap[paystackChannel] ?? paystackChannel;
+
       // Update order status
       const { data: orderData, error } = await supabaseAdmin
         .from("orders")
@@ -55,6 +67,7 @@ export async function POST(req: Request) {
           payment_verified: true,
           paystack_reference: reference,
           paid_at: new Date().toISOString(),
+          payment_method: resolvedPaymentMethod,
         })
         .eq("id", orderId)
         .select("tracking_number")

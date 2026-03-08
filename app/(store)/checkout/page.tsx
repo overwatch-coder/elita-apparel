@@ -177,8 +177,7 @@ export default function CheckoutPage() {
 
       if (paymentMethod === "manual_momo") {
         setProcessingStatus("manual_payment");
-        clearCart();
-        // Stay in modal until proofs uploaded
+        // Cart will be cleared when the user proceeds from the manual payment modal.
       } else {
         // Handle Card, MoMo via Paystack Inline, or COD
         const response = await fetch("/api/payments/initialize", {
@@ -206,6 +205,11 @@ export default function CheckoutPage() {
         }
 
         const publicKey = process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY;
+        console.log(
+          "Initializing Paystack with Key:",
+          publicKey?.substring(0, 10) + "...",
+        );
+
         if (!publicKey) {
           throw new Error("Payment configuration error: Public key missing.");
         }
@@ -215,11 +219,7 @@ export default function CheckoutPage() {
           email: form.email,
           amount: Math.round(finalTotal * 100),
           currency: "GHS",
-          ref: data.reference,
           access_code: data.access_code,
-          metadata: {
-            order_id: result.orderId,
-          },
           onClose: () => {
             setProcessingStatus("idle");
             setIsSubmitting(false);
@@ -266,8 +266,7 @@ export default function CheckoutPage() {
           },
         });
 
-        // Hide our loading modal before opening Paystack's popup
-        setProcessingStatus("idle");
+        // keep the modal open while waiting for Paystack to load
         handler.openIframe();
       }
     } catch (error) {
@@ -341,7 +340,7 @@ export default function CheckoutPage() {
     );
   }
 
-  if (items.length === 0 && !isComplete) {
+  if (items.length === 0 && !isComplete && processingStatus === "idle") {
     return (
       <div className="pt-28 pb-20 min-h-[60vh] flex items-center justify-center">
         <div className="container mx-auto px-4 lg:px-8 max-w-2xl text-center">
@@ -371,6 +370,7 @@ export default function CheckoutPage() {
         trackingNumber={trackingNumber}
         onClose={() => {
           if (processingStatus === "manual_payment") {
+            clearCart(); // Clear cart now — after user has seen the account details
             setProcessingStatus("upload_proof");
           } else if (processingStatus === "upload_proof") {
             setIsComplete(true);

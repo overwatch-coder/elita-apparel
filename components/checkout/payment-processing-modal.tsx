@@ -166,11 +166,72 @@ export function PaymentProcessingModal({
       }`}
     >
       <div
-        className={`bg-background border border-border/50 rounded-2xl p-8 max-w-sm w-full mx-4 shadow-2xl transition-all duration-500 transform ${
+        className={`bg-background border border-border/50 rounded-2xl p-8 max-w-sm w-full mx-4 shadow-2xl transition-all duration-500 transform max-h-[90vh] overflow-y-auto ${
           isOpen ? "scale-100 translate-y-0" : "scale-95 translate-y-4"
         }`}
       >
         <div className="flex flex-col items-center justify-center text-center space-y-6">
+          {status === "processing" && (
+            <>
+              <div className="relative">
+                <div className="absolute inset-0 rounded-full blur-2xl bg-gold/20 animate-pulse" />
+                <Loader2 className="h-16 w-16 text-gold animate-spin relative" />
+              </div>
+              <div>
+                <h3 className="text-xl font-serif text-foreground mb-2">
+                  Processing Payment
+                </h3>
+                <p className="text-sm text-muted-foreground max-w-[240px]">
+                  Please wait while we securely process your transaction. Do not
+                  refresh the page.
+                </p>
+              </div>
+            </>
+          )}
+
+          {status === "success" && (
+            <>
+              <div className="relative">
+                <div className="absolute inset-0 rounded-full blur-2xl bg-ghana-green/20 animate-pulse" />
+                <CheckCircle2 className="h-16 w-16 text-ghana-green relative" />
+              </div>
+              <div>
+                <h3 className="text-xl font-serif text-foreground mb-2">
+                  Payment Successful
+                </h3>
+                <p className="text-sm text-muted-foreground w-64">
+                  Thank you for your purchase! We've received your payment and
+                  are preparing your order.
+                </p>
+              </div>
+            </>
+          )}
+
+          {status === "error" && (
+            <>
+              <div className="h-16 w-16 bg-destructive/10 rounded-full flex items-center justify-center">
+                <div className="h-8 w-2 bg-destructive rounded-full" />
+                <div className="h-2 w-2 bg-destructive rounded-full mt-6 -ml-2" />
+              </div>
+              <div>
+                <h3 className="text-xl font-serif text-foreground mb-2">
+                  Payment Failed
+                </h3>
+                <p className="text-sm text-muted-foreground">
+                  Something went wrong with your transaction. Please try again
+                  or choose another method.
+                </p>
+              </div>
+              <Button
+                onClick={onClose}
+                variant="outline"
+                className="w-full border-border hover:bg-muted"
+              >
+                Close and Try Again
+              </Button>
+            </>
+          )}
+
           {status === "manual_payment" && (
             <>
               <div className="relative">

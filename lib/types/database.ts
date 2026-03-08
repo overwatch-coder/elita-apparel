@@ -1016,6 +1016,44 @@ export interface Database {
         };
         Relationships: [];
       };
+      verification_codes: {
+        Row: {
+          id: string;
+          user_id: string;
+          code: string;
+          type: "email_change" | "password_change";
+          metadata: Json;
+          expires_at: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          code: string;
+          type: "email_change" | "password_change";
+          metadata?: Json;
+          expires_at: string;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          code?: string;
+          type?: "email_change" | "password_change";
+          metadata?: Json;
+          expires_at?: string;
+          created_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "verification_codes_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
     };
     Views: {
       [_ in never]: never;
@@ -1056,6 +1094,7 @@ export type WhatsAppOrder = Tables["whatsapp_orders"]["Row"];
 export type FabricType = Tables["fabric_types"]["Row"];
 export type InstagramPost = Tables["instagram_posts"]["Row"];
 export type SiteSetting = Tables["site_settings"]["Row"];
+export type VerificationCode = Tables["verification_codes"]["Row"];
 // ── Composite types (with joins) ────────────────────────────────────
 
 export interface ProductWithImages extends Product {
