@@ -75,7 +75,7 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
   // Apply search
   if (params.q) {
     query = query.or(
-      `name.ilike.%${params.q}%,description.ilike.%${params.q}%,fabric_type.ilike.%${params.q}%`,
+      `name.ilike.%${params.q}%,description.ilike.%${params.q}%,cultural_story.ilike.%${params.q}%,fabric_type.ilike.%${params.q}%`,
     );
   }
 

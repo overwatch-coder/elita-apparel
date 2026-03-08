@@ -60,12 +60,19 @@ export function Footer() {
                   alt="Elita Apparel"
                   width={140}
                   height={56}
-                  className="h-12 w-auto object-contain dark:invert-0 light:invert transition-all"
+                  className="h-12 w-auto object-contain dark:hidden transition-all"
+                />
+                <Image
+                  src="/logo-dark.png"
+                  alt="Elita Apparel"
+                  width={140}
+                  height={56}
+                  className="h-12 w-auto object-contain hidden dark:block transition-all"
                 />
               </Link>
               <p className="text-sm text-muted-foreground leading-relaxed">
-                Premium African fashion celebrating heritage through elite
-                craftsmanship.
+                Celebrating African heritage through vibrant, modern clothing
+                that empowers individuals to embrace their roots.
               </p>
             </div>
 
@@ -75,6 +82,10 @@ export function Footer() {
                 <p className="text-sm text-muted-foreground">
                   {BRAND.location}
                 </p>
+              </div>
+              <div className="flex items-start gap-3">
+                <Phone className="h-4 w-4 text-gold mt-0.5 shrink-0" />
+                <p className="text-sm text-muted-foreground">{SOCIALS.phone}</p>
               </div>
               <div className="flex items-start gap-3">
                 <Mail className="h-4 w-4 text-gold mt-0.5 shrink-0" />
@@ -159,6 +170,18 @@ export function Footer() {
                 >
                   Contact Us
                 </Link>
+                <Link
+                  href="/privacy"
+                  className="text-sm text-muted-foreground hover:text-gold transition-colors duration-300"
+                >
+                  Privacy Policy
+                </Link>
+                <Link
+                  href="/terms"
+                  className="text-sm text-muted-foreground hover:text-gold transition-colors duration-300"
+                >
+                  Terms & Conditions
+                </Link>
               </nav>
             </div>
 
@@ -217,10 +240,7 @@ export function Footer() {
         {/* Bottom bar */}
         <div className="py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-xs text-muted-foreground/50">
-            © {currentYear} {BRAND.name}. All rights reserved.
-          </p>
-          <p className="text-xs text-muted-foreground/30 tracking-[0.3em] uppercase">
-            {BRAND.tagline}
+            © {currentYear} {BRAND.name}. All rights reserved. {BRAND.tagline}
           </p>
         </div>
       </div>

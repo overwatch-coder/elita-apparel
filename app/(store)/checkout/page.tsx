@@ -43,9 +43,14 @@ export default function CheckoutPage() {
   const [orderId, setOrderId] = useState<string | null>(null);
   const [trackingNumber, setTrackingNumber] = useState<string | null>(null);
 
-  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("cod");
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("card");
   const [processingStatus, setProcessingStatus] = useState<
-    "idle" | "processing" | "success" | "error"
+    | "idle"
+    | "processing"
+    | "success"
+    | "error"
+    | "manual_payment"
+    | "upload_proof"
   >("idle");
 
   const [user, setUser] = useState<User | null>(null);
@@ -170,18 +175,12 @@ export default function CheckoutPage() {
         subscribeToNewsletter(form.email, "checkout").catch(console.error);
       }
 
-      if (paymentMethod === "cod") {
-        setProcessingStatus("success");
+      if (paymentMethod === "manual_momo") {
+        setProcessingStatus("manual_payment");
         clearCart();
-
-        // Allow animation to play before transitioning
-        setTimeout(() => {
-          setIsComplete(true);
-          setProcessingStatus("idle");
-          setIsSubmitting(false);
-        }, 2500);
+        // Stay in modal until proofs uploaded
       } else {
-        // Handle Card or MoMo via Paystack Inline
+        // Handle Card, MoMo via Paystack Inline, or COD
         const response = await fetch("/api/payments/initialize", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -368,9 +367,19 @@ export default function CheckoutPage() {
       <PaymentProcessingModal
         isOpen={processingStatus !== "idle"}
         status={processingStatus}
+        orderId={orderId}
+        trackingNumber={trackingNumber}
         onClose={() => {
-          setProcessingStatus("idle");
-          setIsSubmitting(false);
+          if (processingStatus === "manual_payment") {
+            setProcessingStatus("upload_proof");
+          } else if (processingStatus === "upload_proof") {
+            setIsComplete(true);
+            setProcessingStatus("idle");
+            setIsSubmitting(false);
+          } else {
+            setProcessingStatus("idle");
+            setIsSubmitting(false);
+          }
         }}
       />
 

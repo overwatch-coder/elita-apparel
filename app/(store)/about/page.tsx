@@ -12,24 +12,30 @@ export const metadata: Metadata = {
 
 const VALUES = [
   {
-    title: "Cultural Heritage",
-    description:
-      "Every piece is rooted in African tradition, telling stories through authentic prints and patterns that span generations.",
+    title: "Cultural Pride",
+    description: "Honoring African heritage in every design.",
   },
   {
-    title: "Premium Craftsmanship",
+    title: "Elegance & Excellence",
     description:
-      "Each garment reflects premium fabrics, expert tailoring, and detailed finishing — no shortcuts, no compromise.",
+      "Crafting elite, high-quality pieces that exude sophistication.",
   },
   {
-    title: "Elegant Design",
-    description:
-      "Our designs blend traditional African aesthetics with contemporary silhouettes, creating pieces that command attention.",
+    title: "Empowerment",
+    description: "Inspiring confidence and self-expression in every wearer.",
   },
   {
-    title: "Authentic Fabrics",
+    title: "Creativity & Innovation",
+    description: "Blending tradition with modern, stylish designs.",
+  },
+  {
+    title: "Authenticity & Integrity",
+    description: "Staying true to our roots and ethical practices.",
+  },
+  {
+    title: "Accessible Luxury",
     description:
-      "We source the finest Ankara, Kente, Adire, and other authentic African fabrics directly from skilled artisans.",
+      "Offering premium, culturally inspired fashion that is attainable and valued.",
   },
 ];
 
@@ -40,15 +46,13 @@ export default function AboutPage() {
       <section className="bg-background pt-24 lg:pt-32 pb-16 border-b border-border/50">
         <div className="container mx-auto px-4 lg:px-8 text-center max-w-3xl">
           <p className="text-gold tracking-[0.4em] uppercase text-xs mb-4">
-            Our Story
+            Our Mission
           </p>
           <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl text-foreground mb-6">
-            About Elita Apparel
+            To celebrate African heritage through vibrant, modern clothing that
+            empowers individuals to embrace their roots, express their unique
+            style, and shine with confidence and elegance.
           </h1>
-          <p className="text-muted-foreground leading-relaxed">
-            A premium African fashion house celebrating culture through elite
-            craftsmanship, founded in {BRAND.location}.
-          </p>
           <div className="w-16 h-px bg-gold mx-auto mt-8" />
         </div>
       </section>
@@ -58,33 +62,29 @@ export default function AboutPage() {
         <div className="container mx-auto px-4 lg:px-8">
           <div className="max-w-3xl mx-auto">
             <p className="text-gold tracking-[0.3em] uppercase text-xs mb-6">
-              The Vision
+              Our Vision
             </p>
             <h2 className="font-serif text-3xl sm:text-4xl mb-8">
-              {BRAND.motto}
+              Celebrating African Heritage Through Elite African Wear
             </h2>
             <div className="space-y-6 text-foreground/70 leading-relaxed">
               <p>
-                Elita Apparel was born from a deep love for African culture and
-                a desire to elevate how the world experiences African fashion.
-                Based in the vibrant heart of Accra, Ghana, we create premium
-                fashion pieces that honour our rich heritage while embracing
-                modern elegance.
+                Our brand celebrates the rich heritage and vibrant artistry of
+                African prints. Each piece is thoughtfully designed to blend
+                tradition with modern style, turning cultural patterns into
+                wearable expressions of confidence and grace.
               </p>
               <p>
-                Our name — <em>Elita</em> — speaks to our commitment to
-                excellence. Every garment that carries our label has been
-                carefully designed, meticulously crafted, and finished to the
-                highest standards. We believe that African fashion deserves to
-                stand among the world&apos;s finest, and we&apos;re here to make
-                that a reality.
+                From bold batiks to intricate designs, we create clothing that
+                empowers you to embrace your story, honor your roots, and shine
+                with timeless elegance. Each garment represents a bridge between
+                our ancestry and the contemporary world, meticulously crafted
+                for those who value authenticity.
               </p>
               <p>
-                From sourcing authentic fabrics like Kente, Ankara, and Adire,
-                to working with skilled tailors who pour artistry into every
-                stitch, each Elita piece is a celebration of who we are —
-                culturally proud, elegantly crafted, and unapologetically
-                premium.
+                At Elita Apparel, we believe that what you wear is a reflection
+                of your journey. We are committed to providing elite African
+                wear that makes a statement without saying a word.
               </p>
             </div>
           </div>
@@ -102,15 +102,89 @@ export default function AboutPage() {
             <div className="w-16 h-px bg-gold mx-auto mt-6" />
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
             {VALUES.map((value) => (
-              <div key={value.title} className="text-center">
-                <h3 className="font-serif text-lg mb-3">{value.title}</h3>
+              <div
+                key={value.title}
+                className="text-center p-6 border border-border/50 rounded-lg hover:border-gold/30 transition-colors bg-background/50"
+              >
+                <h3 className="font-serif text-lg mb-3 text-gold">
+                  {value.title}
+                </h3>
                 <p className="text-muted-foreground text-sm leading-relaxed">
                   {value.description}
                 </p>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Clothing Tips */}
+      <section className="py-16 lg:py-24 bg-background">
+        <div className="container mx-auto px-4 lg:px-8">
+          <div className="max-w-4xl mx-auto flex flex-col md:flex-row gap-12 items-center">
+            <div className="flex-1 space-y-6">
+              <p className="text-gold tracking-[0.3em] uppercase text-xs mb-2 text-center md:text-left">
+                Care & Longevity
+              </p>
+              <h2 className="font-serif text-3xl sm:text-4xl text-center md:text-left">
+                Clothing Tips
+              </h2>
+              <div className="w-12 h-px bg-gold mb-8 mx-auto md:mx-0" />
+
+              <div className="space-y-6">
+                {[
+                  {
+                    tip: "Gentle Washing",
+                    desc: "Hand wash and use a mild detergent to preserve color and fabric quality.",
+                  },
+                  {
+                    tip: "Proper Drying",
+                    desc: "Avoid direct sunlight or tumble dryers when drying to prevent fading.",
+                  },
+                  {
+                    tip: "Protect Patterns",
+                    desc: "Iron on the reverse side on low heat to protect intricate patterns.",
+                  },
+                  {
+                    tip: "Smart Storage",
+                    desc: "Fold neatly or hang in a cool, dry place; breathable garment bags work best.",
+                  },
+                ].map((item, idx) => (
+                  <div key={idx} className="flex gap-4">
+                    <div className="h-6 w-6 rounded-full bg-gold/10 flex items-center justify-center shrink-0 mt-1">
+                      <span className="text-gold text-xs font-bold">
+                        {idx + 1}
+                      </span>
+                    </div>
+                    <div>
+                      <h4 className="font-serif text-lg text-foreground">
+                        {item.tip}
+                      </h4>
+                      <p className="text-sm text-muted-foreground">
+                        {item.desc}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="flex-1 w-full aspect-square relative rounded-2xl overflow-hidden bg-accent/20 border border-border/50">
+              {/* Decorative elements for the tips section */}
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="text-center p-8">
+                  <p className="font-serif text-2xl text-gold mb-2 italic">
+                    Elite African Wear
+                  </p>
+                  <p className="text-sm text-muted-foreground uppercase tracking-widest">
+                    Designed for your legacy
+                  </p>
+                </div>
+              </div>
+              <div className="absolute top-0 left-0 w-24 h-24 border-t-2 border-l-2 border-gold/20 m-6" />
+              <div className="absolute bottom-0 right-0 w-24 h-24 border-b-2 border-r-2 border-gold/20 m-6" />
+            </div>
           </div>
         </div>
       </section>

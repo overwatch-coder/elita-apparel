@@ -41,11 +41,12 @@ export function BrandStory() {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="text-muted-foreground text-base sm:text-lg leading-relaxed mb-12 max-w-3xl mx-auto"
           >
-            Elita Apparel is a premium African fashion house rooted in Accra,
-            Ghana. Each garment reflects premium fabrics, skilled tailoring, and
-            detailed finishing. We don&apos;t do fast fashion — we create pieces
-            that tell stories, honor traditions, and make you feel proud of your
-            heritage.
+            Our brand celebrates the rich heritage and vibrant artistry of
+            African prints. Each piece is thoughtfully designed to blend
+            tradition with modern style, turning cultural patterns into wearable
+            expressions of confidence and grace. From bold batiks to intricate
+            designs, we create clothing that empowers you to embrace your story,
+            honor your roots, and shine with timeless elegance.
           </motion.p>
 
           {/* Value propositions */}

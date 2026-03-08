@@ -1,8 +1,9 @@
 "use client";
 
-import { CheckCircle2, CreditCard, Smartphone, Banknote } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { CreditCard, Smartphone, CheckCircle2 } from "lucide-react";
 
-export type PaymentMethod = "cod" | "card" | "momo";
+export type PaymentMethod = "card" | "momo" | "manual_momo";
 
 interface PaymentMethodSelectorProps {
   value: PaymentMethod;
@@ -13,87 +14,83 @@ export function PaymentMethodSelector({
   value,
   onChange,
 }: PaymentMethodSelectorProps) {
-  const methods = [
-    {
-      id: "cod" as const,
-      title: "Pay on Delivery",
-      description: "Pay with cash when your order arrives.",
-      icon: Banknote,
-      badge: "Most Flexible",
-    },
-    {
-      id: "card" as const,
-      title: "Card Payment",
-      description: "Secure payment with Visa or Mastercard.",
-      icon: CreditCard,
-      badge: "Instant Confirmation",
-    },
-    {
-      id: "momo" as const,
-      title: "Mobile Money",
-      description: "Pay with MTN, Vodafone, or AirtelTigo.",
-      icon: Smartphone,
-      badge: "Popular in Ghana",
-    },
-  ];
-
   return (
-    <div className="space-y-4">
-      <h3 className="font-serif text-xl mb-4">Payment Method</h3>
-      <div className="grid gap-4 sm:grid-cols-1">
-        {methods.map((method) => {
-          const isSelected = value === method.id;
-          const Icon = method.icon;
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h2 className="font-serif text-xl text-foreground">Payment Method</h2>
+      </div>
 
-          return (
-            <label
-              key={method.id}
-              className={`relative flex cursor-pointer rounded-xl border p-5 transition-all duration-300 hover:border-gold/50 ${
-                isSelected
-                  ? "border-gold bg-gold/5 shadow-[0_0_15px_rgba(202,176,131,0.15)] ring-1 ring-gold"
-                  : "border-border bg-card hover:bg-accent hover:text-accent-foreground"
-              }`}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Card/Momo Online */}
+        <button
+          type="button"
+          onClick={() => onChange("card")}
+          className={cn(
+            "relative flex flex-col items-start p-4 border-2 rounded-xl transition-all hover:bg-accent/50 text-left",
+            value === "card" || value === "momo"
+              ? "border-gold bg-gold/5"
+              : "border-border bg-transparent opacity-60 hover:opacity-100",
+          )}
+        >
+          <div className="flex items-center gap-3 mb-2 w-full">
+            <div
+              className={cn(
+                "p-2 rounded-lg",
+                value === "card" || value === "momo"
+                  ? "bg-gold text-white"
+                  : "bg-muted text-muted-foreground",
+              )}
             >
-              <input
-                type="radio"
-                name="payment_method"
-                value={method.id}
-                className="sr-only"
-                checked={isSelected}
-                onChange={() => onChange(method.id)}
-              />
-              <div className="flex w-full items-start justify-between gap-4">
-                <div className="flex items-start gap-4">
-                  <div
-                    className={`mt-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition-colors ${
-                      isSelected
-                        ? "bg-gold text-white"
-                        : "bg-muted text-muted-foreground"
-                    }`}
-                  >
-                    <Icon className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <span className="font-medium text-lg leading-none flex items-center gap-3">
-                      {method.title}
-                      {method.badge && (
-                        <span className="inline-flex items-center rounded-full bg-gold/10 px-2.5 py-0.5 text-xs font-medium text-gold border border-gold/20">
-                          {method.badge}
-                        </span>
-                      )}
-                    </span>
-                    <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
-                      {method.description}
-                    </p>
-                  </div>
-                </div>
-                {isSelected && (
-                  <CheckCircle2 className="h-6 w-6 text-gold shrink-0 mt-1" />
-                )}
-              </div>
-            </label>
-          );
-        })}
+              <CreditCard className="h-5 w-5" />
+            </div>
+            <span className="font-medium text-foreground">
+              Card / Momo (Online)
+            </span>
+          </div>
+          <p className="text-xs text-muted-foreground">
+            Secure online payment via Paystack. Supports all cards and mobile
+            money.
+          </p>
+          {(value === "card" || value === "momo") && (
+            <div className="absolute top-3 right-3">
+              <CheckCircle2 className="h-5 w-5 text-gold" />
+            </div>
+          )}
+        </button>
+
+        {/* Manual Transfer */}
+        <button
+          type="button"
+          onClick={() => onChange("manual_momo")}
+          className={cn(
+            "relative flex flex-col items-start p-4 border-2 rounded-xl transition-all hover:bg-accent/50 text-left",
+            value === "manual_momo"
+              ? "border-gold bg-gold/5"
+              : "border-border bg-transparent opacity-60 hover:opacity-100",
+          )}
+        >
+          <div className="flex items-center gap-3 mb-2 w-full">
+            <div
+              className={cn(
+                "p-2 rounded-lg",
+                value === "manual_momo"
+                  ? "bg-gold text-white"
+                  : "bg-muted text-muted-foreground",
+              )}
+            >
+              <Smartphone className="h-5 w-5" />
+            </div>
+            <span className="font-medium text-foreground">Manual Transfer</span>
+          </div>
+          <p className="text-xs text-muted-foreground">
+            Transfer directly to our account and upload proof of payment.
+          </p>
+          {value === "manual_momo" && (
+            <div className="absolute top-3 right-3">
+              <CheckCircle2 className="h-5 w-5 text-gold" />
+            </div>
+          )}
+        </button>
       </div>
     </div>
   );

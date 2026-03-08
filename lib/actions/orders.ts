@@ -174,3 +174,30 @@ export async function getOrderTrackingDetails(
 
   return { order };
 }
+export async function updateOrderPaymentProof(
+  orderId: string,
+  proofUrl: string,
+) {
+  try {
+    const supabase = await createClient();
+
+    const { error } = await supabase
+      .from("orders")
+      .update({
+        payment_proof_url: proofUrl,
+        payment_method: "manual_momo" as any,
+        payment_status: "pending", // Still pending verification
+      })
+      .eq("id", orderId);
+
+    if (error) throw error;
+
+    // Send notification to admin (TODO: implement email)
+    console.log(`Proof uploaded for order ${orderId}: ${proofUrl}`);
+
+    return { success: true };
+  } catch (error: any) {
+    console.error("Error updating order proof:", error);
+    return { error: error.message };
+  }
+}

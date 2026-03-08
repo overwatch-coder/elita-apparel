@@ -41,14 +41,24 @@ export function Navbar() {
       <nav className="container mx-auto flex h-20 items-center justify-between px-4 lg:px-8">
         {/* Logo + Brand — far left */}
         <Link href="/" className="flex items-center gap-3 shrink-0">
-          <Image
-            src="/logo.png"
-            alt="Elita Apparel"
-            width={44}
-            height={44}
-            className="h-11 w-auto object-contain dark:invert-0"
-            priority
-          />
+          <div className="relative h-11 w-11">
+            <Image
+              src="/logo.png"
+              alt="Elita Apparel"
+              width={44}
+              height={44}
+              className="h-11 w-auto object-contain dark:hidden"
+              priority
+            />
+            <Image
+              src="/logo-dark.png"
+              alt="Elita Apparel"
+              width={44}
+              height={44}
+              className="h-11 w-auto object-contain hidden dark:block"
+              priority
+            />
+          </div>
           <span className="hidden sm:inline font-serif text-lg tracking-wide text-foreground">
             Elita Apparel
           </span>
