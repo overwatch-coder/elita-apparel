@@ -77,11 +77,19 @@ export function QuickViewModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-2xl p-0 overflow-hidden">
+      <DialogContent className="sm:max-w-2xl p-0" showCloseButton={false}>
         <DialogTitle className="sr-only">
           Quick View: {product.name}
         </DialogTitle>
-        <div className="grid grid-cols-1 sm:grid-cols-2">
+        <div className="relative grid grid-cols-1 sm:grid-cols-2">
+          {/* Custom close button for visibility */}
+          <button
+            onClick={() => onOpenChange(false)}
+            className="absolute top-4 right-4 z-50 p-2 rounded-full bg-background/80 backdrop-blur-md border border-border shadow-sm hover:bg-background transition-colors"
+            aria-label="Close"
+          >
+            <X className="h-4 w-4" />
+          </button>
           {/* Image */}
           <div className="relative aspect-3/4 bg-cream-dark">
             {imageUrl && (
