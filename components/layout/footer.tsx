@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Mail, MapPin, Phone, Globe } from "lucide-react";
+import { Mail, MapPin, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
@@ -17,7 +17,6 @@ import {
   BsWhatsapp as Whatsapp,
   BsInstagram as Instagram,
 } from "react-icons/bs";
-
 import { usePathname } from "next/navigation";
 
 export function Footer() {
@@ -26,7 +25,7 @@ export function Footer() {
   const [email, setEmail] = useState("");
   const [isSubscribing, setIsSubscribing] = useState(false);
 
-  const handleSubscribe = async (e: React.FormEvent) => {
+  const handleSubscribe = async (e: React.SubmitEvent) => {
     e.preventDefault();
     if (!email) return;
 
@@ -56,18 +55,11 @@ export function Footer() {
             <div className="space-y-4">
               <Link href="/">
                 <Image
-                  src="/logo-dark.png"
+                  src={"/logo.png"}
                   alt="Elita Apparel"
                   width={140}
                   height={56}
-                  className="h-12 w-auto object-contain dark:hidden transition-all"
-                />
-                <Image
-                  src="/logo.png"
-                  alt="Elita Apparel"
-                  width={140}
-                  height={56}
-                  className="h-12 w-auto object-contain hidden dark:block transition-all"
+                  className="h-24 w-24 object-contain transition-all"
                 />
               </Link>
               <p className="text-sm text-muted-foreground leading-relaxed">
@@ -109,7 +101,7 @@ export function Footer() {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="text-sm text-muted-foreground hover:text-gold transition-colors duration-300"
+                  className="text-sm text-muted-foreground hover:text-gold transition-colors duration-300 w-fit"
                 >
                   {link.label}
                 </Link>
@@ -154,31 +146,31 @@ export function Footer() {
               <nav className="flex flex-col gap-3">
                 <Link
                   href="/shop"
-                  className="text-sm text-muted-foreground hover:text-gold transition-colors duration-300"
+                  className="text-sm text-muted-foreground hover:text-gold transition-colors duration-300 w-fit"
                 >
                   Shop All
                 </Link>
                 <Link
                   href="/track"
-                  className="text-sm text-muted-foreground hover:text-gold transition-colors duration-300"
+                  className="text-sm text-muted-foreground hover:text-gold transition-colors duration-300 w-fit"
                 >
                   Track Order
                 </Link>
                 <Link
                   href="/contact"
-                  className="text-sm text-muted-foreground hover:text-gold transition-colors duration-300"
+                  className="text-sm text-muted-foreground hover:text-gold transition-colors duration-300 w-fit"
                 >
                   Contact Us
                 </Link>
                 <Link
                   href="/privacy"
-                  className="text-sm text-muted-foreground hover:text-gold transition-colors duration-300"
+                  className="text-sm text-muted-foreground hover:text-gold transition-colors duration-300 w-fit"
                 >
                   Privacy Policy
                 </Link>
                 <Link
                   href="/terms"
-                  className="text-sm text-muted-foreground hover:text-gold transition-colors duration-300"
+                  className="text-sm text-muted-foreground hover:text-gold transition-colors duration-300 w-fit"
                 >
                   Terms & Conditions
                 </Link>

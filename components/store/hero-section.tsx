@@ -14,7 +14,7 @@ const VALUE_PROPS = [
 
 export function HeroSection() {
   return (
-    <section className="relative min-h-screen flex items-center overflow-hidden bg-background pt-20">
+    <section className="relative min-h-screen flex items-center overflow-hidden bg-background lg:pt-20 pt-10">
       {/* Subtle geometric pattern */}
       <div
         className="absolute inset-0 opacity-[0.03]"

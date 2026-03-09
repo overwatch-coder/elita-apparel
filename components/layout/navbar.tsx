@@ -43,20 +43,11 @@ export function Navbar() {
         <Link href="/" className="flex items-center gap-3 shrink-0">
           <div className="relative h-11 w-11">
             <Image
-              src="/logo-dark.png"
-              alt="Elita Apparel"
-              width={44}
-              height={44}
-              className="h-11 w-auto object-contain dark:hidden"
-              priority
-            />
-            <Image
               src="/logo.png"
               alt="Elita Apparel"
               width={44}
               height={44}
-              className="h-11 w-auto object-contain hidden dark:block"
-              priority
+              className="h-11 w-auto object-contain"
             />
           </div>
           <span className="hidden sm:inline font-serif text-lg tracking-wide text-foreground">

@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { X } from "lucide-react";
 import {
   Sheet,
   SheetContent,
@@ -13,6 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { NAV_LINKS, BRAND, SOCIALS } from "@/lib/constants";
+import { BsWhatsapp as Whatsapp } from "react-icons/bs";
 
 interface MobileNavProps {
   open: boolean;
@@ -31,7 +31,7 @@ export function MobileNav({ open, onOpenChange }: MobileNavProps) {
               alt="Elita Apparel"
               width={100}
               height={40}
-              className="h-10 w-auto object-contain invert dark:invert-0"
+              className="h-10 w-auto object-contain"
             />
           </div>
         </SheetHeader>
@@ -74,7 +74,9 @@ export function MobileNav({ open, onOpenChange }: MobileNavProps) {
                   href={SOCIALS.whatsapp.url}
                   target="_blank"
                   rel="noopener noreferrer"
+                  className="flex items-center gap-2"
                 >
+                  <Whatsapp className="h-5 w-5" />
                   WhatsApp Us
                 </Link>
               </Button>
