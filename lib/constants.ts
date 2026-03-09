@@ -124,3 +124,40 @@ export function calculateDiscountedPrice(
 ): number {
   return price * (1 - discountPercentage / 100);
 }
+
+// ── Testimonials ───────────────────────────────────────────────────
+
+export const TESTIMONIALS = [
+  {
+    name: "Akosua Mensah",
+    role: "Fashion Enthusiast",
+    content:
+      "The quality of the Ankara two-piece I ordered is exceptional. The attention to detail in the stitching really makes it feel like an elite piece. Elita Apparel definitely knows how to blend culture with luxury.",
+    rating: 5,
+    initials: "AM",
+  },
+  {
+    name: "Kwame Boateng",
+    role: "Cultural Consultant",
+    content:
+      "Elita Apparel perfectly captures the essence of Ghanaian heritage while maintaining a modern, sophisticated aesthetic. Their collections are a testament to what premium African fashion should be.",
+    rating: 5,
+    initials: "KB",
+  },
+  {
+    name: "Ama Serwaa",
+    role: "Verified Buyer",
+    content:
+      "I wore my Elita dress to a high-end wedding in Accra and received so many compliments. The fit was perfect and the fabric felt so rich. Highly recommended for anyone looking for that elite touch.",
+    rating: 5,
+    initials: "AS",
+  },
+  {
+    name: "Ekow Thompson",
+    role: "Business Executive",
+    content:
+      "Ordered a few pieces for a corporate gala. The craftsmanship is top-notch. It's rare to find such high-quality African wear that feels this comfortable and professional.",
+    rating: 5,
+    initials: "ET",
+  },
+] as const;

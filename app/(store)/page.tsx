@@ -6,6 +6,7 @@ import { WhatsAppButton } from "@/components/store/whatsapp-button";
 import { CollectionsSection } from "@/components/store/collections-section";
 import { FeaturedSection } from "@/components/store/featured-section";
 import { InstagramSection } from "@/components/store/instagram-section";
+import { TestimonialsSection } from "@/components/store/testimonials-section";
 import { OrganizationJsonLd } from "@/components/seo/organization-jsonld";
 
 export default async function HomePage() {
@@ -82,6 +83,9 @@ export default async function HomePage() {
         showViewAll
         viewAllHref="/shop?sort=newest"
       />
+
+      {/* Testimonials */}
+      <TestimonialsSection />
 
       {/* Instagram Section */}
       <InstagramSection posts={instagramPosts || []} limit={instagramLimit} />
