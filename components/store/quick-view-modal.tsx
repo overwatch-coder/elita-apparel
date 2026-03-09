@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ShoppingBag, X } from "lucide-react";
@@ -11,6 +11,8 @@ import { SizeSelector } from "@/components/store/size-selector";
 import { useCart } from "@/components/cart/cart-provider";
 import { formatPrice, calculateDiscountedPrice } from "@/lib/constants";
 import type { Product, ProductImage } from "@/lib/types/database";
+import { cn } from "@/lib/utils";
+import type { ColorVariant } from "./product-detail-wrapper";
 
 interface QuickViewModalProps {
   product: Product & { product_images: ProductImage[] };
@@ -24,11 +26,26 @@ export function QuickViewModal({
   onOpenChange,
 }: QuickViewModalProps) {
   const [selectedSize, setSelectedSize] = useState("");
+  const [selectedColor, setSelectedColor] = useState<ColorVariant | null>(null);
   const { addItem } = useCart();
 
-  const primaryImage = product.product_images.find((img) => img.is_primary);
-  const imageUrl =
-    primaryImage?.image_url || product.product_images[0]?.image_url;
+  const colorVariants: ColorVariant[] = Array.isArray(product.color_variants)
+    ? (product.color_variants as unknown as ColorVariant[])
+    : [];
+
+  const images: ProductImage[] = product.product_images || [];
+
+  // Determine the display image based on selected color
+  const imageUrl = useMemo(() => {
+    if (selectedColor && selectedColor.image_ids.length > 0) {
+      const colorImg = images.find(
+        (img) => img.id === selectedColor.image_ids[0],
+      );
+      if (colorImg) return colorImg.image_url;
+    }
+    const primaryImage = images.find((img) => img.is_primary);
+    return primaryImage?.image_url || images[0]?.image_url;
+  }, [selectedColor, images]);
 
   const hasDiscount = product.discount_percentage > 0;
   const discountedPrice = hasDiscount
@@ -48,6 +65,9 @@ export function QuickViewModal({
       discount_percentage: product.discount_percentage,
       image_url: imageUrl || "",
       size: selectedSize,
+      color: selectedColor
+        ? `${selectedColor.name} (${selectedColor.hex})`
+        : undefined,
       quantity: 1,
       stock_quantity: product.stock_quantity,
     });
@@ -111,9 +131,48 @@ export function QuickViewModal({
             </div>
 
             {product.description && (
-              <p className="text-sm text-muted-foreground line-clamp-3 leading-relaxed">
-                {product.description}
-              </p>
+              <div
+                className="text-sm text-muted-foreground line-clamp-3 leading-relaxed prose prose-sm dark:prose-invert"
+                dangerouslySetInnerHTML={{ __html: product.description }}
+              />
+            )}
+
+            {/* Color variants */}
+            {colorVariants.length > 0 && (
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-[10px] uppercase tracking-widest font-bold">
+                  <span className="text-muted-foreground">Color</span>
+                  {selectedColor && (
+                    <span className="text-gold">{selectedColor.name}</span>
+                  )}
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {colorVariants.map((color) => {
+                    const isSelected = selectedColor?.id === color.id;
+                    return (
+                      <button
+                        key={color.id}
+                        type="button"
+                        onClick={() =>
+                          setSelectedColor(isSelected ? null : color)
+                        }
+                        className={cn(
+                          "h-7 w-7 rounded-full border transition-all p-0.5",
+                          isSelected
+                            ? "border-gold ring-1 ring-gold/40"
+                            : "border-border hover:border-gold/50",
+                        )}
+                        title={color.name}
+                      >
+                        <div
+                          className="w-full h-full rounded-full"
+                          style={{ backgroundColor: color.hex }}
+                        />
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
             )}
 
             {/* Size selector */}

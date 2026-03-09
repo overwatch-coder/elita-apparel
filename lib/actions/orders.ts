@@ -1,6 +1,7 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
+import { createClient as createSupabaseAdmin } from "@supabase/supabase-js";
 import { revalidatePath } from "next/cache";
 import { sendOrderConfirmation } from "@/lib/mail";
 import { calculateDiscountedPrice } from "@/lib/constants";
@@ -95,14 +96,12 @@ export async function createOrder(
     */
   }
 
-  // 4. If COD, send confirmation email immediately
-  if (paymentMethod === "cod") {
-    try {
-      await sendOrderConfirmation(orderData, orderItems);
-    } catch (emailError) {
-      console.error("Failed to send COD confirmation email:", emailError);
-      // We don't fail the order just because the email failed
-    }
+  // 4. Send confirmation email immediately for all orders
+  try {
+    await sendOrderConfirmation(orderData, orderItems);
+  } catch (emailError) {
+    console.error("Failed to send order confirmation email:", emailError);
+    // We don't fail the order just because the email failed
   }
 
   // 4. Trigger Marketing Automation (Post-Purchase Flow)
@@ -180,9 +179,13 @@ export async function updateOrderPaymentProof(
   proofUrl: string,
 ) {
   try {
-    const supabase = await createClient();
+    // Determine admin client bypassing RLS since guest users cannot update records
+    const supabaseAdmin = createSupabaseAdmin(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    );
 
-    const { error } = await supabase
+    const { error } = await supabaseAdmin
       .from("orders")
       .update({
         payment_proof_url: proofUrl,

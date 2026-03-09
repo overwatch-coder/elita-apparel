@@ -84,9 +84,12 @@ export default async function CollectionsPage() {
                           {collection.name}
                         </h2>
                         {collection.description && (
-                          <p className="text-white/70 text-sm line-clamp-2">
-                            {collection.description}
-                          </p>
+                          <div
+                            className="text-white/70 text-sm line-clamp-2 prose prose-invert prose-sm"
+                            dangerouslySetInnerHTML={{
+                              __html: collection.description,
+                            }}
+                          />
                         )}
                         <div className="flex items-center gap-2 mt-4 text-gold text-xs tracking-widest uppercase group-hover:gap-3 transition-all">
                           Explore

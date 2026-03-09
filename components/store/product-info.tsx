@@ -122,17 +122,17 @@ export function ProductInfo({
       {/* Badges */}
       <div className="flex items-center gap-2 flex-wrap">
         {product.is_new && (
-          <Badge className="bg-royal-black text-cream text-[10px] tracking-wider uppercase">
+          <Badge className="bg-foreground text-background text-[10px] tracking-wider uppercase">
             New Arrival
           </Badge>
         )}
         {hasDiscount && (
-          <Badge className="bg-gold text-white text-[10px] tracking-wider uppercase">
+          <Badge className="bg-primary text-primary-foreground text-[10px] tracking-wider uppercase">
             {product.discount_percentage}% Off
           </Badge>
         )}
         {product.early_bird_eligible && (
-          <Badge className="bg-gold/80 text-white text-[10px] tracking-wider uppercase">
+          <Badge className="bg-primary/80 text-primary-foreground text-[10px] tracking-wider uppercase">
             Early Bird
           </Badge>
         )}
@@ -170,9 +170,10 @@ export function ProductInfo({
 
       {/* Description */}
       {product.description && (
-        <p className="text-muted-foreground leading-relaxed">
-          {product.description}
-        </p>
+        <div
+          className="text-muted-foreground leading-relaxed prose prose-sm dark:prose-invert max-w-none"
+          dangerouslySetInnerHTML={{ __html: product.description }}
+        />
       )}
 
       {/* Features list */}
@@ -329,9 +330,10 @@ export function ProductInfo({
           <h3 className="font-serif text-lg mb-3 text-gold">
             Cultural Inspiration
           </h3>
-          <p className="text-sm text-muted-foreground leading-relaxed">
-            {product.cultural_story}
-          </p>
+          <div
+            className="text-sm text-muted-foreground leading-relaxed prose prose-sm dark:prose-invert max-w-none"
+            dangerouslySetInnerHTML={{ __html: product.cultural_story }}
+          />
         </div>
       )}
 

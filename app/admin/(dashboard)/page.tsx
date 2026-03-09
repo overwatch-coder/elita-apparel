@@ -35,8 +35,10 @@ export default async function AdminDashboard() {
   // Fetch stats
   const [
     { count: productCount },
-    { count: orderCount },
-    { data: revenueData },
+    { count: paidOrderCount },
+    { count: pendingOrderCount },
+    { data: paidRevenueData },
+    { data: pendingRevenueData },
     { count: lowStockCount },
     { count: collectionCount },
     { count: categoryCount },
@@ -45,8 +47,19 @@ export default async function AdminDashboard() {
     { data: recentSalesData },
   ] = await Promise.all([
     supabase.from("products").select("*", { count: "exact", head: true }),
-    supabase.from("orders").select("*", { count: "exact", head: true }),
+    supabase
+      .from("orders")
+      .select("*", { count: "exact", head: true })
+      .eq("payment_status", "paid"),
+    supabase
+      .from("orders")
+      .select("*", { count: "exact", head: true })
+      .eq("payment_status", "pending"),
     supabase.from("orders").select("total_amount").eq("payment_status", "paid"),
+    supabase
+      .from("orders")
+      .select("total_amount")
+      .eq("payment_status", "pending"),
     supabase
       .from("products")
       .select("*", { count: "exact", head: true })
@@ -67,8 +80,15 @@ export default async function AdminDashboard() {
       .order("created_at", { ascending: true }),
   ]);
 
-  const totalRevenue =
-    revenueData?.reduce(
+  const totalPaidRevenue =
+    paidRevenueData?.reduce(
+      (sum: number, o: { total_amount: number | string }) =>
+        sum + Number(o.total_amount),
+      0,
+    ) || 0;
+
+  const totalPendingRevenue =
+    pendingRevenueData?.reduce(
       (sum: number, o: { total_amount: number | string }) =>
         sum + Number(o.total_amount),
       0,
@@ -107,22 +127,34 @@ export default async function AdminDashboard() {
 
   const stats = [
     {
-      label: "Total Products",
-      value: productCount || 0,
-      icon: Package,
+      label: "Actual Revenue (Paid)",
+      value: formatPrice(totalPaidRevenue),
+      icon: DollarSign,
+      color: "text-ghana-green",
+    },
+    {
+      label: "Potential Revenue (Pending)",
+      value: formatPrice(totalPendingRevenue),
+      icon: DollarSign,
       color: "text-gold",
     },
     {
-      label: "Total Orders",
-      value: orderCount || 0,
+      label: "Paid Orders",
+      value: paidOrderCount || 0,
       icon: ShoppingCart,
       color: "text-ghana-green",
     },
     {
-      label: "Revenue",
-      value: formatPrice(totalRevenue),
-      icon: DollarSign,
+      label: "Pending Orders",
+      value: pendingOrderCount || 0,
+      icon: ShoppingCart,
       color: "text-gold",
+    },
+    {
+      label: "Total Products",
+      value: productCount || 0,
+      icon: Package,
+      color: "text-primary",
     },
     {
       label: "Low Stock Items",
@@ -183,7 +215,7 @@ export default async function AdminDashboard() {
       </div>
 
       {/* Primary Stats grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {stats.map((stat) => (
           <Card
             key={stat.label}

@@ -44,6 +44,14 @@ import { RichTextEditor } from "@/components/ui/rich-text-editor";
 import { AIGeneratorButton } from "@/components/admin/ai-generator-button";
 import { AIRewriteButton } from "@/components/admin/ai-rewrite-button";
 import {
+  FeaturesEditor,
+  type ProductFeature,
+} from "@/components/admin/features-editor";
+import {
+  ColorsEditor,
+  type ColorVariant,
+} from "@/components/admin/colors-editor";
+import {
   Category,
   Collection,
   FabricType,
@@ -99,6 +107,21 @@ export function ProductWizard({
     product?.available_sizes || [],
   );
 
+  const [features, setFeatures] = useState<ProductFeature[]>(
+    Array.isArray(product?.features)
+      ? (product.features as any[]).map((f: any) => ({
+          id: f.id || `feat-${Math.random()}`,
+          text: f.text || f,
+        }))
+      : [],
+  );
+
+  const [colorVariants, setColorVariants] = useState<ColorVariant[]>(
+    Array.isArray(product?.color_variants)
+      ? (product.color_variants as unknown as ColorVariant[])
+      : [],
+  );
+
   const handleInputChange = (
     field: keyof typeof formData,
     value: string | boolean,
@@ -132,6 +155,9 @@ export function ProductWizard({
     });
     // Append sizes individually for formData.getAll("sizes") compatibility
     selectedSizes.forEach((size) => submitData.append("sizes", size));
+
+    submitData.append("features", JSON.stringify(features));
+    submitData.append("color_variants", JSON.stringify(colorVariants));
 
     startTransition(async () => {
       const result = createdProductId
@@ -506,6 +532,39 @@ export function ProductWizard({
                       ))}
                     </div>
                   </div>
+
+                  {/* Features */}
+                  <div className="space-y-4 pt-4 border-t border-border/50">
+                    <Label className="uppercase tracking-widest text-[11px] font-bold text-muted-foreground">
+                      Product Features
+                    </Label>
+                    <p className="text-xs text-muted-foreground mb-4">
+                      Bullet-point highlights shown on the product page. Drag to
+                      reorder.
+                    </p>
+                    <FeaturesEditor
+                      features={features}
+                      onChange={setFeatures}
+                    />
+                  </div>
+
+                  {/* Color Variants */}
+                  <div className="space-y-4 pt-4 border-t border-border/50">
+                    <Label className="uppercase tracking-widest text-[11px] font-bold text-muted-foreground">
+                      Color Variants
+                    </Label>
+                    <p className="text-xs text-muted-foreground mb-4">
+                      Define colors and link each to specific product images for
+                      swatching.
+                      {!isEditing &&
+                        " Upload images after creating the product to link them."}
+                    </p>
+                    <ColorsEditor
+                      colors={colorVariants}
+                      images={product?.product_images || []}
+                      onChange={setColorVariants}
+                    />
+                  </div>
                 </CardContent>
               </Card>
             )}
@@ -661,10 +720,11 @@ export function ProductWizard({
 
       {/* Navigation Buttons */}
       <div
-        className="flex items-center justify-between mt-12 bg-background/80 backdrop-blur-md p-4 rounded-xl border border-border/50 shadow-lg fixed bottom-6 left-[280px] right-6 lg:left-[calc(280px+2.5rem)] lg:right-10 z-40 transition-all duration-300"
+        className="flex flex-col sm:flex-row items-center justify-between mt-12 bg-background/80 backdrop-blur-md p-4 rounded-xl border border-border/50 shadow-lg fixed bottom-4 left-4 right-4 md:bottom-6 md:left-[280px] md:right-6 lg:left-[calc(280px+2.5rem)] lg:right-10 z-40 transition-all duration-300 gap-4"
         style={{
           left:
             typeof window !== "undefined" &&
+            window.innerWidth >= 768 &&
             document.querySelector("aside")?.classList.contains("w-16")
               ? "calc(64px + 2.5rem)"
               : undefined,

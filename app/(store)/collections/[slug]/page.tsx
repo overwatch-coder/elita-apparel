@@ -64,13 +64,14 @@ export default async function CollectionPage({ params }: CollectionPageProps) {
           <p className="text-gold tracking-[0.4em] uppercase text-xs mb-4">
             Collection
           </p>
-          <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl text-cream mb-6">
+          <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl text-[#faf7f2] mb-6">
             {collection.name}
           </h1>
           {collection.description && (
-            <p className="text-cream/50 leading-relaxed">
-              {collection.description}
-            </p>
+            <div
+              className="text-[#faf7f2]/70 leading-relaxed prose prose-invert mx-auto"
+              dangerouslySetInnerHTML={{ __html: collection.description }}
+            />
           )}
           <div className="w-16 h-px bg-gold mx-auto mt-8" />
         </div>
@@ -83,9 +84,10 @@ export default async function CollectionPage({ params }: CollectionPageProps) {
             <p className="text-gold tracking-[0.3em] uppercase text-xs mb-4">
               The Story
             </p>
-            <p className="text-foreground/70 leading-relaxed italic font-serif text-lg">
-              &ldquo;{collection.cultural_story}&rdquo;
-            </p>
+            <div
+              className="text-foreground/70 leading-relaxed italic font-serif text-lg prose mx-auto dark:prose-invert"
+              dangerouslySetInnerHTML={{ __html: collection.cultural_story }}
+            />
           </div>
         </section>
       )}

@@ -37,9 +37,10 @@ export function CollectionCard({ collection, index }: CollectionCardProps) {
             {collection.name}
           </h3>
           {collection.description && (
-            <p className="text-foreground/50 text-sm leading-relaxed mb-4 line-clamp-2">
-              {collection.description}
-            </p>
+            <div
+              className="text-foreground/50 text-sm leading-relaxed mb-4 line-clamp-2 prose prose-sm dark:prose-invert"
+              dangerouslySetInnerHTML={{ __html: collection.description }}
+            />
           )}
           <div className="flex items-center gap-2 text-gold group-hover:gap-3 transition-all duration-300">
             <span className="text-xs tracking-widest uppercase font-medium">

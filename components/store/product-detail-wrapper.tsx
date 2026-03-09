@@ -24,21 +24,26 @@ export function ProductDetailWrapper({ product }: ProductDetailWrapperProps) {
     : [];
 
   // Build filtered/sorted images for the gallery based on selected color
-  const images: ProductImage[] = product.product_images || [];
-  const galleryImages =
+  const baseImages: ProductImage[] = [...(product.product_images || [])].sort(
+    (a, b) => {
+      if (a.is_primary) return -1;
+      if (b.is_primary) return 1;
+      return a.position - b.position;
+    },
+  );
+
+  const activeImageId =
     selectedColor && selectedColor.image_ids.length > 0
-      ? [
-          // Show color images first (in their linked order), then the rest
-          ...(selectedColor.image_ids
-            .map((id) => images.find((img) => img.id === id))
-            .filter(Boolean) as ProductImage[]),
-          ...images.filter((img) => !selectedColor.image_ids.includes(img.id)),
-        ]
-      : images;
+      ? selectedColor.image_ids[0]
+      : undefined;
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16">
-      <ProductGallery images={galleryImages} productName={product.name} />
+      <ProductGallery
+        images={baseImages}
+        productName={product.name}
+        activeImageId={activeImageId}
+      />
       <ProductInfo
         product={product}
         colorVariants={colorVariants}

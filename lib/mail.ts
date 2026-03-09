@@ -20,8 +20,29 @@ export async function sendOrderConfirmation(order: any, items: any[]) {
   }
 
   const isCOD = order.payment_method === "cod";
+  const isVerified =
+    order.payment_status === "paid" ||
+    order.payment_status === "verified" ||
+    order.payment_status === "success";
+
   const trackingNumber =
     order.tracking_number || order.id.slice(0, 8).toUpperCase();
+
+  let statusMessage = "";
+  if (isCOD) {
+    statusMessage =
+      "Our team will contact you shortly to coordinate payment and delivery.";
+  } else if (isVerified) {
+    statusMessage =
+      "Your payment has been verified. We are now preparing your order for shipment.";
+  } else {
+    statusMessage =
+      "We have received your order. If you've chosen to pay via Card or Mobile Money, your order will be processed as soon as we verify your payment.";
+  }
+
+  const subjectHeader = isVerified
+    ? `Payment Verified - Order #${trackingNumber}`
+    : `Order Confirmation #${trackingNumber}`;
 
   const emailHtml = `
     <!DOCTYPE html>
@@ -63,9 +84,9 @@ export async function sendOrderConfirmation(order: any, items: any[]) {
           </div>
           
           <div class="hero">
-            <h1>Thank You for Your Order!</h1>
-            <p>Order #${trackingNumber} has been successfully placed.</p>
-            <p>${isCOD ? "Our team will contact you shortly to coordinate payment and delivery." : "Your payment has been verified. We are now preparing your order for shipment."}</p>
+            <h1>${isVerified ? "Payment Verified!" : "Thank You for Your Order!"}</h1>
+            <p>Order #${trackingNumber} has been successfully ${isVerified ? "verified" : "placed"}.</p>
+            <p>${statusMessage}</p>
           </div>
 
           <div class="order-details">
@@ -140,7 +161,7 @@ export async function sendOrderConfirmation(order: any, items: any[]) {
       from:
         process.env.SMTP_FROM || `"Elita Apparel" <${process.env.SMTP_USER}>`,
       to: order.customer_email,
-      subject: `Order Confirmation #${trackingNumber} - Elita Apparel`,
+      subject: `${subjectHeader} - Elita Apparel`,
       html: emailHtml,
     });
 

@@ -56,14 +56,14 @@ export function Footer() {
             <div className="space-y-4">
               <Link href="/">
                 <Image
-                  src="/logo.png"
+                  src="/logo-dark.png"
                   alt="Elita Apparel"
                   width={140}
                   height={56}
                   className="h-12 w-auto object-contain dark:hidden transition-all"
                 />
                 <Image
-                  src="/logo-dark.png"
+                  src="/logo.png"
                   alt="Elita Apparel"
                   width={140}
                   height={56}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { ImageLightbox } from "@/components/store/image-lightbox";
@@ -10,19 +10,33 @@ import type { ProductImage } from "@/lib/types/database";
 interface ProductGalleryProps {
   images: ProductImage[];
   productName: string;
+  activeImageId?: string;
 }
 
-export function ProductGallery({ images, productName }: ProductGalleryProps) {
-  const sortedImages = [...images].sort((a, b) => {
-    if (a.is_primary) return -1;
-    if (b.is_primary) return 1;
-    return a.position - b.position;
-  });
+export function ProductGallery({
+  images,
+  productName,
+  activeImageId,
+}: ProductGalleryProps) {
+  // Use images directly as they are pre-sorted by the parent
+  const sortedImages = images;
 
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [isZoomed, setIsZoomed] = useState(false);
   const [zoomPosition, setZoomPosition] = useState({ x: 50, y: 50 });
   const [lightboxOpen, setLightboxOpen] = useState(false);
+
+  // Update selected index when activeImageId changes (e.g. from color swatch selection)
+  useEffect(() => {
+    if (activeImageId) {
+      const idx = sortedImages.findIndex((img) => img.id === activeImageId);
+      if (idx !== -1) {
+        setSelectedIndex(idx);
+      }
+    } else {
+      setSelectedIndex(0);
+    }
+  }, [activeImageId, sortedImages]);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!isZoomed) return;
@@ -65,7 +79,7 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
 
         {/* Main image */}
         <div
-          className="relative flex-1 aspect-3/4 rounded-lg overflow-hidden bg-cream-dark cursor-zoom-in"
+          className="relative flex-1 aspect-3/4 max-h-[70vh] rounded-lg overflow-hidden bg-cream-dark cursor-zoom-in lg:mx-auto"
           onClick={() => setIsZoomed(!isZoomed)}
           onMouseMove={handleMouseMove}
           onMouseLeave={() => setIsZoomed(false)}

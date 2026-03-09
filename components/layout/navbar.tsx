@@ -43,7 +43,7 @@ export function Navbar() {
         <Link href="/" className="flex items-center gap-3 shrink-0">
           <div className="relative h-11 w-11">
             <Image
-              src="/logo.png"
+              src="/logo-dark.png"
               alt="Elita Apparel"
               width={44}
               height={44}
@@ -51,7 +51,7 @@ export function Navbar() {
               priority
             />
             <Image
-              src="/logo-dark.png"
+              src="/logo.png"
               alt="Elita Apparel"
               width={44}
               height={44}

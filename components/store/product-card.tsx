@@ -93,12 +93,12 @@ export function ProductCard({ product, view = "grid" }: ProductCardProps) {
               </Badge>
             )}
             {hasDiscount && (
-              <Badge className="bg-gold text-white text-[10px] tracking-wider uppercase px-2.5 py-1">
+              <Badge className="bg-primary text-primary-foreground text-[10px] tracking-wider uppercase px-2.5 py-1">
                 {product.discount_percentage}% Off
               </Badge>
             )}
             {product.early_bird_eligible && !hasDiscount && (
-              <Badge className="bg-gold/80 text-white text-[10px] tracking-wider uppercase px-2.5 py-1">
+              <Badge className="bg-primary/80 text-primary-foreground text-[10px] tracking-wider uppercase px-2.5 py-1">
                 Early Bird
               </Badge>
             )}
@@ -198,9 +198,10 @@ export function ProductCard({ product, view = "grid" }: ProductCardProps) {
               )}
             </div>
             {view === "list" && product.description && (
-              <p className="text-sm text-muted-foreground line-clamp-2 mt-4 max-w-xl">
-                {product.description}
-              </p>
+              <div
+                className="text-sm text-muted-foreground line-clamp-2 mt-4 max-w-xl prose prose-sm dark:prose-invert"
+                dangerouslySetInnerHTML={{ __html: product.description }}
+              />
             )}
           </div>
 
