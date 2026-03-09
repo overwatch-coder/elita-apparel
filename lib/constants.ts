@@ -13,7 +13,7 @@ export const NAV_LINKS = [
 
 export const BRAND = {
   name: "Elita Apparel",
-  tagline: "Elite African Wear",
+  tagline: "Intrigued. Elegance. You",
   motto: "Rooted in Culture. Wrapped in Elite.",
   location: "Accra, Ghana",
   siteUrl: "https://elitaapparel.vercel.app",
@@ -40,10 +40,10 @@ export const SOCIALS = {
     url: "https://www.facebook.com/elitaapparel",
   },
   whatsapp: {
-    number: "+233504698263",
-    url: "https://wa.me/233504698263",
+    number: "+233553663183",
+    url: "https://wa.me/2330553663183",
   },
-  email: "bellamoner98@gmail.com",
+  email: "[EMAIL_ADDRESS]",
   phone: "0553663183",
 } as const;
 
@@ -53,6 +53,11 @@ export const BRAND_MESSAGES = [
   "Celebrate African heritage in style.",
   "As a Ghanaian, it's your time to shine.",
 ] as const;
+
+export const PAYMENT_INFO = {
+  name: "Emmanuella Opata Dedo",
+  number: "0504698263",
+} as const;
 
 // ── Product options ─────────────────────────────────────────────────
 

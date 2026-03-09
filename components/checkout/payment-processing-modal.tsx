@@ -1,15 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import {
-  CheckCircle2,
-  Loader2,
-  Smartphone,
-  Upload,
-  Copy,
-  ExternalLink,
-} from "lucide-react";
-import { formatPrice } from "@/lib/constants";
+import { CheckCircle2, Loader2, Smartphone, Upload, Copy } from "lucide-react";
+import { PAYMENT_INFO } from "@/lib/constants";
 import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
 import { updateOrderPaymentProof } from "@/lib/actions/orders";
@@ -257,7 +250,7 @@ export function PaymentProcessingModal({
                     </span>
                     <button
                       onClick={() => {
-                        navigator.clipboard.writeText("0553663183");
+                        navigator.clipboard.writeText(PAYMENT_INFO.number);
                         toast.success("Copied to clipboard");
                       }}
                       className="text-gold hover:text-gold-light"
@@ -266,7 +259,7 @@ export function PaymentProcessingModal({
                     </button>
                   </div>
                   <p className="font-mono text-lg font-bold text-foreground tracking-wider">
-                    0553663183
+                    {PAYMENT_INFO.number}
                   </p>
 
                   <Separator className="bg-border/20" />
@@ -276,7 +269,7 @@ export function PaymentProcessingModal({
                       Account Name
                     </span>
                     <p className="font-medium text-foreground">
-                      Elita Apparel / Isabella Moner
+                      {PAYMENT_INFO.name}
                     </p>
                   </div>
 
@@ -292,14 +285,14 @@ export function PaymentProcessingModal({
 
                 <div className="space-y-3">
                   <div className="p-3 bg-blue-500/10 border border-blue-500/20 rounded-lg text-xs text-blue-400 text-left">
-                    <strong>Important:</strong> Please use the Tracking Number
-                    or your name as the transfer reference to speed up
+                    <strong>Important:</strong> Please use the Order Number or
+                    your name as the transfer reference to speed up
                     verification.
                   </div>
                   <button
                     type="button"
                     onClick={() => {
-                      if (onClose) onClose(); // This will trigger the next state in parent
+                      if (onClose) onClose();
                     }}
                     className="w-full bg-gold hover:bg-gold-dark text-white font-medium tracking-wider uppercase py-4 rounded-xl transition-all shadow-lg shadow-gold/20"
                   >
