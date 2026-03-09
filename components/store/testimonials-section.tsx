@@ -46,7 +46,7 @@ export function TestimonialsSection() {
         </div>
 
         {/* Carousel */}
-        <div className="relative max-w-5xl mx-auto px-12">
+        <div className="relative max-w-5xl mx-auto px-2 lg:px-12">
           <Carousel
             opts={{
               align: "start",
