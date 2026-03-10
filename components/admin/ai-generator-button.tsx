@@ -44,7 +44,7 @@ export function AIGeneratorButton({
   const [customInstructions, setCustomInstructions] = useState("");
   const [showCustomDialog, setShowCustomDialog] = useState(false);
 
-  const handleGenerate = async () => {
+  const handleGenerate = async (instructions?: string) => {
     // Basic validation: ensure we have at least a name for product-related tasks
     if (type === "product_description" && !input.name) {
       toast.error(
@@ -63,8 +63,7 @@ export function AIGeneratorButton({
         body: JSON.stringify({
           type,
           input,
-          customInstructions:
-            typeof arguments[0] === "string" ? arguments[0] : undefined,
+          customInstructions: instructions,
         }),
       });
 
