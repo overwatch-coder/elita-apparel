@@ -1,0 +1,98 @@
+<!-- 
+  ELITA APPAREL SUPABASE CHANGE EMAIL TEMPLATE
+  ===================================================
+  
+  HOW TO USE THIS TEMPLATE:
+  1. Go to your Supabase Dashboard: https://supabase.com/dashboard/
+  2. Select your project.
+  3. On the left sidebar, click on "Authentication" (the lock icon).
+  4. Under the "Configuration" section in the menu, click on "Email Templates".
+  5. Select the "Change Email Address" tab.
+  6. Copy all the code in this entire file (including these comments if you want, or just from <!DOCTYPE html> downwards).
+  7. Paste it into the "Message Body" editor box, completely replacing the default code.
+  8. Click "Save" at the bottom of the page.
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Confirm Your New Email Address</title>
+  <style>
+    /* Reset styles for email clients */
+    body, h1, h2, p, a {
+      margin: 0;
+      padding: 0;
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+    }
+  </style>
+</head>
+<body style="background-color: #f9f9f9; padding: 40px 0; margin: 0; -webkit-font-smoothing: antialiased;">
+
+  <!-- Main Container -->
+  <table width="100%" border="0" cellspacing="0" cellpadding="0" style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);">
+    
+    <!-- Header -->
+    <tr>
+      <td style="text-align: center; padding: 40px 0; border-bottom: 1px solid #eeeeee;">
+        <h1 style="color: #000000; font-family: Georgia, 'Times New Roman', serif; font-weight: normal; font-size: 32px; letter-spacing: 2px; text-transform: uppercase;">
+          ELITA <span style="color: #c9a227;">APPAREL</span>
+        </h1>
+      </td>
+    </tr>
+
+    <!-- Body Content -->
+    <tr>
+      <td style="padding: 40px;">
+        <h2 style="color: #111111; font-size: 24px; font-weight: 500; margin-bottom: 24px; font-family: Georgia, 'Times New Roman', serif;">
+          Confirm Your New Email
+        </h2>
+        
+        <p style="color: #555555; font-size: 16px; line-height: 1.6; margin-bottom: 24px;">
+          You've requested to change the email address associated with your Elita Apparel account. Please confirm this change by clicking the button below.
+        </p>
+
+        <!-- Call to Action Button -->
+        <table border="0" cellspacing="0" cellpadding="0" style="margin: 32px auto;">
+          <tr>
+            <td align="center" style="background-color: #c9a227; border-radius: 4px;">
+              <a href="{{ .ConfirmationURL }}" target="_blank" style="display: inline-block; padding: 16px 32px; font-size: 14px; color: #ffffff; text-decoration: none; font-weight: bold; letter-spacing: 1px; text-transform: uppercase;">
+                Confirm Email Change
+              </a>
+            </td>
+          </tr>
+        </table>
+        
+        <p style="color: #777777; font-size: 14px; line-height: 1.6; margin-bottom: 16px; text-align: center;">
+          Or copy and paste this link into your browser:
+        </p>
+        
+        <p style="text-align: center; margin-bottom: 32px;">
+          <a href="{{ .ConfirmationURL }}" style="color: #c9a227; font-size: 14px; word-break: break-all;">
+            {{ .ConfirmationURL }}
+          </a>
+        </p>
+
+        <p style="color: #777777; font-size: 14px; line-height: 1.6;">
+          If you didn't request this change, your account may be compromised. Please ignore this email or contact our support team immediately.
+        </p>
+      </td>
+    </tr>
+
+    <!-- Footer -->
+    <tr>
+      <td style="background-color: #111111; color: #ffffff; text-align: center; padding: 32px 40px;">
+        <p style="font-size: 12px; color: #888888; margin-bottom: 8px; font-family: Georgia, 'Times New Roman', serif; letter-spacing: 1px;">
+          ELITA APPAREL
+        </p>
+        <p style="font-size: 12px; color: #666666;">
+          &copy; 2026 Elita Apparel. All rights reserved.
+        </p>
+      </td>
+    </tr>
+
+  </table>
+
+</body>
+</html>

@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { updateProfileAction } from "@/lib/actions/profile";
 import { toast } from "sonner";
+import { ChangeEmailDialog } from "@/components/settings/change-email-dialog";
 
 interface ProfileFormProps {
   initialData: {
@@ -55,22 +56,24 @@ export function ProfileForm({ initialData }: ProfileFormProps) {
       </div>
 
       <div className="space-y-2">
-        <Label
-          htmlFor="email"
-          className="text-muted-foreground text-sm font-medium"
-        >
-          Email Address
-        </Label>
+        <div className="flex items-center justify-between">
+          <Label
+            htmlFor="email"
+            className="text-muted-foreground text-sm font-medium"
+          >
+            Email Address
+          </Label>
+          <ChangeEmailDialog />
+        </div>
         <Input
           id="email"
           name="email"
           type="email"
           defaultValue={initialData.email}
-          disabled
           className="h-12 bg-muted/30 border-border text-muted-foreground cursor-not-allowed"
         />
         <p className="text-[10px] text-muted-foreground/60 uppercase tracking-wider">
-          Email cannot be changed.
+          Email can only be changed via verification code.
         </p>
       </div>
 

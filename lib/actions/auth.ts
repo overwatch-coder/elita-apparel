@@ -94,7 +94,8 @@ export async function signupCustomerAction(formData: FormData) {
   }
 
   // Usually email confirmation is required, but if disabled or after sign up we redirect to account
-  redirect("/account");
+  // redirect("/account");
+  return { success: true, email };
 }
 
 export async function resetPasswordAction(formData: FormData) {
@@ -121,11 +122,12 @@ export async function resetPasswordAction(formData: FormData) {
 }
 
 export async function updatePasswordAction(formData: FormData) {
+  const currentPassword = formData.get("currentPassword") as string;
   const password = formData.get("password") as string;
   const confirmPassword = formData.get("confirmPassword") as string;
 
-  if (!password || !confirmPassword) {
-    return { error: "Both fields are required" };
+  if (!currentPassword || !password || !confirmPassword) {
+    return { error: "All fields are required" };
   }
 
   if (password !== confirmPassword) {
@@ -138,6 +140,24 @@ export async function updatePasswordAction(formData: FormData) {
 
   const supabase = await createClient();
 
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return { error: "Unauthorized" };
+  }
+
+  // Verify current password
+  const { error: authError } = await supabase.auth.signInWithPassword({
+    email: user.email!,
+    password: currentPassword,
+  });
+
+  if (authError) {
+    return { error: "Invalid current password" };
+  }
+
   const { error } = await supabase.auth.updateUser({
     password: password,
   });
@@ -146,7 +166,7 @@ export async function updatePasswordAction(formData: FormData) {
     return { error: error.message };
   }
 
-  redirect("/account");
+  return { success: "Password updated successfully" };
 }
 
 // ── Secure Account Update Actions ────────────────────────────────

@@ -11,12 +11,15 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { signupCustomerAction } from "@/lib/actions/auth";
 import { subscribeToNewsletter } from "@/app/actions/marketing";
 import { toast } from "sonner";
+import { MailCheck } from "lucide-react";
 
 export default function SignupPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [isPending, setIsPending] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [registeredEmail, setRegisteredEmail] = useState("");
 
-  const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsPending(true);
 
@@ -42,11 +45,64 @@ export default function SignupPage() {
 
     // Handle newsletter opt-in
     const subscribeOptIn = formData.get("subscribe") === "on";
+    const email = formData.get("email") as string;
+
     if (subscribeOptIn) {
-      const email = formData.get("email") as string;
       await subscribeToNewsletter(email, "signup");
     }
+
+    setRegisteredEmail(email);
+    setIsSuccess(true);
+    setIsPending(false);
   };
+
+  if (isSuccess) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background p-4 py-20 relative overflow-hidden transition-colors">
+        {/* Decorative corners */}
+        <div className="absolute top-0 left-0 w-32 h-32 border-t border-l border-gold/20" />
+        <div className="absolute bottom-0 right-0 w-32 h-32 border-b border-r border-gold/20" />
+
+        <div className="w-full max-w-md space-y-8 relative z-10 mt-10 text-center">
+          <div className="mx-auto w-24 h-24 bg-gold/10 rounded-full flex items-center justify-center mb-8 border border-gold/20">
+            <MailCheck className="w-12 h-12 text-gold" />
+          </div>
+
+          <h1 className="font-serif text-4xl text-foreground mb-4">
+            Check Your Email
+          </h1>
+
+          <div className="space-y-4 text-muted-foreground">
+            <p>
+              We've sent a verification link to
+              <br />
+              <span className="text-foreground font-medium">
+                {registeredEmail}
+              </span>
+            </p>
+            <p className="text-sm">
+              Please click the link in the email to confirm your account before
+              logging in.
+            </p>
+          </div>
+
+          <div className="pt-8">
+            <Button
+              asChild
+              className="w-full h-12 bg-gold hover:bg-gold-dark text-white font-medium tracking-wider uppercase"
+            >
+              <Link href="/login">Return to Login</Link>
+            </Button>
+          </div>
+
+          <p className="text-xs text-muted-foreground/60 mt-8">
+            Didn't receive the email? Check your spam folder or try signing up
+            again.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4 py-20 relative overflow-hidden transition-colors">

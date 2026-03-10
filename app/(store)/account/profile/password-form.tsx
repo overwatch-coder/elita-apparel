@@ -9,6 +9,7 @@ import { updatePasswordAction } from "@/lib/actions/auth";
 import { toast } from "sonner";
 
 export function PasswordForm() {
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [isPending, setIsPending] = useState(false);
 
@@ -30,8 +31,8 @@ export function PasswordForm() {
 
     if (result?.error) {
       toast.error(result.error);
-    } else {
-      toast.success("Password updated successfully");
+    } else if (result?.success) {
+      toast.success(result.success);
       (e.target as HTMLFormElement).reset();
     }
 
@@ -40,6 +41,39 @@ export function PasswordForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
+      <div className="space-y-2">
+        <Label
+          htmlFor="currentPassword"
+          className="text-muted-foreground text-sm font-medium"
+        >
+          Current Password
+        </Label>
+        <div className="relative">
+          <Input
+            id="currentPassword"
+            name="currentPassword"
+            type={showCurrentPassword ? "text" : "password"}
+            required
+            autoComplete="current-password"
+            placeholder="••••••••"
+            className="h-12 bg-background border-border text-foreground placeholder:text-muted-foreground/30 focus-visible:ring-gold/50 pr-12"
+          />
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            className="absolute right-1 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground hover:bg-transparent"
+            onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+          >
+            {showCurrentPassword ? (
+              <EyeOff className="h-4 w-4" />
+            ) : (
+              <Eye className="h-4 w-4" />
+            )}
+          </Button>
+        </div>
+      </div>
+
       <div className="space-y-2">
         <Label
           htmlFor="password"
