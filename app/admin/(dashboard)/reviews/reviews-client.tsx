@@ -23,6 +23,24 @@ import {
 import { moderateReview } from "@/app/actions/reviews";
 import { toast } from "sonner";
 
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { Trash2 } from "lucide-react";
 import { DataPagination } from "@/components/admin/data-pagination";
 
 interface Review {
@@ -52,6 +70,8 @@ export function ReviewsModerationClient({
   const [reviews, setReviews] = useState(initialReviews);
   const [filter, setFilter] = useState<"all" | "pending" | "approved">("all");
   const [search, setSearch] = useState("");
+  const [viewingReview, setViewingReview] = useState<Review | null>(null);
+  const [reviewToDelete, setReviewToDelete] = useState<Review | null>(null);
 
   const filtered = reviews.filter((r) => {
     const matchesFilter =
@@ -188,6 +208,16 @@ export function ReviewsModerationClient({
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex items-center justify-end gap-1">
+                      {/* View full review */}
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-8"
+                        onClick={() => setViewingReview(review)}
+                      >
+                        View Full
+                      </Button>
+
                       {!review.is_approved && (
                         <Button
                           variant="ghost"
@@ -203,10 +233,10 @@ export function ReviewsModerationClient({
                         variant="ghost"
                         size="icon"
                         className="h-8 w-8 text-red-500 hover:bg-red-500/10"
-                        onClick={() => handleModerate(review.id, false)}
-                        title="Reject & Remove"
+                        onClick={() => setReviewToDelete(review)}
+                        title="Delete Review"
                       >
-                        <X className="h-4 w-4" />
+                        <Trash2 className="h-4 w-4" />
                       </Button>
                     </div>
                   </TableCell>
@@ -222,6 +252,78 @@ export function ReviewsModerationClient({
         pageSize={pageSize}
         currentPage={currentPage}
       />
+
+      {/* View Review Modal */}
+      <Dialog
+        open={!!viewingReview}
+        onOpenChange={(open) => !open && setViewingReview(null)}
+      >
+        <DialogContent className="max-w-xl max-h-[90vh] flex flex-col">
+          <DialogHeader>
+            <DialogTitle>Review for {viewingReview?.products?.name}</DialogTitle>
+            <DialogDescription>
+              By {viewingReview?.profiles?.full_name || "Anonymous"} on{" "}
+              {viewingReview &&
+                new Date(viewingReview.created_at).toLocaleDateString()}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 overflow-y-auto pr-2 mt-2 grow">
+            <div className="flex items-center gap-1">
+              {viewingReview &&
+                Array.from({ length: 5 }, (_, i) => (
+                  <Star
+                    key={i}
+                    className={`h-4 w-4 ${
+                      i < viewingReview.rating
+                        ? "fill-amber-400 text-amber-400"
+                        : "text-muted-foreground/20"
+                    }`}
+                  />
+                ))}
+            </div>
+            <p className="text-foreground whitespace-pre-wrap leading-relaxed text-sm">
+              {viewingReview?.comment || "No comment provided."}
+            </p>
+            {viewingReview?.image_url && (
+              <img
+                src={viewingReview.image_url}
+                alt="Review attachment"
+                className="rounded-md w-full object-cover mt-4 max-h-[300px]"
+              />
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirmation Modal */}
+      <AlertDialog
+        open={!!reviewToDelete}
+        onOpenChange={(open) => !open && setReviewToDelete(null)}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete the
+              review from the database.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-red-500 hover:bg-red-600 focus:ring-red-500 text-white"
+              onClick={() => {
+                if (reviewToDelete) {
+                  handleModerate(reviewToDelete.id, false);
+                  setReviewToDelete(null);
+                }
+              }}
+            >
+              Delete Review
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

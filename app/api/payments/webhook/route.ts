@@ -14,7 +14,7 @@ export async function POST(req: Request) {
     const signature = req.headers.get("x-paystack-signature");
 
     if (!signature) {
-      return NextResponse.json({ error: "Missing signature" }, { status: 401 });
+      return NextResponse.json({ error: "Missing signature" }, { status: 401 } as any);
     }
 
     // Verify Paystack Signature
@@ -25,7 +25,7 @@ export async function POST(req: Request) {
 
     if (hash !== signature) {
       console.error("Invalid Paystack Signature");
-      return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
+      return NextResponse.json({ error: "Invalid signature" }, { status: 401 } as any);
     }
 
     // Parse the verified payload
@@ -53,6 +53,7 @@ export async function POST(req: Request) {
         .from("orders")
         .update({
           payment_status: "paid",
+          status: "processing",
           payment_verified: true,
           paystack_reference: reference,
           paid_at: new Date().toISOString(),
@@ -63,7 +64,7 @@ export async function POST(req: Request) {
         console.error("Failed to update order in database:", error);
         return NextResponse.json(
           { error: "Database update failed" },
-          { status: 500 },
+          { status: 500 } as any,
         );
       }
 
@@ -89,12 +90,12 @@ export async function POST(req: Request) {
     }
 
     // Respond with 200 OK to acknowledge receipt
-    return NextResponse.json({ status: "success" }, { status: 200 });
+    return NextResponse.json({ status: "success" }, { status: 200 } as any);
   } catch (error) {
     console.error("Webhook processing error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
-      { status: 500 },
+      { status: 500 } as any,
     );
   }
 }

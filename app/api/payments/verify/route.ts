@@ -10,7 +10,7 @@ export async function POST(req: Request) {
     if (!PAYSTACK_SECRET_KEY) {
       return NextResponse.json(
         { error: "Payment configuration error" },
-        { status: 500 },
+        { status: 500 } as any,
       );
     }
 
@@ -22,7 +22,7 @@ export async function POST(req: Request) {
     if (!reference || !orderId) {
       return NextResponse.json(
         { error: "Missing reference or orderId" },
-        { status: 400 },
+        { status: 400 } as any,
       );
     }
 
@@ -63,7 +63,7 @@ export async function POST(req: Request) {
         .from("orders")
         .update({
           payment_status: "paid",
-          status: "paid",
+          status: "processing",
           payment_verified: true,
           paystack_reference: reference,
           paid_at: new Date().toISOString(),
@@ -80,7 +80,7 @@ export async function POST(req: Request) {
         );
         return NextResponse.json(
           { error: "Failed to update order status", details: error },
-          { status: 500 },
+          { status: 500 } as any,
         );
       }
 
@@ -93,14 +93,14 @@ export async function POST(req: Request) {
     } else {
       return NextResponse.json(
         { error: data.message || "Payment verification failed" },
-        { status: 400 },
+        { status: 400 } as any,
       );
     }
   } catch (error) {
     console.error("Payment verification error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
-      { status: 500 },
+      { status: 500 } as any,
     );
   }
 }

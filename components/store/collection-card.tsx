@@ -22,7 +22,7 @@ export function CollectionCard({ collection, index }: CollectionCardProps) {
     >
       <Link
         href={`/shop?collection=${collection.slug}`}
-        className="group relative flex flex-col h-full overflow-hidden rounded-2xl border border-border/40 hover:border-gold/30 transition-all duration-500 bg-royal-black"
+        className="group relative flex flex-col md:h-[400px] overflow-hidden rounded-2xl border border-border/40 hover:border-gold/30 transition-all duration-500 bg-royal-black"
       >
         {/* Image Area */}
         <div className="relative aspect-4/5 overflow-hidden">

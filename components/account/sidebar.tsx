@@ -110,7 +110,7 @@ export function AccountSidebar({
           />
           {!isCollapsed && (
             <span className="font-serif text-lg tracking-wide text-foreground truncate">
-              Elita
+              Elita Apparel
             </span>
           )}
         </Link>
@@ -225,7 +225,7 @@ export function AccountSidebar({
             variant="ghost"
             size="sm"
             className={cn(
-              "w-full justify-start text-muted-foreground hover:bg-gold/5 hover:text-gold",
+              "w-full justify-start text-muted-foreground hover:bg-gold/5 hover:text-gold hidden",
               isCollapsed && "justify-center px-0",
             )}
           >

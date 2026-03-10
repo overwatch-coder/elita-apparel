@@ -4,7 +4,7 @@ import { formatPrice, BRAND, SOCIALS } from "./constants";
 export const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST,
   port: parseInt(process.env.SMTP_PORT || "587"),
-  secure: process.env.SMTP_SECURE === "true", // true for 465, false for other ports
+  secure: parseInt(process.env.SMTP_PORT || "587") === 465, // true for 465, false for other ports
   auth: {
     user: process.env.SMTP_USER,
     pass: process.env.SMTP_PASS,
@@ -136,7 +136,6 @@ export async function sendOrderConfirmation(order: any, items: any[]) {
             ${order.shipping_address}<br>
             ${order.shipping_city}, ${order.shipping_state || ""}<br>
             ${order.shipping_country}</p>
-            <p><strong>Payment Method:</strong> ${order.payment_method.toUpperCase()}</p>
           </div>
 
           <div style="text-align: center;">

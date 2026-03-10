@@ -2,7 +2,6 @@ import { createClient } from "@/lib/supabase/server";
 import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Package, Truck, CheckCircle2, Clock } from "lucide-react";
-import { Button } from "@/components/ui/button";
 
 export default async function OrderDetailPage({
   params,
@@ -39,7 +38,7 @@ export default async function OrderDetailPage({
     { id: "delivered", label: "Delivered", icon: CheckCircle2 },
   ];
 
-  // Logic to determine active states. Simplified for MVP:
+  // Logic to determine active states
   const getStatusIndex = (currentStatus: string) => {
     switch (currentStatus.toLowerCase()) {
       case "pending":

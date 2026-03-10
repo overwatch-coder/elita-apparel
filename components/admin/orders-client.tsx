@@ -8,6 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
 import { formatPrice } from "@/lib/constants";
 import { OrderStatusSelect } from "@/components/admin/order-status-select";
 import { Button } from "@/components/ui/button";
@@ -41,6 +42,7 @@ export function OrdersClient({
               <TableHead className="font-bold py-4">Customer</TableHead>
               <TableHead className="font-bold py-4">Items</TableHead>
               <TableHead className="font-bold py-4">Total</TableHead>
+              <TableHead className="font-bold py-4">Payment</TableHead>
               <TableHead className="font-bold py-4">Status</TableHead>
               <TableHead className="font-bold py-4">Date</TableHead>
               <TableHead className="text-right font-bold py-4">
@@ -74,6 +76,18 @@ export function OrdersClient({
                   </TableCell>
                   <TableCell className="font-bold text-sm text-gold">
                     {formatPrice(order.total_amount)}
+                  </TableCell>
+                  <TableCell>
+                    <Badge
+                      variant={order.payment_status === "paid" ? "default" : "secondary"}
+                      className={
+                        order.payment_status === "paid"
+                          ? "bg-green-500/10 text-green-500 uppercase tracking-wider text-[10px]"
+                          : "bg-amber-500/10 text-amber-500 uppercase tracking-wider text-[10px]"
+                      }
+                    >
+                      {order.payment_status || "pending"}
+                    </Badge>
                   </TableCell>
                   <TableCell>
                     <OrderStatusSelect

@@ -84,7 +84,7 @@ export default async function ProfileSettingsPage() {
                 </div>
               </div>
             </CardHeader>
-            <CardContent className="pt-8">
+            <CardContent>
               <ProfileForm
                 initialData={{
                   fullName: profile?.full_name || "",
@@ -100,7 +100,7 @@ export default async function ProfileSettingsPage() {
           <Card className="border-border/40 shadow-sm rounded-xl overflow-hidden">
             <CardHeader className="bg-muted/10 border-b border-border/20 pb-8">
               <div className="flex items-start gap-4">
-                <div className="h-12 w-12 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-500 shrink-0 border border-blue-500/20">
+                <div className="h-12 w-12 rounded-xl bg-gold/10 flex items-center justify-center text-gold shrink-0 border border-gold/20">
                   <ShieldCheck className="h-6 w-6" />
                 </div>
                 <div className="space-y-1">
@@ -114,7 +114,7 @@ export default async function ProfileSettingsPage() {
                 </div>
               </div>
             </CardHeader>
-            <CardContent className="pt-8">
+            <CardContent>
               <PasswordForm />
             </CardContent>
           </Card>

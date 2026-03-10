@@ -36,7 +36,7 @@ export function BrandSettingsForm({ initialData }: BrandSettingsFormProps) {
     ai_model_preference: initialData?.ai_model_preference || "openai",
   });
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.SubmitEvent) => {
     e.preventDefault();
     setLoading(true);
 
@@ -84,7 +84,7 @@ export function BrandSettingsForm({ initialData }: BrandSettingsFormProps) {
           </Select>
         </div>
 
-        <div className="space-y-2">
+        <div className="space-y-2 hidden">
           <Label
             htmlFor="ai_model"
             className="text-sm font-bold uppercase tracking-widest text-muted-foreground"

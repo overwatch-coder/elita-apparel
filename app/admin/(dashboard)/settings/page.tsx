@@ -44,7 +44,7 @@ export default async function AdminSettingsPage() {
       </div>
 
       <Tabs defaultValue="profile" className="w-full">
-        <div className="flex justify-start sm:justify-center mb-10 overflow-x-auto pb-4 scrollbar-hide">
+        <div className="flex justify-start sm:justify-center mb-10 overflow-x-auto pb-2 scrollbar-hide">
           <TabsList className="inline-flex h-auto p-1 bg-muted/30 rounded-xl border border-border/50 font-serif whitespace-nowrap">
             <TabsTrigger
               value="profile"
@@ -90,7 +90,7 @@ export default async function AdminSettingsPage() {
                 </div>
               </div>
             </CardHeader>
-            <CardContent className="pt-8">
+            <CardContent>
               <AdminProfileForm
                 initialData={{
                   fullName: profile?.full_name || "",
@@ -106,7 +106,7 @@ export default async function AdminSettingsPage() {
           <Card className="border-border/40 shadow-sm rounded-xl overflow-hidden">
             <CardHeader className="bg-muted/10 border-b border-border/20 pb-6 sm:pb-8 font-serif">
               <div className="flex items-start gap-4 text-foreground">
-                <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-500 shrink-0 border border-blue-500/20">
+                <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-xl bg-gold/10 flex items-center justify-center text-gold shrink-0 border border-gold/20">
                   <ShieldCheck className="h-5 w-5 sm:h-6 sm:w-6" />
                 </div>
                 <div className="space-y-1">
@@ -119,7 +119,7 @@ export default async function AdminSettingsPage() {
                 </div>
               </div>
             </CardHeader>
-            <CardContent className="pt-8">
+            <CardContent>
               <AdminPasswordForm />
             </CardContent>
           </Card>
@@ -169,7 +169,7 @@ export default async function AdminSettingsPage() {
                 </div>
               </div>
             </CardHeader>
-            <CardContent className="pt-8">
+            <CardContent>
               <BrandSettingsForm
                 initialData={{
                   brand_voice: brandSettings?.brand_voice || "Luxury",
