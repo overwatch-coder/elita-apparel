@@ -216,7 +216,7 @@ export function ProductWizard({
     { title: "Economics", icon: BadgePercent },
     { title: "Taxonomy", icon: Sparkles },
     ...(isEditing ? [{ title: "Media", icon: ImageIcon }] : []),
-    { title: "Status", icon: Megaphone },
+    { title: "Visibility", icon: Megaphone },
   ];
 
   return (
@@ -274,7 +274,7 @@ export function ProductWizard({
         </div>
       </div>
 
-      <div className="mt-12">
+      <div className="mt-12 pb-20 lg:pb-10">
         <AnimatePresence mode="wait">
           <motion.div
             key={step}
@@ -621,7 +621,7 @@ export function ProductWizard({
                     </Label>
                     <div className="space-y-4">
                       <div className="space-y-2">
-                        <div className="flex items-center justify-between">
+                        <div className="flex flex-col md:flex-row md:items-center gap-2 md:justify-between">
                           <Label htmlFor="seo_title">SEO Title</Label>
                           <div className="flex items-center gap-2">
                             <AIGeneratorButton
@@ -655,7 +655,7 @@ export function ProductWizard({
                         />
                       </div>
                       <div className="space-y-2">
-                        <div className="flex items-center justify-between">
+                        <div className="flex flex-col md:flex-row md:items-center gap-2 md:justify-between">
                           <Label htmlFor="seo_description">
                             SEO Description
                           </Label>

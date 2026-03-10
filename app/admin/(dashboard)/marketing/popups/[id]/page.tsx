@@ -1,6 +1,6 @@
 import { getDiscountCodes } from "@/lib/actions/discounts";
 import { getPopupById } from "@/lib/actions/marketing-popups";
-import { PopupForm } from "@/components/admin/marketing/popup-form";
+import { PopupWizard } from "@/components/admin/marketing/popup-wizard";
 import { notFound } from "next/navigation";
 
 interface EditPopupPageProps {
@@ -10,7 +10,7 @@ interface EditPopupPageProps {
 }
 
 export default async function EditPopupPage({ params }: EditPopupPageProps) {
-  const { id } = params;
+  const { id } = await params;
   const { popup, error } = await getPopupById(id);
   const { codes = [] } = await getDiscountCodes();
 
@@ -29,7 +29,7 @@ export default async function EditPopupPage({ params }: EditPopupPageProps) {
         </p>
       </div>
 
-      <PopupForm initialData={popup} discountCodes={codes} />
+      <PopupWizard initialData={popup} discountCodes={codes} />
     </div>
   );
 }

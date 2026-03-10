@@ -26,7 +26,7 @@ export function PeriodSelector() {
   return (
     <div className="flex items-center gap-2">
       <Select value={currentPeriod} onValueChange={handlePeriodChange}>
-        <SelectTrigger className="w-[180px] bg-background border-border h-9 text-xs">
+        <SelectTrigger className="md:w-[180px] w-full bg-background border-border h-9 text-xs">
           <Calendar className="mr-2 h-4 w-4 text-muted-foreground" />
           <SelectValue placeholder="Select period" />
         </SelectTrigger>

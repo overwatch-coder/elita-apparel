@@ -169,7 +169,7 @@ export function InstagramManager() {
           </CardDescription>
         </CardHeader>
         <CardContent className="pt-6">
-          <div className="flex items-center gap-4 max-w-xs">
+          <div className="flex flex-col sm:flex-row sm:items-end gap-4 max-w-md">
             <div className="flex-1 space-y-2">
               <Label htmlFor="limit">Display Limit</Label>
               <Input
@@ -179,10 +179,11 @@ export function InstagramManager() {
                 max={20}
                 value={limit}
                 onChange={(e) => setLimit(parseInt(e.target.value) || 0)}
+                className="h-10"
               />
             </div>
             <Button
-              className="mt-8 bg-gold hover:bg-gold/90 text-white"
+              className="w-full sm:w-auto bg-gold hover:bg-gold/90 text-white h-10 px-8"
               onClick={handleSave}
               disabled={isPending}
             >
@@ -193,9 +194,9 @@ export function InstagramManager() {
       </Card>
 
       {/* Posts Grid Management */}
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div>
-          <h2 className="text-2xl font-serif">Instagram Posts</h2>
+          <h2 className="text-xl sm:text-2xl font-serif">Instagram Posts</h2>
           <p className="text-sm text-muted-foreground">
             Manage individual posts in your feed.
           </p>
@@ -203,7 +204,7 @@ export function InstagramManager() {
         <Button
           onClick={handleAddPost}
           variant="outline"
-          className="border-gold/30 text-gold hover:bg-gold/5"
+          className="w-full sm:w-auto border-gold/30 text-gold hover:bg-gold/5 h-10"
         >
           <Plus className="mr-2 h-4 w-4" /> Add Post
         </Button>
@@ -291,7 +292,7 @@ export function InstagramManager() {
 
         <div className="flex justify-end pt-6">
           <Button
-            className="bg-gold hover:bg-gold-dark text-white px-10 tracking-widest uppercase font-bold shadow-md shadow-gold/20"
+            className="w-full sm:w-auto bg-gold hover:bg-gold-dark text-white px-10 tracking-widest uppercase font-bold shadow-md shadow-gold/20 h-11"
             onClick={handleSave}
             disabled={isPending}
           >

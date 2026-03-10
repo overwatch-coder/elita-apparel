@@ -35,7 +35,7 @@ export function OrderStatusSelect({
 
   return (
     <Select value={currentStatus} onValueChange={handleChange}>
-      <SelectTrigger className="w-[130px] h-8 text-xs">
+      <SelectTrigger className="lg:w-[130px] w-full h-8 text-xs">
         <SelectValue />
       </SelectTrigger>
       <SelectContent>

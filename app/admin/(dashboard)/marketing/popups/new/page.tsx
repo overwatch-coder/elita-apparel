@@ -1,5 +1,5 @@
 import { getDiscountCodes } from "@/lib/actions/discounts";
-import { PopupForm } from "@/components/admin/marketing/popup-form";
+import { PopupWizard } from "@/components/admin/marketing/popup-wizard";
 
 export default async function NewPopupPage() {
   const { codes = [] } = await getDiscountCodes();
@@ -15,7 +15,7 @@ export default async function NewPopupPage() {
         </p>
       </div>
 
-      <PopupForm discountCodes={codes} />
+      <PopupWizard discountCodes={codes} />
     </div>
   );
 }

@@ -181,21 +181,21 @@ export default function NewCampaignPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-4">
           <Button variant="ghost" size="icon" asChild>
             <Link href="/admin/campaigns">
               <ArrowLeft className="h-5 w-5" />
             </Link>
           </Button>
-          <h1 className="text-3xl font-serif text-foreground">
+          <h1 className="text-2xl sm:text-3xl font-serif text-foreground">
             Create Campaign
           </h1>
         </div>
         <div className="flex gap-2">
           <Button
             variant="outline"
-            className="uppercase tracking-widest text-xs h-10 border-border text-foreground hover:bg-accent"
+            className="flex-1 sm:flex-none uppercase tracking-widest text-[10px] h-10 border-border text-foreground hover:bg-accent"
           >
             <Eye className="mr-2 h-4 w-4" />
             Preview
@@ -203,7 +203,7 @@ export default function NewCampaignPage() {
           <Button
             onClick={handleSave}
             disabled={isSubmitting}
-            className="bg-gold hover:bg-gold-dark text-white uppercase tracking-widest text-xs h-10"
+            className="flex-1 sm:flex-none bg-gold hover:bg-gold-dark text-white uppercase tracking-widest text-[10px] h-10"
           >
             <Save className="mr-2 h-4 w-4" />
             {isSubmitting ? "Saving..." : "Save Draft"}
@@ -237,7 +237,7 @@ export default function NewCampaignPage() {
                 />
               </div>
               <div className="space-y-2">
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                   <Label htmlFor="subject">Subject Line</Label>
                   <div className="flex items-center gap-2">
                     <AIGeneratorButton
@@ -259,12 +259,14 @@ export default function NewCampaignPage() {
                       }}
                       label="AI Subject"
                       size="sm"
+                      className="flex-1 sm:flex-none"
                     />
                     <AIRewriteButton
                       text={settings.subject_line}
                       onRewrite={(text) =>
                         setSettings({ ...settings, subject_line: text })
                       }
+                      className="flex-1 sm:flex-none"
                     />
                   </div>
                 </div>
@@ -279,7 +281,7 @@ export default function NewCampaignPage() {
                 />
               </div>
               <div className="space-y-2">
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                   <Label htmlFor="preview">Preview Text (Optional)</Label>
                   <div className="flex items-center gap-2">
                     <AIGeneratorButton
@@ -293,12 +295,14 @@ export default function NewCampaignPage() {
                       }
                       label="AI Preview"
                       size="sm"
+                      className="flex-1 sm:flex-none"
                     />
                     <AIRewriteButton
                       text={settings.preview_text}
                       onRewrite={(text) =>
                         setSettings({ ...settings, preview_text: text })
                       }
+                      className="flex-1 sm:flex-none"
                     />
                   </div>
                 </div>
@@ -426,25 +430,29 @@ export default function NewCampaignPage() {
                   <CardContent className="p-4 pt-3 space-y-4">
                     {block.type === "text" && (
                       <div className="space-y-3">
-                        <div className="flex items-center justify-end gap-2">
-                          <AIGeneratorButton
-                            type="marketing_content"
-                            input={{
-                              campaign_name: settings.name,
-                              subject: settings.subject_line,
-                            }}
-                            onGenerated={(text) =>
-                              updateBlock(idx, { content: text })
-                            }
-                            label="Generate"
-                            size="sm"
-                          />
-                          <AIRewriteButton
-                            text={block.content}
-                            onRewrite={(text) =>
-                              updateBlock(idx, { content: text })
-                            }
-                          />
+                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-end gap-2">
+                          <div className="flex items-center gap-2">
+                            <AIGeneratorButton
+                              type="marketing_content"
+                              input={{
+                                campaign_name: settings.name,
+                                subject: settings.subject_line,
+                              }}
+                              onGenerated={(text) =>
+                                updateBlock(idx, { content: text })
+                              }
+                              label="Generate"
+                              size="sm"
+                              className="flex-1 sm:flex-none"
+                            />
+                            <AIRewriteButton
+                              text={block.content}
+                              onRewrite={(text) =>
+                                updateBlock(idx, { content: text })
+                              }
+                              className="flex-1 sm:flex-none"
+                            />
+                          </div>
                         </div>
                         <RichTextEditor
                           value={block.content}

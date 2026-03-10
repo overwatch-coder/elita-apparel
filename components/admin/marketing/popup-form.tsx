@@ -75,7 +75,7 @@ export function PopupForm({ initialData, discountCodes }: PopupFormProps) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-8 max-w-4xl">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <Link
           href="/admin/marketing/popups"
           className="flex items-center text-sm text-muted-foreground hover:text-gold transition-colors"
@@ -86,7 +86,7 @@ export function PopupForm({ initialData, discountCodes }: PopupFormProps) {
         <Button
           type="submit"
           disabled={loading}
-          className="bg-gold hover:bg-gold-dark text-white"
+          className="w-full sm:w-auto bg-gold hover:bg-gold-dark text-white uppercase tracking-widest text-[10px] h-11 px-8"
         >
           {loading ? (
             <Loader2 className="h-4 w-4 mr-2 animate-spin" />
@@ -118,7 +118,7 @@ export function PopupForm({ initialData, discountCodes }: PopupFormProps) {
               </div>
 
               <div className="space-y-2">
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                   <Label htmlFor="title">Display Title</Label>
                   <div className="flex items-center gap-2">
                     <AIGeneratorButton
@@ -134,12 +134,15 @@ export function PopupForm({ initialData, discountCodes }: PopupFormProps) {
                           text.match(/Headline:\s*(.*)/i)?.[1] || text;
                         setFormData((prev) => ({ ...prev, title: headline }));
                       }}
+                      size="sm"
+                      className="flex-1 sm:flex-none"
                     />
                     <AIRewriteButton
                       text={formData.title}
                       onRewrite={(text) =>
                         setFormData((prev) => ({ ...prev, title: text }))
                       }
+                      className="flex-1 sm:flex-none"
                     />
                   </div>
                 </div>
@@ -155,22 +158,26 @@ export function PopupForm({ initialData, discountCodes }: PopupFormProps) {
               </div>
 
               <div className="space-y-2">
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                   <Label htmlFor="content">Content / Description</Label>
-                  <AIGeneratorButton
-                    type="popup"
-                    label="Generate Content"
-                    input={{
-                      target: formData.type,
-                      offer: formData.title || formData.name,
-                    }}
-                    onGenerated={(text) => {
-                      // Extract subheadline/content from AI response
-                      const content =
-                        text.match(/Subheadline:\s*(.*)/i)?.[1] || text;
-                      setFormData((prev) => ({ ...prev, content }));
-                    }}
-                  />
+                  <div className="flex items-center gap-2">
+                    <AIGeneratorButton
+                      type="popup"
+                      label="Generate Content"
+                      input={{
+                        target: formData.type,
+                        offer: formData.title || formData.name,
+                      }}
+                      onGenerated={(text) => {
+                        // Extract subheadline/content from AI response
+                        const content =
+                          text.match(/Subheadline:\s*(.*)/i)?.[1] || text;
+                        setFormData((prev) => ({ ...prev, content }));
+                      }}
+                      size="sm"
+                      className="flex-1 sm:flex-none"
+                    />
+                  </div>
                 </div>
                 <RichTextEditor
                   value={formData.content}
@@ -179,7 +186,7 @@ export function PopupForm({ initialData, discountCodes }: PopupFormProps) {
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="cta_label">CTA Button Label</Label>
                   <Input

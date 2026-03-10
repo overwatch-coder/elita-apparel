@@ -23,6 +23,8 @@ import {
 import { moderateReview } from "@/app/actions/reviews";
 import { toast } from "sonner";
 
+import { DataPagination } from "@/components/admin/data-pagination";
+
 interface Review {
   id: string;
   rating: number;
@@ -34,11 +36,19 @@ interface Review {
   profiles: { full_name: string | null } | null;
 }
 
+interface ReviewsModerationClientProps {
+  reviews: Review[];
+  totalCount: number;
+  pageSize: number;
+  currentPage: number;
+}
+
 export function ReviewsModerationClient({
   reviews: initialReviews,
-}: {
-  reviews: Review[];
-}) {
+  totalCount,
+  pageSize,
+  currentPage,
+}: ReviewsModerationClientProps) {
   const [reviews, setReviews] = useState(initialReviews);
   const [filter, setFilter] = useState<"all" | "pending" | "approved">("all");
   const [search, setSearch] = useState("");
@@ -206,6 +216,12 @@ export function ReviewsModerationClient({
           </TableBody>
         </Table>
       </div>
+
+      <DataPagination
+        totalCount={totalCount}
+        pageSize={pageSize}
+        currentPage={currentPage}
+      />
     </div>
   );
 }

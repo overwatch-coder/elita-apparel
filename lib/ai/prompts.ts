@@ -16,14 +16,18 @@ export type GenerationType =
 
 interface PromptConfig {
   system: string;
-  prompt: (input: Record<string, unknown>, brandVoice: string) => string;
+  prompt: (
+    input: Record<string, unknown>,
+    brandVoice: string,
+    customInstructions?: string,
+  ) => string;
 }
 
 export const PROMPTS: Record<GenerationType, PromptConfig> = {
   product_description: {
     system:
       "You are an expert fashion copywriter specializing in premium African apparel. Write compelling, concise, and professional product descriptions that highlight quality, craftsmanship, and style.",
-    prompt: (input, voice) => `
+    prompt: (input, voice, custom) => `
       Product Name: ${input.name}
       Fabric: ${input.fabric}
       Fit: ${input.fit}
@@ -38,7 +42,7 @@ export const PROMPTS: Record<GenerationType, PromptConfig> = {
   cultural_story: {
     system:
       "You are a cultural storyteller and historian of African textiles and fashion. Write evocative narratives that explain the heritage, meaning, and craftsmanship behind apparel.",
-    prompt: (input, voice) => `
+    prompt: (input, voice, custom) => `
       Product Name: ${input.name}
       Theme/Pattern: ${input.theme}
       Heritage: ${input.heritage}
@@ -51,7 +55,7 @@ export const PROMPTS: Record<GenerationType, PromptConfig> = {
   email: {
     system:
       "You are a professional email marketing specialist for a high-end luxury fashion brand. Write high-converting email content.",
-    prompt: (input, voice) => `
+    prompt: (input, voice, custom) => `
       Campaign Type: ${input.campaignType}
       Offer/Message: ${input.offer}
       Brand Voice: ${voice}
@@ -69,7 +73,7 @@ export const PROMPTS: Record<GenerationType, PromptConfig> = {
   popup: {
     system:
       "You are a conversion optimization expert. Write short, punchy, and persuasive popup copy.",
-    prompt: (input, voice) => `
+    prompt: (input, voice, custom) => `
       Target: ${input.target}
       Offer: ${input.offer}
       Brand Voice: ${voice}
@@ -84,7 +88,7 @@ export const PROMPTS: Record<GenerationType, PromptConfig> = {
   },
   seo: {
     system: "You are an SEO expert specializing in fashion eCommerce.",
-    prompt: (input, voice) => `
+    prompt: (input, voice, custom) => `
       Product Name: ${input.name}
       Description: ${input.description}
       Keywords: ${input.keywords}
@@ -100,7 +104,7 @@ export const PROMPTS: Record<GenerationType, PromptConfig> = {
   rewrite: {
     system:
       "You are a master editor. Rewrite text to match a specific tone or style while preserving the original meaning.",
-    prompt: (input, voice) => `
+    prompt: (input, voice, custom) => `
       Original Text: "${input.text}"
       Goal: ${input.goal} (e.g., make more luxurious, shorter, add storytelling)
       Brand Voice: ${voice}
@@ -112,7 +116,7 @@ export const PROMPTS: Record<GenerationType, PromptConfig> = {
   collection_description: {
     system:
       "You are a luxury fashion copywriter. Write elegant and inviting descriptions for curated fashion collections.",
-    prompt: (input, voice) => `
+    prompt: (input, voice, custom) => `
       Collection Name: ${input.name}
       Brand Voice: ${voice}
 
@@ -123,7 +127,7 @@ export const PROMPTS: Record<GenerationType, PromptConfig> = {
   marketing_content: {
     system:
       "You are a direct response marketing expert for a luxury fashion brand. Write high-converting body copy for marketing campaigns.",
-    prompt: (input, voice) => `
+    prompt: (input, voice, custom) => `
       Campaign: ${input.campaign_name}
       Subject: ${input.subject}
       Brand Voice: ${voice}
@@ -135,7 +139,7 @@ export const PROMPTS: Record<GenerationType, PromptConfig> = {
   marketing_subject: {
     system:
       "You are a master of email subject lines and open-rate optimization. Write catchy, engaging, and high-open-rate subject lines for a luxury fashion brand.",
-    prompt: (input, voice) => `
+    prompt: (input, voice, custom) => `
       Campaign: ${input.campaign_name}
       Main Content: ${input.content}
       Brand Voice: ${voice}
@@ -147,7 +151,7 @@ export const PROMPTS: Record<GenerationType, PromptConfig> = {
   marketing_preview: {
     system:
       "You are an expert in email preview text. Write compelling hooks that complement the subject line and drive clicks.",
-    prompt: (input, voice) => `
+    prompt: (input, voice, custom) => `
       Campaign: ${input.campaign_name}
       Subject: ${input.subject}
       Brand Voice: ${voice}

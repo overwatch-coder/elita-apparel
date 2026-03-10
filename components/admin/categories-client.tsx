@@ -31,8 +31,13 @@ import {
 import { toast } from "sonner";
 import type { Category } from "@/lib/types/database";
 
+import { DataPagination } from "./data-pagination";
+
 interface CategoriesClientProps {
   categories: Category[];
+  totalCount: number;
+  pageSize: number;
+  currentPage: number;
 }
 
 function generateSlug(name: string): string {
@@ -42,7 +47,12 @@ function generateSlug(name: string): string {
     .replace(/(^-|-$)/g, "");
 }
 
-export function CategoriesClient({ categories }: CategoriesClientProps) {
+export function CategoriesClient({
+  categories,
+  totalCount,
+  pageSize,
+  currentPage,
+}: CategoriesClientProps) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
@@ -99,7 +109,7 @@ export function CategoriesClient({ categories }: CategoriesClientProps) {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pb-10">
       <ConfirmDialog
         open={!!deleteId}
         onOpenChange={(open) => !open && setDeleteId(null)}
@@ -109,7 +119,7 @@ export function CategoriesClient({ categories }: CategoriesClientProps) {
         variant="destructive"
         confirmText="Delete"
       />
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-2 md:flex-row md:items-center justify-between">
         <div>
           <h1 className="font-serif text-3xl">Categories</h1>
           <p className="text-muted-foreground mt-1">
@@ -239,6 +249,12 @@ export function CategoriesClient({ categories }: CategoriesClientProps) {
           </TableBody>
         </Table>
       </div>
+
+      <DataPagination
+        totalCount={totalCount}
+        pageSize={pageSize}
+        currentPage={currentPage}
+      />
     </div>
   );
 }

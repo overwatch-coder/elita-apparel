@@ -24,7 +24,7 @@ export default async function AutomationsDashboardPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-4 md:flex-row md:items-center justify-between">
         <div>
           <h1 className="text-3xl font-serif text-foreground">
             Lifecycle Automations
@@ -61,20 +61,20 @@ export default async function AutomationsDashboardPage() {
               key={flow.id}
               className="bg-card border-border shadow-sm overflow-hidden"
             >
-              <CardHeader className="flex flex-row items-center justify-between pb-4 border-b border-border/50">
+              <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-border/50">
                 <div className="space-y-1">
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center flex-wrap gap-2">
                     <CardTitle className="text-xl font-serif">
                       {flow.name}
                     </CardTitle>
                     <Badge
                       variant="outline"
-                      className="text-[10px] uppercase font-bold tracking-tight"
+                      className="text-[10px] uppercase font-bold tracking-tight shrink-0"
                     >
                       Trigger: {flow.trigger_event.replace("_", " ")}
                     </Badge>
                   </div>
-                  <CardDescription>
+                  <CardDescription className="line-clamp-2 sm:line-clamp-none">
                     {flow.trigger_event === "signup" &&
                       "Sent when a new user signs up or subscribes."}
                     {flow.trigger_event === "order_placed" &&
@@ -83,9 +83,9 @@ export default async function AutomationsDashboardPage() {
                       "Sent to users who leave items in their cart."}
                   </CardDescription>
                 </div>
-                <div className="flex items-center gap-4">
+                <div className="flex items-center justify-between sm:justify-end gap-6">
                   <div className="flex items-center gap-2">
-                    <span className="text-xs text-muted-foreground font-medium uppercase tracking-widest">
+                    <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-widest shrink-0">
                       {flow.active ? "Active" : "Inactive"}
                     </span>
                     <AutomationToggle
@@ -97,7 +97,7 @@ export default async function AutomationsDashboardPage() {
                     asChild
                     variant="ghost"
                     size="sm"
-                    className="text-gold hover:text-gold-dark h-9"
+                    className="text-gold hover:text-gold-dark h-9 px-0 sm:px-3"
                   >
                     <Link href={`/admin/automations/${flow.id}`}>
                       Configure <ArrowRight className="ml-2 h-4 w-4" />

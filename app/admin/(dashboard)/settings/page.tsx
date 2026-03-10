@@ -22,7 +22,7 @@ export default async function AdminSettingsPage() {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    redirect("/admin/login");
+    redirect("/login");
   }
 
   // Fetch profile
@@ -44,29 +44,29 @@ export default async function AdminSettingsPage() {
       </div>
 
       <Tabs defaultValue="profile" className="w-full">
-        <div className="flex justify-center mb-10">
-          <TabsList className="inline-flex h-auto p-1 bg-muted/30 rounded-xl border border-border/50 font-serif">
+        <div className="flex justify-start sm:justify-center mb-10 overflow-x-auto pb-4 scrollbar-hide">
+          <TabsList className="inline-flex h-auto p-1 bg-muted/30 rounded-xl border border-border/50 font-serif whitespace-nowrap">
             <TabsTrigger
               value="profile"
-              className="px-6 py-2.5 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all data-[state=active]:bg-background data-[state=active]:text-gold data-[state=active]:shadow-sm"
+              className="px-4 sm:px-6 py-2.5 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all data-[state=active]:bg-background data-[state=active]:text-gold data-[state=active]:shadow-sm"
             >
               Profile Details
             </TabsTrigger>
             <TabsTrigger
               value="security"
-              className="px-6 py-2.5 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all data-[state=active]:bg-background data-[state=active]:text-blue-500 data-[state=active]:shadow-sm"
+              className="px-4 sm:px-6 py-2.5 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all data-[state=active]:bg-background data-[state=active]:text-blue-500 data-[state=active]:shadow-sm"
             >
               Security
             </TabsTrigger>
             <TabsTrigger
               value="preferences"
-              className="px-6 py-2.5 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all data-[state=active]:bg-background data-[state=active]:text-green-500 data-[state=active]:shadow-sm"
+              className="px-4 sm:px-6 py-2.5 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all data-[state=active]:bg-background data-[state=active]:text-green-500 data-[state=active]:shadow-sm"
             >
               Preferences
             </TabsTrigger>
             <TabsTrigger
               value="brand"
-              className="px-6 py-2.5 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all data-[state=active]:bg-background data-[state=active]:text-gold data-[state=active]:shadow-sm"
+              className="px-4 sm:px-6 py-2.5 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all data-[state=active]:bg-background data-[state=active]:text-gold data-[state=active]:shadow-sm"
             >
               Brand & AI
             </TabsTrigger>
@@ -75,16 +75,16 @@ export default async function AdminSettingsPage() {
 
         <TabsContent value="profile" className="space-y-6 outline-none">
           <Card className="border-border/40 shadow-sm rounded-xl overflow-hidden">
-            <CardHeader className="bg-muted/10 border-b border-border/20 pb-8 font-serif">
+            <CardHeader className="bg-muted/10 border-b border-border/20 pb-6 sm:pb-8 font-serif">
               <div className="flex items-start gap-4 text-foreground">
-                <div className="h-12 w-12 rounded-xl bg-gold/10 flex items-center justify-center text-gold shrink-0 border border-gold/20">
-                  <User className="h-6 w-6" />
+                <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-xl bg-gold/10 flex items-center justify-center text-gold shrink-0 border border-gold/20">
+                  <User className="h-5 w-5 sm:h-6 sm:w-6" />
                 </div>
                 <div className="space-y-1">
-                  <CardTitle className="text-lg font-serif">
+                  <CardTitle className="text-base sm:text-lg font-serif">
                     Personal Information
                   </CardTitle>
-                  <CardDescription className="text-xs text-muted-foreground leading-relaxed">
+                  <CardDescription className="text-[10px] sm:text-xs text-muted-foreground leading-relaxed">
                     Your name and contact information displayed in admin logs.
                   </CardDescription>
                 </div>
@@ -104,16 +104,16 @@ export default async function AdminSettingsPage() {
 
         <TabsContent value="security" className="space-y-6 outline-none">
           <Card className="border-border/40 shadow-sm rounded-xl overflow-hidden">
-            <CardHeader className="bg-muted/10 border-b border-border/20 pb-8 font-serif">
+            <CardHeader className="bg-muted/10 border-b border-border/20 pb-6 sm:pb-8 font-serif">
               <div className="flex items-start gap-4 text-foreground">
-                <div className="h-12 w-12 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-500 shrink-0 border border-blue-500/20">
-                  <ShieldCheck className="h-6 w-6" />
+                <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-500 shrink-0 border border-blue-500/20">
+                  <ShieldCheck className="h-5 w-5 sm:h-6 sm:w-6" />
                 </div>
                 <div className="space-y-1">
-                  <CardTitle className="text-lg font-serif">
+                  <CardTitle className="text-base sm:text-lg font-serif">
                     Access Control
                   </CardTitle>
-                  <CardDescription className="text-xs text-muted-foreground leading-relaxed">
+                  <CardDescription className="text-[10px] sm:text-xs text-muted-foreground leading-relaxed">
                     Enforce strong authentication for administrative access.
                   </CardDescription>
                 </div>
@@ -153,16 +153,16 @@ export default async function AdminSettingsPage() {
 
         <TabsContent value="brand" className="space-y-6 outline-none">
           <Card className="border-border/40 shadow-sm rounded-xl overflow-hidden">
-            <CardHeader className="bg-muted/10 border-b border-border/20 pb-8 font-serif">
+            <CardHeader className="bg-muted/10 border-b border-border/20 pb-6 sm:pb-8 font-serif">
               <div className="flex items-start gap-4 text-foreground">
-                <div className="h-12 w-12 rounded-xl bg-gold/10 flex items-center justify-center text-gold shrink-0 border border-gold/20">
-                  <Palette className="h-6 w-6" />
+                <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-xl bg-gold/10 flex items-center justify-center text-gold shrink-0 border border-gold/20">
+                  <Palette className="h-5 w-5 sm:h-6 sm:w-6" />
                 </div>
                 <div className="space-y-1">
-                  <CardTitle className="text-lg font-serif">
+                  <CardTitle className="text-base sm:text-lg font-serif">
                     Brand Identity & AI
                   </CardTitle>
-                  <CardDescription className="text-xs text-muted-foreground leading-relaxed">
+                  <CardDescription className="text-[10px] sm:text-xs text-muted-foreground leading-relaxed">
                     Define your brand voice and configure AI content generation
                     preferences.
                   </CardDescription>

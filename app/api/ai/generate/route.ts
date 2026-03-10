@@ -11,26 +11,30 @@ export async function POST(req: NextRequest) {
     } = await supabase.auth.getUser();
 
     if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, {
+        status: 401,
+      } as any);
     }
 
     const body = await req.json();
-    const { type, input, tone } = body as {
+    const { type, input, tone, customInstructions } = body as {
       type: GenerationType;
       input: any;
       tone?: string;
+      customInstructions?: string;
     };
 
     if (!type || !input) {
-      return NextResponse.json({ error: "Invalid request" }, { status: 400 });
+      return NextResponse.json({ error: "Invalid request" }, {
+        status: 400,
+      } as any);
     }
 
     const promptConfig = PROMPTS[type];
     if (!promptConfig) {
-      return NextResponse.json(
-        { error: "Unsupported generation type" },
-        { status: 400 },
-      );
+      return NextResponse.json({ error: "Unsupported generation type" }, {
+        status: 400,
+      } as any);
     }
 
     // 1. Fetch Brand Voice (if not provided in payload)
@@ -44,7 +48,11 @@ export async function POST(req: NextRequest) {
     }
 
     // 2. Build Prompt
-    const promptText = promptConfig.prompt(input, brandVoice!);
+    const promptText = promptConfig.prompt(
+      input,
+      brandVoice!,
+      customInstructions,
+    );
     const systemPrompt = promptConfig.system;
 
     // 3. Generate Content
@@ -54,7 +62,7 @@ export async function POST(req: NextRequest) {
     });
 
     if (error) {
-      return NextResponse.json({ error }, { status: 500 });
+      return NextResponse.json({ error }, { status: 500 } as any);
     }
 
     // 4. Log Generation
@@ -70,7 +78,7 @@ export async function POST(req: NextRequest) {
     console.error("AI Route Error:", error);
     return NextResponse.json(
       { error: error.message || "Internal Server Error" },
-      { status: 500 },
+      { status: 500 } as any,
     );
   }
 }

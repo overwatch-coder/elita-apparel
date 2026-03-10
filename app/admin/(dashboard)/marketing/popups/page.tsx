@@ -14,7 +14,7 @@ import Link from "next/link";
 import { PopupActions } from "@/components/admin/marketing/popup-actions";
 
 export default async function PopupsPage() {
-  const { popups, error } = (await getPopups()) as any;
+  const { popups } = (await getPopups()) as any;
 
   return (
     <div className="space-y-6">
@@ -36,68 +36,74 @@ export default async function PopupsPage() {
       </div>
 
       <div className="border rounded-xl bg-card overflow-hidden shadow-sm">
-        <Table>
-          <TableHeader className="bg-accent/40">
-            <TableRow>
-              <TableHead className="font-medium py-4 px-6">Name</TableHead>
-              <TableHead className="font-medium py-4 px-6">Type</TableHead>
-              <TableHead className="text-right font-medium py-4 px-6">
-                Status & Actions
-              </TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {popups && popups.length > 0 ? (
-              popups.map((popup: any) => (
-                <TableRow
-                  key={popup.id}
-                  className="hover:bg-accent/5 transition-colors border-border/40"
-                >
-                  <TableCell className="font-medium py-4 px-6">
-                    {popup.name}
-                  </TableCell>
-                  <TableCell className="py-4 px-6">
-                    <Badge
-                      variant="outline"
-                      className="capitalize bg-accent/30 border-border/50 text-[10px] tracking-wider py-0.5"
-                    >
-                      {popup.type.replace("_", " ")}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="py-4 px-6">
-                    <PopupActions popup={popup} />
+        <div className="overflow-x-auto">
+          <Table>
+            <TableHeader className="bg-accent/40">
+              <TableRow>
+                <th className="font-medium py-4 px-6 text-left text-xs uppercase tracking-wider text-muted-foreground whitespace-nowrap">
+                  Name
+                </th>
+                <th className="font-medium py-4 px-6 text-left text-xs uppercase tracking-wider text-muted-foreground whitespace-nowrap">
+                  Type
+                </th>
+                <th className="text-right font-medium py-4 px-6 text-xs uppercase tracking-wider text-muted-foreground whitespace-nowrap">
+                  Status & Actions
+                </th>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {popups && popups.length > 0 ? (
+                popups.map((popup: any) => (
+                  <TableRow
+                    key={popup.id}
+                    className="hover:bg-accent/5 transition-colors border-border/40"
+                  >
+                    <TableCell className="font-medium py-4 px-6 whitespace-nowrap">
+                      {popup.name}
+                    </TableCell>
+                    <TableCell className="py-4 px-6 whitespace-nowrap">
+                      <Badge
+                        variant="outline"
+                        className="capitalize bg-accent/30 border-border/50 text-[10px] tracking-wider py-0.5"
+                      >
+                        {popup.type.replace("_", " ")}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="py-4 px-6 whitespace-nowrap text-right">
+                      <PopupActions popup={popup} />
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={3} className="h-72 text-center py-10">
+                    <div className="flex flex-col items-center gap-3 text-muted-foreground px-4">
+                      <div className="w-16 h-16 rounded-full bg-accent/20 flex items-center justify-center mb-2 shrink-0">
+                        <MousePointer2 className="h-8 w-8 opacity-20" />
+                      </div>
+                      <p className="font-serif text-lg text-foreground">
+                        No Marketing Popups
+                      </p>
+                      <p className="text-sm max-w-xs mx-auto">
+                        Create your first popup to start capturing emails and
+                        driving sales with automated offers.
+                      </p>
+                      <Button
+                        asChild
+                        className="bg-gold hover:bg-gold-dark text-white mt-4 w-full sm:w-auto"
+                        size="sm"
+                      >
+                        <Link href="/admin/marketing/popups/new">
+                          Get Started
+                        </Link>
+                      </Button>
+                    </div>
                   </TableCell>
                 </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell colSpan={6} className="h-72 text-center">
-                  <div className="flex flex-col items-center gap-3 text-muted-foreground">
-                    <div className="w-16 h-16 rounded-full bg-accent/20 flex items-center justify-center mb-2">
-                      <MousePointer2 className="h-8 w-8 opacity-20" />
-                    </div>
-                    <p className="font-serif text-lg text-foreground">
-                      No Marketing Popups
-                    </p>
-                    <p className="text-sm max-w-xs mx-auto">
-                      Create your first popup to start capturing emails and
-                      driving sales with automated offers.
-                    </p>
-                    <Button
-                      asChild
-                      className="bg-gold hover:bg-gold-dark text-white mt-4"
-                      size="sm"
-                    >
-                      <Link href="/admin/marketing/popups/new">
-                        Get Started
-                      </Link>
-                    </Button>
-                  </div>
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
+              )}
+            </TableBody>
+          </Table>
+        </div>
       </div>
     </div>
   );

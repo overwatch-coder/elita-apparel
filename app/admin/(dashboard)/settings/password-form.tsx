@@ -97,7 +97,7 @@ export function PasswordForm() {
       <Button
         type="submit"
         disabled={isPending}
-        className="h-11 bg-gold hover:bg-gold-dark text-white font-medium uppercase tracking-widest text-[10px] px-8"
+        className="w-full sm:w-auto h-11 bg-gold hover:bg-gold-dark text-white font-medium uppercase tracking-widest text-[10px] px-8"
       >
         {isPending ? (
           <>

@@ -5,7 +5,8 @@ import { Plus, Pencil, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
+import { RichTextEditor } from "@/components/ui/rich-text-editor";
+import { AIGeneratorButton } from "@/components/admin/ai-generator-button";
 import {
   Table,
   TableBody,
@@ -28,6 +29,9 @@ import {
 import { toast } from "sonner";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
+import { DataPagination } from "@/components/admin/data-pagination";
+import { useRouter } from "next/navigation";
+
 interface SizeGuide {
   id: string;
   title: string;
@@ -36,12 +40,20 @@ interface SizeGuide {
   created_at: string;
 }
 
-export function SizeGuidesClient({
-  guides: initialGuides,
-}: {
+interface SizeGuidesClientProps {
   guides: SizeGuide[];
-}) {
-  const [guides, setGuides] = useState(initialGuides);
+  totalCount: number;
+  pageSize: number;
+  currentPage: number;
+}
+
+export function SizeGuidesClient({
+  guides,
+  totalCount,
+  pageSize,
+  currentPage,
+}: SizeGuidesClientProps) {
+  const router = useRouter();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingGuide, setEditingGuide] = useState<SizeGuide | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
@@ -81,14 +93,8 @@ export function SizeGuidesClient({
         category: form.category || undefined,
       });
       if (result.success) {
-        setGuides((prev) =>
-          prev.map((g) =>
-            g.id === editingGuide.id
-              ? { ...g, ...form, category: form.category || null }
-              : g,
-          ),
-        );
         toast.success("Size guide updated");
+        router.refresh();
       } else {
         toast.error(result.error || "Failed to update");
       }
@@ -100,8 +106,7 @@ export function SizeGuidesClient({
       });
       if (result.success) {
         toast.success("Size guide created");
-        // Reload to get the new ID
-        window.location.reload();
+        router.refresh();
       } else {
         toast.error(result.error || "Failed to create");
       }
@@ -113,15 +118,15 @@ export function SizeGuidesClient({
   const handleDelete = async (id: string) => {
     const result = await deleteSizeGuide(id);
     if (result.success) {
-      setGuides((prev) => prev.filter((g) => g.id !== id));
       toast.success("Size guide deleted");
+      router.refresh();
     } else {
       toast.error(result.error || "Failed to delete");
     }
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pb-10">
       <ConfirmDialog
         open={!!deleteId}
         onOpenChange={(open) => !open && setDeleteId(null)}
@@ -131,43 +136,51 @@ export function SizeGuidesClient({
         variant="destructive"
         confirmText="Delete"
       />
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-2 md:flex-row md:items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold">Size Guides</h1>
           <p className="text-muted-foreground">
             Manage size charts for products
           </p>
         </div>
-        <Button onClick={openCreate}>
+        <Button
+          onClick={openCreate}
+          className="bg-gold hover:bg-gold-dark text-white"
+        >
           <Plus className="mr-2 h-4 w-4" />
           New Guide
         </Button>
       </div>
 
-      <div className="border rounded-lg">
+      <div className="rounded-xl border border-border/50 overflow-hidden bg-card shadow-sm">
         <Table>
           <TableHeader>
-            <TableRow>
-              <TableHead>Title</TableHead>
-              <TableHead>Category</TableHead>
-              <TableHead>Created</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
+            <TableRow className="bg-muted/50 hover:bg-muted/50">
+              <TableHead className="font-bold py-4">Title</TableHead>
+              <TableHead className="font-bold py-4">Category</TableHead>
+              <TableHead className="font-bold py-4">Created</TableHead>
+              <TableHead className="text-right font-bold py-4">
+                Actions
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {guides.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={4} className="text-center py-12">
-                  <p className="text-muted-foreground">
+                <TableCell colSpan={4} className="text-center py-12 bg-muted/5">
+                  <p className="text-muted-foreground font-medium">
                     No size guides yet. Create your first one.
                   </p>
                 </TableCell>
               </TableRow>
             ) : (
               guides.map((guide) => (
-                <TableRow key={guide.id}>
+                <TableRow
+                  key={guide.id}
+                  className="hover:bg-muted/30 transition-colors"
+                >
                   <TableCell className="font-medium">{guide.title}</TableCell>
-                  <TableCell className="text-muted-foreground">
+                  <TableCell className="text-muted-foreground/80 font-medium">
                     {guide.category || "—"}
                   </TableCell>
                   <TableCell className="text-sm text-muted-foreground">
@@ -178,7 +191,7 @@ export function SizeGuidesClient({
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-8 w-8"
+                        className="h-8 w-8 hover:bg-gold/10 hover:text-gold transition-colors"
                         onClick={() => openEdit(guide)}
                       >
                         <Pencil className="h-4 w-4" />
@@ -186,7 +199,7 @@ export function SizeGuidesClient({
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-8 w-8 text-red-500 hover:bg-red-500/10"
+                        className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10"
                         onClick={() => setDeleteId(guide.id)}
                       >
                         <Trash2 className="h-4 w-4" />
@@ -199,6 +212,12 @@ export function SizeGuidesClient({
           </TableBody>
         </Table>
       </div>
+
+      <DataPagination
+        totalCount={totalCount}
+        pageSize={pageSize}
+        currentPage={currentPage}
+      />
 
       {/* Create/Edit Dialog */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
@@ -234,19 +253,36 @@ export function SizeGuidesClient({
                 className="mt-1"
               />
             </div>
-            <div>
-              <Label htmlFor="sg-content">
-                Content (HTML — use &lt;table&gt; for charts)
-              </Label>
-              <Textarea
-                id="sg-content"
+            <div className="space-y-4 pt-2">
+              <div className="flex flex-col md:flex-row md:items-center gap-2 md:justify-between">
+                <Label htmlFor="sg-content">Size Chart & Guidelines</Label>
+                <AIGeneratorButton
+                  type="product_description"
+                  label="Generate Chart"
+                  input={{
+                    name: form.title,
+                    fabric: "Standard",
+                    fit: "True to size",
+                    audience: form.category || "Customers",
+                    occasion: "Sizing information",
+                  }}
+                  onGenerated={(text) =>
+                    setForm((p) => ({ ...p, content_html: text }))
+                  }
+                />
+              </div>
+              <RichTextEditor
                 value={form.content_html}
-                onChange={(e) =>
-                  setForm((p) => ({ ...p, content_html: e.target.value }))
+                onChange={(val) =>
+                  setForm((p) => ({ ...p, content_html: val }))
                 }
                 placeholder="<table><tr><th>Size</th><th>Bust (in)</th></tr>...</table>"
-                className="mt-1 min-h-[200px] font-mono text-sm"
+                className="min-h-[250px]"
               />
+              <p className="text-[10px] text-muted-foreground italic uppercase tracking-wider font-bold">
+                Professional Tip: Use tables for clear size charts. AI can help
+                format these perfectly.
+              </p>
             </div>
             <Button onClick={handleSave} className="w-full">
               {editingGuide ? "Save Changes" : "Create Guide"}

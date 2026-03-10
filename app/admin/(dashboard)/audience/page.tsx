@@ -2,16 +2,7 @@ import { redirect } from "next/navigation";
 import { getSubscribers } from "@/lib/actions/marketing-admin";
 import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
-import { getPaginationRange } from "@/lib/pagination";
+import { DataPagination } from "@/components/admin/data-pagination";
 
 export const metadata = {
   title: "Audience Dashboard | Admin",
@@ -25,18 +16,16 @@ export default async function AudienceDashboardPage({
 }) {
   const params = await searchParams;
   const currentPage = parseInt(params.page || "1");
-  const pageSize = 15;
+  const pageSize = 20;
 
-  const { subscribers, totalCount, totalPages, error } = await getSubscribers(
+  const { subscribers, totalCount, error } = await getSubscribers(
     currentPage,
     pageSize,
   );
 
   if (error === "Unauthorized access") {
-    redirect("/admin/login");
+    redirect("/login");
   }
-
-  const paginationRange = getPaginationRange(currentPage, totalPages || 0);
 
   return (
     <div className="space-y-6">
@@ -50,7 +39,7 @@ export default async function AudienceDashboardPage({
         </div>
       </div>
 
-      <div className="bg-card border-border border rounded-lg shadow-sm overflow-hidden">
+      <div className="bg-card border-border/50 border rounded-xl shadow-sm overflow-hidden">
         {error ? (
           <div className="p-6 text-center text-destructive">
             <p>Error loading subscribers: {error}</p>
@@ -65,104 +54,67 @@ export default async function AudienceDashboardPage({
             </p>
           </div>
         ) : (
-          <>
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm text-left">
-                <thead className="text-xs text-muted-foreground bg-muted/40 border-b border-border uppercase">
-                  <tr>
-                    <th className="px-6 py-4 font-medium">Email</th>
-                    <th className="px-6 py-4 font-medium">Name</th>
-                    <th className="px-6 py-4 font-medium">Source</th>
-                    <th className="px-6 py-4 font-medium">Status</th>
-                    <th className="px-6 py-4 font-medium">Joined</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-border">
-                  {subscribers.map((sub: any) => (
-                    <tr
-                      key={sub.id}
-                      className="hover:bg-muted/30 transition-colors"
-                    >
-                      <td className="px-6 py-4 whitespace-nowrap font-medium text-foreground">
-                        {sub.email}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-muted-foreground">
-                        {sub.full_name || "-"}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <Badge variant="outline" className="capitalize">
-                          {sub.source || "Unknown"}
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm text-left">
+              <thead className="text-[10px] text-muted-foreground bg-muted/50 border-b border-border/50 uppercase font-bold tracking-wider">
+                <tr>
+                  <th className="px-6 py-4">Email</th>
+                  <th className="px-6 py-4">Name</th>
+                  <th className="px-6 py-4">Source</th>
+                  <th className="px-6 py-4">Status</th>
+                  <th className="px-6 py-4">Joined</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border/50">
+                {subscribers.map((sub: any) => (
+                  <tr
+                    key={sub.id}
+                    className="hover:bg-muted/30 transition-colors"
+                  >
+                    <td className="px-6 py-4 whitespace-nowrap font-semibold text-foreground">
+                      {sub.email}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-muted-foreground font-medium">
+                      {sub.full_name || "-"}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <Badge
+                        variant="outline"
+                        className="capitalize text-[10px] font-bold border-gold/20 text-gold bg-gold/5 px-2"
+                      >
+                        {sub.source || "Unknown"}
+                      </Badge>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      {sub.is_subscribed ? (
+                        <Badge className="bg-ghana-green/10 text-ghana-green border-ghana-green/20 text-[10px] font-bold uppercase tracking-wider">
+                          Subscribed
                         </Badge>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        {sub.is_subscribed ? (
-                          <Badge className="bg-ghana-green text-white hover:bg-ghana-green/90">
-                            Subscribed
-                          </Badge>
-                        ) : (
-                          <Badge variant="secondary">Unsubscribed</Badge>
-                        )}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-muted-foreground">
-                        {format(new Date(sub.created_at), "MMM d, yyyy")}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-
-            {/* Pagination UI */}
-            {totalPages && totalPages > 1 && (
-              <div className="py-6 border-t border-border">
-                <Pagination>
-                  <PaginationContent>
-                    <PaginationItem>
-                      <PaginationPrevious
-                        href={`/admin/audience?page=${Math.max(1, currentPage - 1)}`}
-                        className={
-                          currentPage === 1
-                            ? "pointer-events-none opacity-50"
-                            : ""
-                        }
-                      />
-                    </PaginationItem>
-
-                    {paginationRange.map((page, index) => (
-                      <PaginationItem key={index}>
-                        {page === "DOTS" ? (
-                          <PaginationEllipsis />
-                        ) : (
-                          <PaginationLink
-                            href={`/admin/audience?page=${page}`}
-                            isActive={currentPage === page}
-                          >
-                            {page}
-                          </PaginationLink>
-                        )}
-                      </PaginationItem>
-                    ))}
-
-                    <PaginationItem>
-                      <PaginationNext
-                        href={`/admin/audience?page=${Math.min(
-                          totalPages,
-                          currentPage + 1,
-                        )}`}
-                        className={
-                          currentPage === totalPages
-                            ? "pointer-events-none opacity-50"
-                            : ""
-                        }
-                      />
-                    </PaginationItem>
-                  </PaginationContent>
-                </Pagination>
-              </div>
-            )}
-          </>
+                      ) : (
+                        <Badge
+                          variant="secondary"
+                          className="text-[10px] font-bold uppercase tracking-wider"
+                        >
+                          Unsubscribed
+                        </Badge>
+                      )}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-muted-foreground text-xs font-medium">
+                      {format(new Date(sub.created_at), "MMM d, yyyy")}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
       </div>
+
+      <DataPagination
+        totalCount={totalCount || 0}
+        pageSize={pageSize}
+        currentPage={currentPage}
+      />
     </div>
   );
 }

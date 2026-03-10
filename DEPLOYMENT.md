@@ -117,7 +117,7 @@ Click **Deploy** — Vercel will build and deploy automatically.
 
 - [ ] Verify `/sitemap.xml` loads correctly
 - [ ] Verify `/robots.txt` loads correctly
-- [ ] Test admin login at `/admin/login`
+- [ ] Test admin login at `/login`
 - [ ] Upload a product image via admin dashboard
 - [ ] Test full checkout flow
 - [ ] Verify OG tags with [og-image debugger](https://www.opengraph.xyz/)

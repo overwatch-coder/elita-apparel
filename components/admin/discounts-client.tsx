@@ -30,6 +30,8 @@ import {
 } from "@/lib/actions/admin";
 import { toast } from "sonner";
 
+import { DataPagination } from "./data-pagination";
+
 interface DiscountCode {
   id: string;
   code: string;
@@ -43,9 +45,17 @@ interface DiscountCode {
 
 interface DiscountsClientProps {
   discounts: DiscountCode[];
+  totalCount: number;
+  pageSize: number;
+  currentPage: number;
 }
 
-export function DiscountsClient({ discounts }: DiscountsClientProps) {
+export function DiscountsClient({
+  discounts,
+  totalCount,
+  pageSize,
+  currentPage,
+}: DiscountsClientProps) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
 
@@ -85,8 +95,8 @@ export function DiscountsClient({ discounts }: DiscountsClientProps) {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="space-y-6 pb-10">
+      <div className="flex flex-col gap-2 md:flex-row md:items-center justify-between">
         <div>
           <h1 className="font-serif text-3xl">Discount Codes</h1>
           <p className="text-muted-foreground mt-1">Manage promotional codes</p>
@@ -229,6 +239,12 @@ export function DiscountsClient({ discounts }: DiscountsClientProps) {
           </TableBody>
         </Table>
       </div>
+
+      <DataPagination
+        totalCount={totalCount}
+        pageSize={pageSize}
+        currentPage={currentPage}
+      />
     </div>
   );
 }

@@ -172,34 +172,41 @@ export default function AutomationDetailPage({
 
       <div className="space-y-8 animate-in fade-in duration-500">
         {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 pb-2">
           <div className="flex items-center gap-4">
-            <Button variant="ghost" size="icon" asChild className="shrink-0">
+            <Button
+              variant="ghost"
+              size="icon"
+              asChild
+              className="shrink-0 -ml-2"
+            >
               <Link href="/admin/automations">
                 <ArrowLeft className="h-5 w-5" />
               </Link>
             </Button>
             <div>
-              <h1 className="text-3xl font-serif text-foreground leading-tight">
+              <h1 className="text-2xl sm:text-3xl font-serif text-foreground leading-tight">
                 {automation.name}
               </h1>
-              <div className="flex items-center gap-2 mt-1">
+              <div className="flex flex-wrap items-center gap-2 mt-1">
                 <span className="text-[10px] text-muted-foreground uppercase tracking-widest font-semibold flex items-center">
                   <Zap className="h-3 w-3 mr-1 text-gold" />
                   Trigger: {automation.trigger_event}
                 </span>
-                <span className="text-muted-foreground/30">•</span>
+                <span className="hidden sm:inline text-muted-foreground/30">
+                  •
+                </span>
                 <span className="text-[10px] text-muted-foreground uppercase tracking-widest font-semibold">
                   {automation.automation_emails?.length || 0} Steps
                 </span>
               </div>
             </div>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
             <Button
               variant="outline"
               onClick={() => setShowDeleteConfirm(true)}
-              className="text-destructive border-destructive/20 hover:bg-destructive/5 uppercase tracking-widest text-[10px] h-10 px-4"
+              className="flex-1 sm:flex-none text-destructive border-destructive/20 hover:bg-destructive/5 uppercase tracking-widest text-[9px] sm:text-[10px] h-10 px-4"
             >
               <Trash2 className="mr-2 h-4 w-4" />
               Delete Flow
@@ -207,7 +214,7 @@ export default function AutomationDetailPage({
             <Button
               onClick={handleSave}
               disabled={isSaving}
-              className="bg-gold hover:bg-gold-dark text-white font-medium uppercase tracking-widest text-[10px] h-10 px-6 shadow-sm shadow-gold/20"
+              className="flex-1 sm:flex-none bg-gold hover:bg-gold-dark text-white font-medium uppercase tracking-widest text-[9px] sm:text-[10px] h-10 px-6 shadow-sm shadow-gold/20"
             >
               <Save className="mr-2 h-4 w-4" />
               {isSaving ? "Saving..." : "Save Changes"}
@@ -278,7 +285,7 @@ export default function AutomationDetailPage({
                           <Label className="text-xs uppercase tracking-wider text-muted-foreground font-semibold">
                             Delay
                           </Label>
-                          <div className="flex items-center gap-3">
+                          <div className="flex flex-col sm:flex-row sm:items-center gap-3">
                             <Input
                               type="number"
                               value={email.delay_minutes}
@@ -287,7 +294,7 @@ export default function AutomationDetailPage({
                                   delay_minutes: parseInt(e.target.value) || 0,
                                 })
                               }
-                              className="bg-background border-border h-10 w-24"
+                              className="bg-background border-border h-10 sm:w-24"
                             />
                             <div className="flex items-center text-[10px] text-muted-foreground italic bg-muted/30 px-3 h-10 rounded-md border border-border/50 flex-1">
                               <Clock className="h-3 w-3 mr-2 opacity-50" />
@@ -299,7 +306,7 @@ export default function AutomationDetailPage({
                         </div>
                       </div>
                       <div className="space-y-2 pt-2">
-                        <div className="flex items-center justify-between">
+                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                           <Label className="text-xs uppercase tracking-wider text-muted-foreground font-semibold">
                             Email Content
                           </Label>
@@ -316,6 +323,7 @@ export default function AutomationDetailPage({
                               }
                               label="Generate"
                               size="sm"
+                              className="flex-1 sm:flex-none"
                             />
                           </div>
                         </div>
@@ -443,7 +451,7 @@ export default function AutomationDetailPage({
                         </Select>
                       </div>
 
-                      <div className="grid grid-cols-2 gap-2">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                         <div className="space-y-2">
                           <Label className="text-[10px] uppercase tracking-wider text-muted-foreground font-bold">
                             Operator

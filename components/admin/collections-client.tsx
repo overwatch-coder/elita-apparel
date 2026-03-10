@@ -44,8 +44,13 @@ import {
 import { toast } from "sonner";
 import type { Collection } from "@/lib/types/database";
 
+import { DataPagination } from "./data-pagination";
+
 interface CollectionsClientProps {
   collections: Collection[];
+  totalCount: number;
+  pageSize: number;
+  currentPage: number;
 }
 
 function generateSlug(name: string): string {
@@ -55,7 +60,12 @@ function generateSlug(name: string): string {
     .replace(/(^-|-$)/g, "");
 }
 
-export function CollectionsClient({ collections }: CollectionsClientProps) {
+export function CollectionsClient({
+  collections,
+  totalCount,
+  pageSize,
+  currentPage,
+}: CollectionsClientProps) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [editingCollection, setEditingCollection] = useState<Collection | null>(
@@ -150,7 +160,7 @@ export function CollectionsClient({ collections }: CollectionsClientProps) {
         variant="destructive"
         confirmText="Delete"
       />
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-2 md:flex-row md:items-center justify-between">
         <div>
           <h1 className="font-serif text-3xl">Collections</h1>
           <p className="text-muted-foreground mt-1">Manage your collections</p>
@@ -358,6 +368,12 @@ export function CollectionsClient({ collections }: CollectionsClientProps) {
           </TableBody>
         </Table>
       </div>
+
+      <DataPagination
+        totalCount={totalCount}
+        pageSize={pageSize}
+        currentPage={currentPage}
+      />
     </div>
   );
 }

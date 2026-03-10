@@ -69,10 +69,14 @@ export function AdminBreadcrumbs() {
             <React.Fragment key={path}>
               <BreadcrumbItem>
                 {isLast ? (
-                  <BreadcrumbPage>{label}</BreadcrumbPage>
+                  <BreadcrumbPage>
+                    {label?.includes("-") ? label?.split("-")[0] : label}
+                  </BreadcrumbPage>
                 ) : (
                   <BreadcrumbLink asChild>
-                    <Link href={href}>{label}</Link>
+                    <Link href={href}>
+                      {label?.includes("-") ? label?.split("-")[0] : label}
+                    </Link>
                   </BreadcrumbLink>
                 )}
               </BreadcrumbItem>

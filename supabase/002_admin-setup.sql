@@ -51,5 +51,5 @@ $$;
 --    INSERT INTO admin_users (user_id, role)
 --    VALUES ('<USER_UUID>', 'admin');
 --
--- The admin can now log in at /admin/login with those credentials.
+-- The admin can now log in at /login with those credentials.
 -- ═══════════════════════════════════════════════════════════════════════════════

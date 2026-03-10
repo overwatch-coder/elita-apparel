@@ -112,7 +112,7 @@ export function BrandSettingsForm({ initialData }: BrandSettingsFormProps) {
               </SelectItem>
             </SelectContent>
           </Select>
-          <div className="p-3 bg-gold/5 border border-gold/20 rounded-lg flex items-start gap-3 mt-2 md:w-[400px]">
+          <div className="p-3 bg-gold/5 border border-gold/20 rounded-lg flex items-start gap-3 mt-2 w-full md:w-[400px]">
             <Sparkles className="h-4 w-4 text-gold shrink-0 mt-0.5" />
             <p className="text-[10px] text-gold font-medium leading-relaxed">
               Vercel AI SDK is used to bridge these providers, ensuring seamless
@@ -126,14 +126,14 @@ export function BrandSettingsForm({ initialData }: BrandSettingsFormProps) {
         <Button
           type="submit"
           disabled={loading}
-          className="bg-gold hover:bg-gold-dark text-white px-8"
+          className="w-full sm:w-auto bg-gold hover:bg-gold-dark text-white px-8 h-11 uppercase tracking-widest text-[10px]"
         >
           {loading ? (
             <Loader2 className="h-4 w-4 mr-2 animate-spin" />
           ) : (
             <Save className="h-4 w-4 mr-2" />
           )}
-          Save Brand Configuration
+          Save Configuration
         </Button>
       </div>
     </form>
