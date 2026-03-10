@@ -26,14 +26,25 @@ BEGIN
 
   -- C. Link Guest Data (Optional/Enhancement Step - wrapped in EXCEPTION)
   BEGIN
-    -- 1. Link past guest orders
     IF new.email IS NOT NULL THEN
+      -- 1. Link past guest orders (Case-insensitive)
       UPDATE public.orders
       SET user_id = NEW.id
-      WHERE customer_email = NEW.email
+      WHERE LOWER(TRIM(customer_email)) = LOWER(TRIM(NEW.email))
         AND user_id IS NULL;
 
-      -- 2. Create default address if orders were linked
+      -- 2. Link WhatsApp orders (Case-insensitive)
+      -- Using a sub-block to handle cases where whatsapp_orders might not exist or lacks guest_email
+      BEGIN
+        UPDATE public.whatsapp_orders
+        SET user_id = NEW.id
+        WHERE LOWER(TRIM(guest_email)) = LOWER(TRIM(NEW.email))
+          AND user_id IS NULL;
+      EXCEPTION WHEN OTHERS THEN
+        RAISE WARNING 'Could not link WhatsApp orders: %', SQLERRM;
+      END;
+
+      -- 3. Create default address if orders were linked
       SELECT * INTO o_rec
       FROM public.orders
       WHERE user_id = NEW.id
@@ -62,7 +73,6 @@ BEGIN
     END IF;
   EXCEPTION WHEN OTHERS THEN
     -- Log error or just ignore so signup isn't blocked
-    -- In Supabase logs, this will still be visible if configured
     RAISE WARNING 'Error in link_guest_data_on_signup: %', SQLERRM;
   END;
 
@@ -73,6 +83,7 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 -- 2. Drop old triggers
 DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
 DROP TRIGGER IF EXISTS on_auth_user_created_link_data ON auth.users;
+DROP TRIGGER IF EXISTS on_auth_user_signup_complete ON auth.users;
 
 -- 3. Create the single consolidated trigger
 CREATE TRIGGER on_auth_user_signup_complete
