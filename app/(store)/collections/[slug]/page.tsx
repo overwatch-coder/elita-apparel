@@ -3,7 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { ProductCard } from "@/components/store/product-card";
 import type { Metadata } from "next";
 import type { Product, ProductImage } from "@/lib/types/database";
-import { motion } from "motion/react";
+import { MotionDiv } from "@/components/animations/motion-wrapper";
 import { Sparkles } from "lucide-react";
 
 interface CollectionPageProps {
@@ -70,7 +70,7 @@ export default async function CollectionPage({ params }: CollectionPageProps) {
         </div>
 
         <div className="container relative z-10 mx-auto px-4 lg:px-8 text-center max-w-4xl">
-          <motion.div
+          <MotionDiv
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
@@ -78,13 +78,13 @@ export default async function CollectionPage({ params }: CollectionPageProps) {
             <p className="text-gold tracking-[0.4em] uppercase text-xs mb-6 font-bold">
               Collection
             </p>
-            <h1 className="font-serif text-4xl sm:text-6xl lg:text-8xl text-cream mb-8 leading-tight">
+            <h1 className="font-serif text-4xl sm:text-6xl lg:text-8xl text-[#faf7f2] mb-8 leading-tight">
               {collection.name}
             </h1>
 
             {collection.description && (
               <div
-                className="text-cream/70 leading-relaxed prose prose-invert mx-auto max-w-2xl text-sm sm:text-base mb-10 px-4"
+                className="text-[#faf7f2]/70 leading-relaxed prose prose-invert mx-auto max-w-2xl text-sm sm:text-base mb-10 px-4"
                 dangerouslySetInnerHTML={{ __html: collection.description }}
               />
             )}
@@ -94,7 +94,7 @@ export default async function CollectionPage({ params }: CollectionPageProps) {
               <div className="w-2 h-2 rounded-full bg-gold" />
               <div className="h-px w-12 bg-gold/30" />
             </div>
-          </motion.div>
+          </MotionDiv>
         </div>
       </section>
 

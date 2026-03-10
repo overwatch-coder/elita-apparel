@@ -97,7 +97,7 @@ export default async function CollectionsPage() {
                           <p className="text-gold tracking-[0.3em] uppercase text-[10px] mb-1 font-bold">
                             Collection
                           </p>
-                          <h2 className="font-serif text-2xl sm:text-3xl text-white group-hover:text-gold transition-colors duration-300">
+                          <h2 className="font-serif text-2xl sm:text-3xl text-[#faf7f2] group-hover:text-gold transition-colors duration-300">
                             {collection.name}
                           </h2>
                         </div>
@@ -108,7 +108,7 @@ export default async function CollectionsPage() {
 
                       {collection.description && (
                         <div
-                          className="text-white/60 text-sm line-clamp-2 prose prose-invert prose-sm mb-2"
+                          className="text-[#faf7f2]/60 text-sm line-clamp-2 prose prose-invert prose-sm mb-2"
                           dangerouslySetInnerHTML={{
                             __html: collection.description,
                           }}

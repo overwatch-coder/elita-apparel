@@ -105,7 +105,7 @@ export function QuickViewModal({
             {/* Badges */}
             <div className="absolute top-3 left-3 flex flex-col gap-1.5">
               {product.is_new && (
-                <Badge className="bg-royal-black text-cream text-[10px] tracking-wider uppercase px-2.5 py-1">
+                <Badge className="bg-royal-black text-[#faf7f2] text-[10px] tracking-wider uppercase px-2.5 py-1">
                   New
                 </Badge>
               )}
