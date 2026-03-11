@@ -1,9 +1,10 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { redirect } from "next/navigation";
 import { triggerMarketingAutomation } from "@/lib/marketing/triggers";
-import { sendVerificationCodeEmail } from "@/lib/mail";
+import { sendVerificationCodeEmail, sendPasswordResetEmail } from "@/lib/mail";
 
 export async function loginAction(formData: FormData) {
   const email = formData.get("email") as string;
@@ -106,17 +107,43 @@ export async function resetPasswordAction(formData: FormData) {
     return { error: "Email is required" };
   }
 
-  const supabase = await createClient();
-
-  // Gets origin for the reset link
   const origin = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 
-  const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${origin}/auth/update-password`,
-  });
+  try {
+    // Use the admin client so we can call generateLink without relying on
+    // Supabase's own email infrastructure (which ignores custom templates
+    // unless Custom SMTP is configured).
+    const admin = createAdminClient();
 
-  if (error) {
-    return { error: error.message };
+    const { data, error } = await admin.auth.admin.generateLink({
+      type: "recovery",
+      email,
+      options: {
+        // Supabase builds the recovery link using this as the redirect target.
+        // After the token is verified it will land the user on update-password.
+        redirectTo: `${origin}/auth/update-password`,
+      },
+    });
+
+    if (error) {
+      // Silently succeed so we don't reveal whether the email is registered
+      console.error("generateLink error:", error.message);
+      return { success: "Password reset instructions sent to your email." };
+    }
+
+    // data.properties.hashed_token is what our /auth/confirm route needs as `token_hash`.
+    // The action_link URL uses a param called "token" (not "token_hash"), so parsing the
+    // URL directly returns an empty string — we must read hashed_token directly.
+    const tokenHash = data.properties.hashed_token;
+
+    // Build a clean link that hits our Next.js auth/confirm route
+    const resetLink = `${origin}/auth/confirm?token_hash=${tokenHash}&type=recovery&next=/auth/update-password`;
+
+    // Send via our SMTP transport with the branded HTML template
+    await sendPasswordResetEmail(email, resetLink);
+  } catch (err) {
+    console.error("resetPasswordAction error:", err);
+    // Do not expose internal errors
   }
 
   return { success: "Password reset instructions sent to your email." };
@@ -168,6 +195,40 @@ export async function updatePasswordAction(formData: FormData) {
   }
 
   return { success: "Password updated successfully" };
+}
+
+/**
+ * Used on the /auth/update-password page after clicking a password reset email link.
+ * The user is already authenticated via the recovery session — no current password needed.
+ */
+export async function resetPasswordUpdateAction(formData: FormData) {
+  const password = formData.get("password") as string;
+  const confirmPassword = formData.get("confirmPassword") as string;
+
+  if (!password || !confirmPassword) {
+    return { error: "Both fields are required" };
+  }
+
+  if (password !== confirmPassword) {
+    return { error: "Passwords do not match" };
+  }
+
+  if (password.length < 6) {
+    return { error: "Password must be at least 6 characters" };
+  }
+
+  const supabase = await createClient();
+
+  const { error } = await supabase.auth.updateUser({ password });
+
+  if (error) {
+    return { error: error.message };
+  }
+
+  // Sign out after reset so they log in fresh with the new password
+  await supabase.auth.signOut();
+
+  return { success: "Password updated successfully! Please log in with your new password." };
 }
 
 // ── Secure Account Update Actions ────────────────────────────────

@@ -291,7 +291,12 @@ export default async function AccountOverviewPage() {
                             variant="outline"
                             className={`capitalize font-bold text-[9px] tracking-widest px-2.5 py-0.5 rounded-full ${getStatusColor(order.status)}`}
                           >
-                            {order.status}
+                            {order.status?.includes("out_for_delivery")
+                              ? order.status?.replace(
+                                  "out_for_delivery",
+                                  "Out for Delivery",
+                                )
+                              : order.status}
                           </Badge>
                         </TableCell>
                         <TableCell className="text-right font-serif text-foreground py-5">

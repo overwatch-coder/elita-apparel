@@ -218,3 +218,75 @@ export async function sendVerificationCodeEmail(
     return { error: "Failed to send verification code" };
   }
 }
+
+export async function sendPasswordResetEmail(
+  toEmail: string,
+  resetLink: string,
+) {
+  if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
+    console.warn("SMTP credentials missing. Reset link:", resetLink);
+    return { success: true };
+  }
+
+  const year = new Date().getFullYear();
+
+  const emailHtml = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reset Your Password</title>
+</head>
+<body style="margin:0;padding:0;background-color:#0c0a09;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#ececec;">
+  <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color:#0c0a09;padding:40px 0;">
+    <tr><td align="center">
+      <table width="100%" border="0" cellspacing="0" cellpadding="0" style="max-width:600px;background-color:#14110f;border:1px solid #c29b62;border-radius:8px;overflow:hidden;margin:0 auto;">
+        <tr>
+          <td align="center" style="padding:40px 20px 20px;background-color:#1a1614;border-bottom:2px solid #33291a;">
+            <h1 style="margin:0;font-size:28px;color:#c29b62;letter-spacing:2px;font-weight:normal;text-transform:uppercase;">ELITA APPAREL</h1>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:40px 30px;">
+            <h2 style="margin:0 0 20px 0;font-size:22px;color:#ffffff;font-weight:500;">Reset Your Password</h2>
+            <p style="margin:0 0 20px 0;font-size:16px;line-height:1.6;color:#a1a1aa;">Hello,</p>
+            <p style="margin:0 0 30px 0;font-size:16px;line-height:1.6;color:#a1a1aa;">We received a request to reset the password for your Elita Apparel account. Click the button below to set a new password.</p>
+            <table border="0" cellspacing="0" cellpadding="0" style="margin:0 auto;">
+              <tr>
+                <td align="center" style="border-radius:4px;background-color:#c29b62;">
+                  <a href="${resetLink}" target="_blank" style="font-size:16px;font-family:Helvetica,Arial,sans-serif;color:#000000;text-decoration:none;border-radius:4px;padding:14px 28px;border:1px solid #c29b62;display:inline-block;font-weight:bold;text-transform:uppercase;letter-spacing:1px;">
+                    Reset Password
+                  </a>
+                </td>
+              </tr>
+            </table>
+            <p style="margin:30px 0 0 0;font-size:12px;line-height:1.6;color:#71717a;word-break:break-all;">Or copy this link: <a href="${resetLink}" style="color:#c29b62;">${resetLink}</a></p>
+            <p style="margin:20px 0 0 0;font-size:14px;line-height:1.6;color:#a1a1aa;">This link expires in 1 hour. If you did not request a reset, you can safely ignore this email.</p>
+          </td>
+        </tr>
+        <tr>
+          <td align="center" style="padding:30px;background-color:#0c0a09;border-top:1px solid #33291a;">
+            <p style="margin:0 0 10px 0;font-size:13px;color:#71717a;">&copy; ${year} Elita Apparel. All rights reserved.</p>
+            <p style="margin:0;font-size:12px;color:#71717a;">Accra, Ghana</p>
+          </td>
+        </tr>
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>`;
+
+  try {
+    await transporter.sendMail({
+      from:
+        process.env.SMTP_FROM || `"Elita Apparel" <${process.env.SMTP_USER}>`,
+      to: toEmail,
+      subject: "Reset your Elita Apparel password",
+      html: emailHtml,
+    });
+    return { success: true };
+  } catch (error) {
+    console.error("Error sending password reset email:", error);
+    return { error: "Failed to send email" };
+  }
+}

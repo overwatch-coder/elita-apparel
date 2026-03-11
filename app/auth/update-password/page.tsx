@@ -7,12 +7,15 @@ import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { updatePasswordAction } from "@/lib/actions/auth";
+import { resetPasswordUpdateAction } from "@/lib/actions/auth";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 export default function UpdatePasswordPage() {
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isPending, setIsPending] = useState(false);
+  const router = useRouter();
 
   const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -28,11 +31,14 @@ export default function UpdatePasswordPage() {
       return;
     }
 
-    const result = await updatePasswordAction(formData);
+    const result = await resetPasswordUpdateAction(formData);
 
     if (result?.error) {
       toast.error(result.error);
       setIsPending(false);
+    } else if (result?.success) {
+      toast.success(result.success);
+      router.push("/login");
     }
   };
 
@@ -105,15 +111,30 @@ export default function UpdatePasswordPage() {
             >
               Confirm New Password
             </Label>
+            <div className="relative">
             <Input
               id="confirmPassword"
               name="confirmPassword"
-              type={showPassword ? "text" : "password"}
+              type={showConfirmPassword ? "text" : "password"}
               required
               autoComplete="new-password"
               placeholder="••••••••"
               className="h-12 bg-card border-border text-foreground placeholder:text-muted-foreground/50 focus-visible:ring-gold/50"
             />
+            <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                className="absolute right-1 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground hover:bg-transparent"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              >
+                {showConfirmPassword ? (
+                  <EyeOff className="h-4 w-4" />
+                ) : (
+                  <Eye className="h-4 w-4" />
+                )}
+              </Button>
+            </div>
           </div>
 
           <Button
