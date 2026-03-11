@@ -21,7 +21,7 @@ export function TrackingNoteForm({
   const [note, setNote] = useState(initialNote);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.SubmitEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
 

@@ -44,7 +44,7 @@ export function PopupForm({ initialData, discountCodes }: PopupFormProps) {
     is_active: initialData?.is_active ?? false,
   });
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.SubmitEvent) => {
     e.preventDefault();
     setLoading(true);
 

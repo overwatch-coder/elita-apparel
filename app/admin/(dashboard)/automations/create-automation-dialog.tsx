@@ -33,7 +33,7 @@ export function CreateAutomationDialog() {
   const [customTrigger, setCustomTrigger] = useState("");
   const [isCustom, setIsCustom] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.SubmitEvent) => {
     e.preventDefault();
     if (!name) return;
 

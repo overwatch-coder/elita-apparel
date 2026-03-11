@@ -34,6 +34,13 @@ export function LocationSelector({
   const [selectedStateCode, setSelectedStateCode] = useState<string>("");
   const [showOtherCity, setShowOtherCity] = useState(false);
 
+  // Local display values — these are the authoritative source for the Select value.
+  // Using local state avoids the Radix blank-value bug caused by the parent round-trip
+  // (child selects → parent state update → prop back down) happening during a re-render
+  // in which the options list is briefly empty and Radix caches "no match".
+  const [selectedStateName, setSelectedStateName] = useState<string>(state || "");
+  const [selectedCityName, setSelectedCityName] = useState<string>(city || "");
+
   useEffect(() => {
     // Get all countries
     const allCountries = Country.getAllCountries();
@@ -53,6 +60,7 @@ export function LocationSelector({
         setStates(st);
 
         if (state) {
+          setSelectedStateName(state);
           const initState = st.find((s) => s.name === state);
           if (initState) {
             setSelectedStateCode(initState.isoCode);
@@ -65,6 +73,10 @@ export function LocationSelector({
               setShowOtherCity(true);
             }
           }
+        }
+
+        if (city) {
+          setSelectedCityName(city);
         }
       }
     } else if (ghana) {
@@ -79,6 +91,8 @@ export function LocationSelector({
     onLocationChange("country", name);
     onLocationChange("state", "");
     onLocationChange("city", "");
+    setSelectedStateName("");
+    setSelectedCityName("");
 
     const countryObj = Country.getAllCountries().find((c) => c.name === name);
     if (countryObj) {
@@ -91,8 +105,10 @@ export function LocationSelector({
   };
 
   const handleStateChange = (name: string) => {
+    setSelectedStateName(name);
     onLocationChange("state", name);
     onLocationChange("city", "");
+    setSelectedCityName("");
 
     const stateObj = states.find((s) => s.name === name);
     if (stateObj && selectedCountryCode) {
@@ -118,9 +134,11 @@ export function LocationSelector({
   const handleCityChange = (name: string) => {
     if (name === "other") {
       setShowOtherCity(true);
-      onLocationChange("city", ""); // Reset the actual city value so the user can type it
+      setSelectedCityName("other");
+      onLocationChange("city", ""); // Reset so the user can type it
     } else {
       setShowOtherCity(false);
+      setSelectedCityName(name);
       onLocationChange("city", name);
     }
   };
@@ -150,7 +168,7 @@ export function LocationSelector({
           Region/State *
         </Label>
         <Select
-          value={state}
+          value={selectedStateName}
           onValueChange={handleStateChange}
           disabled={!selectedCountryCode || states.length === 0}
         >
@@ -178,15 +196,7 @@ export function LocationSelector({
           City/Town *
         </Label>
         <Select
-          value={
-            showOtherCity
-              ? "other"
-              : cities.find((c) => c.name === city)
-                ? city
-                : city && !showOtherCity
-                  ? "other"
-                  : ""
-          }
+          value={selectedCityName}
           onValueChange={handleCityChange}
           disabled={!selectedStateCode && states.length > 0}
         >

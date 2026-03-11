@@ -54,13 +54,26 @@ function TourTooltip({
   tooltipProps,
 }: // eslint-disable-next-line @typescript-eslint/no-explicit-any
 any) {
+  const isMobile = useIsMobile();
+
+  // On mobile we completely take control of positioning: fixed, centred on the viewport.
+  // This bypasses react-floater's computed translate offsets which push the tooltip off-screen.
+  const mobileStyle: React.CSSProperties = {
+    position: "fixed",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    zIndex: 10001,
+    width: "calc(100vw - 2rem)",
+    maxWidth: "340px",
+  };
+
   return (
     <div
       {...tooltipProps}
+      style={isMobile ? mobileStyle : tooltipProps?.style}
       className="bg-card border border-border rounded-xl shadow-2xl font-sans
-        /* Mobile-first: nearly full-width with safe margins */
         w-[calc(100vw-2rem)] max-w-[340px]
-        /* Tablet and above: fixed comfortable width */
         sm:w-80 sm:max-w-sm
         p-4 sm:p-5"
     >
@@ -91,23 +104,23 @@ any) {
         {step.content}
       </p>
 
-      {/* Navigation – stacked on very small screens, inline otherwise */}
-      <div className="flex flex-col-reverse xs:flex-row items-stretch xs:items-center justify-between mt-4 gap-2">
-        {/* Skip – min touch target 44px height */}
+      {/* Navigation */}
+      <div className="flex flex-row items-center justify-between mt-4 gap-2">
+        {/* Skip */}
         <Button
           variant="ghost"
           size="sm"
-          className="text-xs text-muted-foreground hover:text-foreground min-h-[44px] xs:min-h-0"
+          className="text-xs text-muted-foreground hover:text-foreground min-h-[44px]"
           {...skipProps}
         >
-          Skip Tour
+          Skip
         </Button>
         <div className="flex gap-2 justify-end">
           {index > 0 && (
             <Button
               variant="outline"
               size="sm"
-              className="text-xs min-h-[44px] xs:min-h-0 px-4"
+              className="text-xs min-h-[44px] px-4"
               {...backProps}
             >
               Back
@@ -115,7 +128,7 @@ any) {
           )}
           <Button
             size="sm"
-            className="text-xs bg-gold hover:bg-gold/90 text-black font-semibold min-h-[44px] xs:min-h-0 px-4"
+            className="text-xs bg-gold hover:bg-gold/90 text-black font-semibold min-h-[44px] px-4"
             {...primaryProps}
           >
             {isLastStep ? "Finish 🎉" : "Next →"}
@@ -127,26 +140,18 @@ any) {
 }
 
 /**
- * On mobile the sidebar is hidden, so sidebar-targeting steps need to
- * fall back to using body (centre-placed). This function patches the steps.
+ * On mobile every step targets body with center placement.
+ * This prevents any tooltip from being anchored to elements that may be
+ * hidden, scrolled off-screen, or simply outside the visible viewport on
+ * a small handset — which caused the "cropped/off-screen" tooltip.
  */
 function patchStepsForMobile(steps: Step[]): Step[] {
-  return steps.map((step) => {
-    const target = step.target as string;
-    // If the target is a sidebar nav link or group button, center on mobile
-    if (
-      typeof target === "string" &&
-      (target.startsWith("#admin-") || target.startsWith("#customer-"))
-    ) {
-      return {
-        ...step,
-        target: "body",
-        placement: "center" as const,
-        disableBeacon: true,
-      };
-    }
-    return step;
-  });
+  return steps.map((step) => ({
+    ...step,
+    target: "body",
+    placement: "center" as const,
+    disableBeacon: true,
+  }));
 }
 
 function triggerFireworks() {

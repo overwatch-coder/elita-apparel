@@ -20,7 +20,7 @@ export default function SignupPage() {
   const [isSuccess, setIsSuccess] = useState(false);
   const [registeredEmail, setRegisteredEmail] = useState("");
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsPending(true);
 

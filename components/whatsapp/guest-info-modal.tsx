@@ -27,7 +27,7 @@ export function GuestInfoModal({
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.SubmitEvent) => {
     e.preventDefault();
     onSubmit(name, phone, email || undefined);
   };

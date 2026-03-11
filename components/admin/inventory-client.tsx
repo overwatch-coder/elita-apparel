@@ -79,7 +79,7 @@ export function InventoryClient({ products }: InventoryClientProps) {
     }
   };
 
-  const handleBulkSave = async (e: React.FormEvent) => {
+  const handleBulkSave = async (e: React.SubmitEvent) => {
     e.preventDefault();
     if (selectedIds.size === 0) return;
 

@@ -27,7 +27,7 @@ export default function TrackOrderPage() {
   const [error, setError] = useState("");
   const [order, setOrder] = useState<any>(null);
 
-  const handleTrack = async (e: React.FormEvent) => {
+  const handleTrack = async (e: React.SubmitEvent) => {
     e.preventDefault();
     if (!trackingId.trim() || !email.trim()) return;
 

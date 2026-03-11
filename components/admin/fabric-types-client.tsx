@@ -54,7 +54,7 @@ export function FabricTypesClient({
 
   const supabase = createClient();
 
-  async function handleCreate(e: React.FormEvent) {
+  async function handleCreate(e: React.SubmitEvent) {
     e.preventDefault();
     if (!newName) return;
 
