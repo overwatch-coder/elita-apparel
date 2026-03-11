@@ -3,7 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { ProductDetailWrapper } from "@/components/store/product-detail-wrapper";
 import { ProductReviews } from "@/components/store/product-reviews";
 import { FeaturedSection } from "@/components/store/featured-section";
-import { WhatsAppButton } from "@/components/store/whatsapp-button";
+import { WhatsAppProductSync } from "@/components/store/whatsapp-button";
 import { StickyCartBar } from "@/components/store/sticky-cart-bar";
 import { ProductJsonLd } from "@/components/seo/product-jsonld";
 import { BreadcrumbJsonLd } from "@/components/seo/breadcrumb-jsonld";
@@ -143,7 +143,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
       )}
 
       <StickyCartBar product={product} />
-      <WhatsAppButton />
+      <WhatsAppProductSync productName={product.name} />
     </>
   );
 }

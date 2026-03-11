@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { ProfileForm } from "./profile-form";
 import { PasswordForm } from "./password-form";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { User, ShieldCheck, Bell } from "lucide-react";
+import { User, ShieldCheck, Bell, HelpCircle } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -11,6 +11,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { RestartTourButtonCustomer } from "@/components/onboarding/RestartTourButtonCustomer";
 
 export default async function ProfileSettingsPage() {
   const supabase = await createClient();
@@ -62,6 +63,12 @@ export default async function ProfileSettingsPage() {
               className="px-2 py-2.5 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all data-[state=active]:bg-background data-[state=active]:text-green-500 data-[state=active]:shadow-sm"
             >
               Preferences
+            </TabsTrigger>
+            <TabsTrigger
+              value="help"
+              className="px-2 py-2.5 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all data-[state=active]:bg-background data-[state=active]:text-amber-500 data-[state=active]:shadow-sm"
+            >
+              Help
             </TabsTrigger>
           </TabsList>
         </div>
@@ -142,6 +149,35 @@ export default async function ProfileSettingsPage() {
               <p className="text-sm text-muted-foreground italic font-serif">
                 Notification preferences will be available in a future update.
               </p>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="help" className="space-y-6 outline-none">
+          <Card className="border-border/40 shadow-sm rounded-xl overflow-hidden">
+            <CardHeader className="bg-muted/10 border-b border-border/20 pb-8">
+              <div className="flex items-start gap-4">
+                <div className="h-12 w-12 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-500 shrink-0 border border-amber-500/20">
+                  <HelpCircle className="h-6 w-6" />
+                </div>
+                <div className="space-y-1">
+                  <CardTitle className="text-lg font-serif">
+                    Help & Guided Tour
+                  </CardTitle>
+                  <CardDescription className="text-xs text-muted-foreground leading-relaxed">
+                    Get a guided walkthrough of your account to rediscover all the features available to you.
+                  </CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="py-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div>
+                <p className="text-sm font-medium text-foreground">Restart Account Tour</p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Relaunch the step-by-step walkthrough that highlights each section of your account.
+                </p>
+              </div>
+              <RestartTourButtonCustomer />
             </CardContent>
           </Card>
         </TabsContent>

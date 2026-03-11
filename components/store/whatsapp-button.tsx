@@ -4,11 +4,42 @@ import Link from "next/link";
 import { MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SOCIALS } from "@/lib/constants";
+import { useEffect, useState } from "react";
+
+// Simple pub-sub mechanism to avoid passing context down through the tree
+let activeProductName: string | undefined = undefined;
+const listeners = new Set<(name: string | undefined) => void>();
+
+export function setWhatsAppProductName(name: string | undefined) {
+  activeProductName = name;
+  listeners.forEach((listener) => listener(name));
+}
+
+// Client component to be dropped into the product details page
+export function WhatsAppProductSync({ productName }: { productName: string }) {
+  useEffect(() => {
+    setWhatsAppProductName(productName);
+    return () => setWhatsAppProductName(undefined); // Clean up when leaving the page
+  }, [productName]);
+  
+  return null;
+}
 
 export function WhatsAppButton() {
-  const whatsappUrl = `${SOCIALS.whatsapp.url}?text=${encodeURIComponent(
-    "Hi! I'd like to inquire about your products.",
-  )}`;
+  const [productName, setLocalProductName] = useState<string | undefined>(activeProductName);
+
+  useEffect(() => {
+    listeners.add(setLocalProductName);
+    return () => {
+      listeners.delete(setLocalProductName);
+    };
+  }, []);
+
+  const message = productName
+    ? `Hi! I'm interested in the *${productName}*. Could you tell me more about it?`
+    : "Hi! I'd like to inquire about your products.";
+
+  const whatsappUrl = `${SOCIALS.whatsapp.url}?text=${encodeURIComponent(message)}`;
 
   return (
     <Button

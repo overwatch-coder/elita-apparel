@@ -9,6 +9,7 @@ export default function StoreLayout({
 }: {
   children: React.ReactNode;
 }) {
+
   return (
     <>
       <Navbar />

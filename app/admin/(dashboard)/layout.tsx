@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { AdminBreadcrumbs } from "@/components/admin/admin-breadcrumbs";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { NotificationDropdown } from "@/components/notifications/notification-dropdown";
+import { OnboardingController } from "@/components/onboarding/OnboardingController";
 
 export default function AdminDashboardLayout({
   children,
@@ -16,6 +17,11 @@ export default function AdminDashboardLayout({
 }) {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [user, setUser] = useState<{ id: string; name: string; role: string } | null>(null);
+  const [onboarding, setOnboarding] = useState<{
+    show: boolean;
+    showWelcome: boolean;
+    step: number;
+  } | null>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -27,7 +33,7 @@ export default function AdminDashboardLayout({
       if (authUser) {
         const { data: profile } = await supabase
           .from("profiles")
-          .select("full_name, role")
+          .select("full_name, role, onboarding_completed, onboarding_step")
           .eq("id", authUser.id)
           .single();
 
@@ -41,6 +47,11 @@ export default function AdminDashboardLayout({
           name: profile?.full_name || authUser.email?.split("@")[0] || "Admin",
           role: profile?.role || "admin",
         });
+
+        if (!profile?.onboarding_completed) {
+          const step = profile?.onboarding_step ?? 0;
+          setOnboarding({ show: true, showWelcome: step === 0, step });
+        }
       } else {
         router.push("/login");
       }
@@ -75,6 +86,15 @@ export default function AdminDashboardLayout({
             </div>
             {children}
           </div>
+
+          {/* Onboarding tour – only for users who haven't completed it */}
+          {onboarding?.show && (
+            <OnboardingController
+              role="admin"
+              showWelcome={onboarding.showWelcome}
+              initialStep={onboarding.step}
+            />
+          )}
         </main>
       </div>
     </div>

@@ -3,7 +3,6 @@ import { createClient } from "@/lib/supabase/server";
 import { ProductCard } from "@/components/store/product-card";
 import { ProductFilters } from "@/components/store/product-filters";
 import { ShopSidebar } from "@/components/store/shop-sidebar";
-import { WhatsAppButton } from "@/components/store/whatsapp-button";
 import {
   Pagination,
   PaginationContent,
@@ -310,8 +309,6 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
           </div>
         </div>
       </div>
-
-      <WhatsAppButton />
     </>
   );
 }

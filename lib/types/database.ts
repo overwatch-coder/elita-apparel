@@ -427,6 +427,8 @@ export interface Database {
           full_name: string | null;
           phone: string | null;
           role: "admin" | "customer";
+          onboarding_completed: boolean;
+          onboarding_step: number | null;
           created_at: string;
           updated_at: string;
         };
@@ -435,6 +437,8 @@ export interface Database {
           full_name?: string | null;
           phone?: string | null;
           role?: "admin" | "customer";
+          onboarding_completed?: boolean;
+          onboarding_step?: number | null;
           created_at?: string;
           updated_at?: string;
         };
@@ -443,6 +447,8 @@ export interface Database {
           full_name?: string | null;
           phone?: string | null;
           role?: "admin" | "customer";
+          onboarding_completed?: boolean;
+          onboarding_step?: number | null;
           created_at?: string;
           updated_at?: string;
         };

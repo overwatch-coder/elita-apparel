@@ -5,6 +5,7 @@ import { AccountMobileNav } from "@/components/account/mobile-nav";
 import { AccountBreadcrumbs } from "@/components/account/account-breadcrumbs";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { NotificationDropdown } from "@/components/notifications/notification-dropdown";
+import { OnboardingController } from "@/components/onboarding/OnboardingController";
 
 export const dynamic = "force-dynamic";
 
@@ -25,7 +26,7 @@ export default async function AccountLayout({
   // Fetch full profile for the sidebar
   const { data: profile } = await supabase
     .from("profiles")
-    .select("full_name, role")
+    .select("full_name, role, onboarding_completed, onboarding_step")
     .eq("id", user.id)
     .single();
 
@@ -67,6 +68,15 @@ export default async function AccountLayout({
           </div>
         </main>
       </div>
+
+      {/* Onboarding tour – only for customers who haven't completed it */}
+      {!profile?.onboarding_completed && (
+        <OnboardingController
+          role="customer"
+          showWelcome={(profile?.onboarding_step ?? 0) === 0}
+          initialStep={profile?.onboarding_step ?? 0}
+        />
+      )}
     </div>
   );
 }

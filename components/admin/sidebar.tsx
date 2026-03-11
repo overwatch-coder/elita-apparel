@@ -41,19 +41,22 @@ type NavItem = {
   label: string;
   href: string;
   icon: any;
+  id?: string;
 };
 
 type NavGroup = {
   label: string;
   icon: any;
+  id?: string;
   items: NavItem[];
 };
 
 const NAV_GROUPS: (NavGroup | NavItem)[] = [
-  { label: "Dashboard", href: "/admin", icon: LayoutDashboard },
+  { label: "Dashboard", href: "/admin", icon: LayoutDashboard, id: "admin-dashboard-link" },
   {
     label: "Catalog",
     icon: FolderOpen,
+    id: "admin-products-link",
     items: [
       { label: "Collections", href: "/admin/collections", icon: FolderOpen },
       { label: "Categories", href: "/admin/categories", icon: Tags },
@@ -65,6 +68,7 @@ const NAV_GROUPS: (NavGroup | NavItem)[] = [
   {
     label: "Sales",
     icon: ShoppingCart,
+    id: "admin-orders-link",
     items: [
       { label: "Orders", href: "/admin/orders", icon: ShoppingCart },
       {
@@ -79,6 +83,7 @@ const NAV_GROUPS: (NavGroup | NavItem)[] = [
   {
     label: "Marketing",
     icon: Megaphone,
+    id: "admin-marketing-link",
     items: [
       {
         label: "Marketing Stats",
@@ -105,7 +110,7 @@ const NAV_GROUPS: (NavGroup | NavItem)[] = [
     ],
   },
   { label: "Notifications", href: "/admin/notifications", icon: Bell },
-  { label: "Settings", href: "/admin/settings", icon: Settings },
+  { label: "Settings", href: "/admin/settings", icon: Settings, id: "admin-settings-link" },
 ];
 
 export function AdminSidebar({
@@ -183,6 +188,7 @@ export function AdminSidebar({
                     <Link
                       key={item.href}
                       href={item.href}
+                      id={item.id}
                       className={cn(
                         "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
                         isActive
@@ -335,6 +341,7 @@ function NavSection({
     <Collapsible open={isOpen} onOpenChange={setIsOpen} className="space-y-1">
       <CollapsibleTrigger asChild>
         <button
+          id={item.id}
           className={cn(
             "flex w-full items-center justify-between rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-foreground",
             isGroupActive ? "text-gold" : "text-muted-foreground",

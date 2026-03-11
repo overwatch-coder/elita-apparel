@@ -2,7 +2,6 @@ import { createClient } from "@/lib/supabase/server";
 import { HeroSection } from "@/components/store/hero-section";
 import { BrandStory } from "@/components/store/brand-story";
 import { EarlyBirdBanner } from "@/components/store/early-bird-banner";
-import { WhatsAppButton } from "@/components/store/whatsapp-button";
 import { CollectionsSection } from "@/components/store/collections-section";
 import { FeaturedSection } from "@/components/store/featured-section";
 import { InstagramSection } from "@/components/store/instagram-section";
@@ -89,9 +88,6 @@ export default async function HomePage() {
 
       {/* Instagram Section */}
       <InstagramSection posts={instagramPosts || []} limit={instagramLimit} />
-
-      {/* WhatsApp Button */}
-      <WhatsAppButton />
     </>
   );
 }

@@ -29,11 +29,13 @@ const menuGroups = [
         title: "Overview",
         href: "/account",
         icon: LayoutDashboard,
+        id: "customer-account-link",
       },
       {
         title: "Order History",
         href: "/account/orders",
         icon: ShoppingBag,
+        id: "customer-orders-link",
       },
       {
         title: "Notifications",
@@ -49,16 +51,19 @@ const menuGroups = [
         title: "Addresses",
         href: "/account/addresses",
         icon: MapPin,
+        id: "customer-addresses-link",
       },
       {
         title: "Wishlist",
         href: "/account/wishlist",
         icon: Heart,
+        id: "customer-wishlist-link",
       },
       {
         title: "Profile & Security",
         href: "/account/profile",
         icon: User,
+        id: "customer-profile-link",
       },
     ],
   },
@@ -152,6 +157,7 @@ export function AccountSidebar({
                       <Link
                         key={item.href}
                         href={item.href}
+                        id={(item as any).id}
                         className={cn(
                           "flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition-all group",
                           isActive
