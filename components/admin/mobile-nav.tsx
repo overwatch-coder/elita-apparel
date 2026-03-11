@@ -1,3 +1,5 @@
+'use client';
+
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
@@ -20,6 +22,7 @@ import {
   Star,
   Settings,
   LogOut,
+  Bell,
 } from "lucide-react";
 import {
   Sheet,
@@ -32,8 +35,10 @@ import {
 import { Button } from "@/components/ui/button";
 import { logoutAction } from "@/lib/actions/auth";
 import { cn } from "@/lib/utils";
-import { Separator } from "../ui/separator";
-import { ModeToggle } from "../layout/mode-toggle";
+import { ThemeToggle } from "../theme-toggle";
+import { NotificationDropdown } from "../notifications/notification-dropdown";
+import { useEffect, useState } from "react";
+import { createClient } from "@/lib/supabase/client";
 
 const NAV_GROUPS = [
   { label: "Dashboard", href: "/admin", icon: LayoutDashboard },
@@ -89,16 +94,30 @@ const NAV_GROUPS = [
       { label: "Reviews", href: "/admin/reviews", icon: Star },
     ],
   },
+  { label: "Notifications", href: "/admin/notifications", icon: Bell },
   { label: "Settings", href: "/admin/settings", icon: Settings },
 ];
 
 export function AdminMobileNav() {
   const pathname = usePathname();
+  const [userId, setUserId] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function getUser() {
+      const supabase = createClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        setUserId(user.id);
+      }
+    }
+    getUser();
+  }, []);
 
   return (
-    <div className="sticky top-0 z-40 flex h-16 items-center gap-4 border-b border-border/50 bg-background/80 backdrop-blur-md px-4 lg:hidden">
-      <Sheet>
-        <SheetTrigger asChild>
+    <div className="sticky top-0 z-40 flex h-16 items-center justify-between border-b border-border/50 bg-background/80 backdrop-blur-md px-4 lg:hidden">
+      <div className="flex items-center gap-4">
+        <Sheet>
+          <SheetTrigger asChild>
           <Button variant="ghost" size="icon" className="h-10 w-10">
             <Menu className="h-6 w-6" />
           </Button>
@@ -195,15 +214,6 @@ export function AdminMobileNav() {
           </div>
 
           <div className="mt-auto border-t border-border/50 p-6 space-y-4 bg-muted/5">
-            <div className="flex items-center gap-3 px-2">
-              <ModeToggle />
-              <span className="text-[10px] uppercase font-bold tracking-widest text-muted-foreground">
-                Appearance
-              </span>
-            </div>
-
-            <Separator className="bg-border/30" />
-
             <div className="space-y-2">
               <Button
                 asChild
@@ -247,6 +257,12 @@ export function AdminMobileNav() {
         <span className="text-[8px] font-bold text-gold tracking-widest uppercase">
           Admin
         </span>
+      </div>
+      </div>
+
+      <div className="flex items-center gap-2">
+        {userId && <NotificationDropdown isAdminView={true} userId={userId} />}
+        <ThemeToggle />
       </div>
     </div>
   );

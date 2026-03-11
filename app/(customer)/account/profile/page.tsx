@@ -43,23 +43,23 @@ export default async function ProfileSettingsPage() {
       </div>
 
       <Tabs defaultValue="profile" className="w-full">
-        <div className="flex justify-center mb-10">
-          <TabsList className="inline-flex h-auto p-1 bg-muted/30 rounded-xl border border-border/50">
+        <div className="flex justify-center mb-10 w-full">
+          <TabsList className="inline-flex w-full h-auto p-1 bg-muted/30 rounded-xl border border-border/50">
             <TabsTrigger
               value="profile"
-              className="px-6 py-2.5 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all data-[state=active]:bg-background data-[state=active]:text-gold data-[state=active]:shadow-sm"
+              className="px-2 py-2.5 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all data-[state=active]:bg-background data-[state=active]:text-gold data-[state=active]:shadow-sm"
             >
-              Profile Details
+              Profile
             </TabsTrigger>
             <TabsTrigger
               value="security"
-              className="px-6 py-2.5 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all data-[state=active]:bg-background data-[state=active]:text-blue-500 data-[state=active]:shadow-sm"
+              className="px-2 py-2.5 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all data-[state=active]:bg-background data-[state=active]:text-blue-500 data-[state=active]:shadow-sm"
             >
               Security
             </TabsTrigger>
             <TabsTrigger
               value="preferences"
-              className="px-6 py-2.5 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all data-[state=active]:bg-background data-[state=active]:text-green-500 data-[state=active]:shadow-sm"
+              className="px-2 py-2.5 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all data-[state=active]:bg-background data-[state=active]:text-green-500 data-[state=active]:shadow-sm"
             >
               Preferences
             </TabsTrigger>

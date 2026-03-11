@@ -133,7 +133,12 @@ export default async function OrderHistoryPage({
                         variant="outline"
                         className={`capitalize font-normal text-[10px] tracking-wide ${getStatusColor(order.status)}`}
                       >
-                        {order.status}
+                        {order.status?.includes("out_for_delivery")
+                          ? order.status.replace(
+                              "out_for_delivery",
+                              "out for delivery",
+                            )
+                          : order.status}
                       </Badge>
                     </TableCell>
                     <TableCell className="text-right text-sm text-muted-foreground">

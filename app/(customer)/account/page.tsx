@@ -208,7 +208,7 @@ export default async function AccountOverviewPage() {
         <Card className="border-border/40 shadow-sm bg-card overflow-hidden group hover:border-gold/30 transition-colors">
           <CardContent className="p-6">
             <div className="flex items-center justify-between mb-4">
-              <div className="h-10 w-10 rounded-full bg-ghana-red/10 flex items-center justify-center text-ghana-red group-hover:bg-ghana-red group-hover:text-white transition-all">
+              <div className="h-10 w-10 rounded-full bg-green-500/10 flex items-center justify-center text-green-500 group-hover:bg-green-500 group-hover:text-white transition-all">
                 <MapPin className="h-5 w-5" />
               </div>
             </div>
@@ -226,18 +226,15 @@ export default async function AccountOverviewPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Chart Column */}
         <div className="lg:col-span-2 space-y-8">
-          <div className="bg-card border border-border/40 rounded-xl p-8 shadow-sm">
+          <div className="bg-card border border-border/40 rounded-xl p-4 md:p-8 shadow-sm">
             <div className="flex items-center justify-between mb-8">
               <div>
                 <h2 className="text-xl font-serif text-foreground mb-1">
-                  Spending Narrative
+                  Spending Overview
                 </h2>
                 <p className="text-[10px] uppercase font-bold tracking-widest text-muted-foreground">
                   Last 30 Days Activity
                 </p>
-              </div>
-              <div className="h-8 w-8 rounded-full bg-accent/50 flex items-center justify-center border border-border/50">
-                <ChevronRight className="h-4 w-4 text-muted-foreground" />
               </div>
             </div>
             <CustomerDashboardCharts orderData={orderData} />
@@ -272,7 +269,9 @@ export default async function AccountOverviewPage() {
                       <TableHead className="font-bold text-[10px] uppercase tracking-widest py-4 text-right">
                         Value
                       </TableHead>
-                      <TableHead className="w-[60px]"></TableHead>
+                      <TableHead className="w-[60px] text-[10px] uppercase tracking-widest py-4">
+                        Action
+                      </TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -357,10 +356,10 @@ export default async function AccountOverviewPage() {
                 <span>Account Status</span>
                 <span className="text-green-500">Protected</span>
               </div>
-              <div className="flex items-center justify-between border-b border-border/40 pb-2">
+              {/* <div className="flex items-center justify-between border-b border-border/40 pb-2">
                 <span>2FA Status</span>
                 <span className="text-ghana-red">Disabled</span>
-              </div>
+              </div> */}
             </div>
             <Button
               asChild

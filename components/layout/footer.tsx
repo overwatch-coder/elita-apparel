@@ -200,7 +200,7 @@ export function Footer() {
                 href={SOCIALS.twitter.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="h-8 w-8 rounded-full border border-border flex items-center justify-center hover:bg-gold hover:border-gold hover:text-white transition-all duration-300"
+                className="h-8 w-8 rounded-full border border-border hidden items-center justify-center hover:bg-gold hover:border-gold hover:text-white transition-all duration-300"
                 aria-label="X (Twitter)"
               >
                 <Twitter size={14} />
@@ -218,7 +218,7 @@ export function Footer() {
                 href={SOCIALS.facebook.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="h-8 w-8 rounded-full border border-border flex items-center justify-center hover:bg-gold hover:border-gold hover:text-white transition-all duration-300"
+                className="h-8 w-8 rounded-full border border-border hidden items-center justify-center hover:bg-gold hover:border-gold hover:text-white transition-all duration-300"
                 aria-label="Facebook"
               >
                 <Facebook size={14} />

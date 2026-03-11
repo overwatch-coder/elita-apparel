@@ -14,9 +14,10 @@ import {
   ChevronLeft,
   Users,
   ShoppingCart,
+  Bell,
 } from "lucide-react";
-import { ModeToggle } from "../layout/mode-toggle";
-import { Separator } from "../ui/separator";
+import { ThemeToggle } from "../theme-toggle";
+import { NotificationDropdown } from "../notifications/notification-dropdown";
 import {
   Sheet,
   SheetContent,
@@ -35,6 +36,7 @@ const menuGroups = [
     items: [
       { title: "Overview", href: "/account", icon: LayoutDashboard },
       { title: "Order History", href: "/account/orders", icon: ShoppingBag },
+      { title: "Notifications", href: "/account/notifications", icon: Bell },
     ],
   },
   {
@@ -50,14 +52,15 @@ const menuGroups = [
 export function AccountMobileNav({
   user,
 }: {
-  user: { name: string; email: string; role: string };
+  user: { name: string; email: string; role: string; id?: string };
 }) {
   const pathname = usePathname();
 
   return (
-    <div className="sticky top-0 z-40 flex h-16 items-center gap-4 border-b border-border/50 bg-background/80 backdrop-blur-md px-4 lg:hidden">
-      <Sheet>
-        <SheetTrigger asChild>
+    <div className="sticky top-0 z-40 flex h-16 items-center justify-between border-b border-border/50 bg-background/80 backdrop-blur-md px-4 lg:hidden">
+      <div className="flex items-center gap-4">
+        <Sheet>
+          <SheetTrigger asChild>
           <Button variant="ghost" size="icon" className="h-10 w-10">
             <Menu className="h-6 w-6" />
           </Button>
@@ -138,15 +141,6 @@ export function AccountMobileNav({
           </div>
 
           <div className="mt-auto border-t border-border/50 p-6 space-y-4 bg-muted/5">
-            <div className="flex items-center gap-3 px-2">
-              <ModeToggle />
-              <span className="text-[10px] uppercase font-bold tracking-widest text-muted-foreground">
-                Appearance
-              </span>
-            </div>
-
-            <Separator className="bg-border/30" />
-
             {/* User Profile Info */}
             <div className="flex items-center gap-3 p-3 rounded-lg bg-gold/5 border border-gold/10 overflow-hidden">
               <div className="h-9 w-9 rounded-full bg-gold/10 flex items-center justify-center shrink-0 border border-gold/20">
@@ -201,6 +195,12 @@ export function AccountMobileNav({
         <span className="text-[8px] font-bold text-gold tracking-widest uppercase">
           My Account
         </span>
+      </div>
+      </div>
+
+      <div className="flex items-center gap-2">
+        {user?.id && <NotificationDropdown isAdminView={false} userId={user.id} />}
+        <ThemeToggle />
       </div>
     </div>
   );

@@ -13,34 +13,19 @@ import {
 import React from "react";
 
 const routeLabels: Record<string, string> = {
-  admin: "Dashboard",
-  products: "Products",
-  new: "New",
-  edit: "Edit",
-  categories: "Categories",
-  collections: "Collections",
-  orders: "Orders",
-  "whatsapp-orders": "WhatsApp Orders",
-  discounts: "Discounts",
-  reviews: "Reviews",
-  "size-guides": "Size Guides",
-  inventory: "Inventory",
-  audience: "Audience",
-  campaigns: "Campaigns",
-  automations: "Automations",
-  popups: "Popups",
-  marketing: "Marketing",
-  analytics: "Analytics",
-  settings: "Settings",
-  "fabric-types": "Fabric Types",
+  account: "Account Info",
+  orders: "Order History",
+  wishlist: "Wishlist",
+  addresses: "Addresses",
+  profile: "Profile Settings",
 };
 
-export function AdminBreadcrumbs() {
+export function AccountBreadcrumbs() {
   const pathname = usePathname();
   const paths = pathname.split("/").filter(Boolean);
 
-  // Don't show breadcrumbs on the main admin dashboard page (it only has one segment: "admin")
-  if (paths.length <= 1) return null;
+  // We only show breadcrumbs inside /account routes
+  if (paths[0] !== "account") return null;
 
   return (
     <Breadcrumb>
@@ -51,16 +36,16 @@ export function AdminBreadcrumbs() {
             routeLabels[path] || path.charAt(0).toUpperCase() + path.slice(1);
           const isLast = index === paths.length - 1;
 
-          // Skip "admin" segment if it's the first one, or map it to Dashboard
-          if (path === "admin" && index === 0) {
+          // Special case for 'account' root
+          if (path === "account" && index === 0) {
             return (
               <React.Fragment key={path}>
                 <BreadcrumbItem>
                   <BreadcrumbLink asChild>
-                    <Link href="/admin">Dashboard</Link>
+                    <Link href="/account">Account Info</Link>
                   </BreadcrumbLink>
                 </BreadcrumbItem>
-                <BreadcrumbSeparator />
+                {!isLast && <BreadcrumbSeparator />}
               </React.Fragment>
             );
           }

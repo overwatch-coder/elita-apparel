@@ -3,6 +3,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { triggerMarketingAutomation } from "@/lib/marketing/triggers";
+import { sendVerificationCodeEmail } from "@/lib/mail";
 
 export async function loginAction(formData: FormData) {
   const email = formData.get("email") as string;
@@ -171,8 +172,6 @@ export async function updatePasswordAction(formData: FormData) {
 
 // ── Secure Account Update Actions ────────────────────────────────
 
-import { sendVerificationCodeEmail } from "@/lib/mail";
-
 /**
  * Initiates an email change by verifying current password and sending an OTP
  */
@@ -203,7 +202,14 @@ export async function initiateEmailChange(formData: FormData) {
   const code = Math.floor(100000 + Math.random() * 900000).toString();
   const expiresAt = new Date(Date.now() + 10 * 60 * 1000).toISOString(); // 10 mins
 
-  // 3. Save OTP to database
+  // 3 Delete existing OTPs for this user
+  await supabase
+    .from("verification_codes")
+    .delete()
+    .eq("user_id", user.id)
+    .eq("type", "email_change");
+
+  // 4. Save OTP to database
   const { error: dbError } = await supabase.from("verification_codes").insert({
     user_id: user.id,
     code,
@@ -214,7 +220,7 @@ export async function initiateEmailChange(formData: FormData) {
 
   if (dbError) return { error: "Failed to generate verification code" };
 
-  // 4. Send email
+  // 5. Send email
   await sendVerificationCodeEmail(newEmail, code, "email_change");
 
   return {
@@ -244,10 +250,11 @@ export async function confirmEmailChange(otp: string) {
     .eq("code", otp)
     .eq("type", "email_change")
     .gt("expires_at", new Date().toISOString())
-    .single();
+    .maybeSingle();
 
-  if (fetchError || !codeData)
+  if (fetchError || !codeData) {
     return { error: "Invalid or expired verification code" };
+  }
 
   if (!codeData.metadata || typeof codeData.metadata !== "object") {
     return { error: "Invalid verification data" };
@@ -301,7 +308,14 @@ export async function initiatePasswordChange(formData: FormData) {
   const code = Math.floor(100000 + Math.random() * 900000).toString();
   const expiresAt = new Date(Date.now() + 10 * 60 * 1000).toISOString();
 
-  // 3. Save OTP
+  // 3. Delete existing OTPs of this type for this user
+  await supabase
+    .from("verification_codes")
+    .delete()
+    .eq("user_id", user.id)
+    .eq("type", "password_change");
+
+  // 4. Save new OTP
   const { error: dbError } = await supabase.from("verification_codes").insert({
     user_id: user.id,
     code,
@@ -340,10 +354,11 @@ export async function confirmPasswordChange(otp: string, newPassword: string) {
     .eq("code", otp)
     .eq("type", "password_change")
     .gt("expires_at", new Date().toISOString())
-    .single();
+    .maybeSingle();
 
-  if (fetchError || !codeData)
+  if (fetchError || !codeData) {
     return { error: "Invalid or expired verification code" };
+  }
 
   // 2. Update password
   const { error: updateError } = await supabase.auth.updateUser({

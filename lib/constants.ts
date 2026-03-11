@@ -94,7 +94,7 @@ export const ORDER_STATUSES = [
   { value: "paid", label: "Paid" },
   { value: "processing", label: "Processing" },
   { value: "shipped", label: "Shipped" },
-  { value: "out for delivery", label: "Out for Delivery" },
+  { value: "out_for_delivery", label: "Out for Delivery" },
   { value: "delivered", label: "Delivered" },
   { value: "cancelled", label: "Cancelled" },
 ] as const;

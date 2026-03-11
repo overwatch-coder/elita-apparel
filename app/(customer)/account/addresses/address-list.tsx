@@ -8,6 +8,17 @@ import {
   deleteAddressAction,
   setDefaultAddressAction,
 } from "@/lib/actions/address";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
 import type { Address } from "@/lib/types/database";
 
@@ -114,20 +125,40 @@ export function AddressList({ addresses }: AddressListProps) {
               </Button>
             )}
 
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => handleDelete(address.id)}
-              disabled={loadingId === address.id}
-              className="text-xs text-red-400 hover:text-red-300 hover:bg-red-400/10 ml-auto"
-            >
-              {loadingId === address.id && actionType === "delete" ? (
-                <Loader2 className="mr-2 h-3.5 w-3.5 animate-spin" />
-              ) : (
-                <Trash2 className="mr-2 h-3.5 w-3.5" />
-              )}
-              Delete
-            </Button>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  disabled={loadingId === address.id}
+                  className="text-xs text-red-400 hover:text-red-300 hover:bg-red-400/10 ml-auto"
+                >
+                  {loadingId === address.id && actionType === "delete" ? (
+                    <Loader2 className="mr-2 h-3.5 w-3.5 animate-spin" />
+                  ) : (
+                    <Trash2 className="mr-2 h-3.5 w-3.5" />
+                  )}
+                  Delete
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This will permanently delete "{address.full_name}"'s address from your account. This action cannot be undone.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={() => handleDelete(address.id)}
+                    className="bg-red-600 hover:bg-red-700 text-white"
+                  >
+                    Delete Address
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </div>
         </div>
       ))}

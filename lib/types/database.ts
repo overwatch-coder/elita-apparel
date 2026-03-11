@@ -1117,6 +1117,47 @@ export interface Database {
         };
         Relationships: [];
       };
+      notifications: {
+        Row: {
+          id: string;
+          user_id: string | null;
+          type: "order" | "contact" | "review" | "system" | "customer_alert";
+          title: string;
+          message: string;
+          link: string | null;
+          is_read: boolean;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id?: string | null;
+          type: "order" | "contact" | "review" | "system" | "customer_alert";
+          title: string;
+          message: string;
+          link?: string | null;
+          is_read?: boolean;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string | null;
+          type?: "order" | "contact" | "review" | "system" | "customer_alert";
+          title?: string;
+          message?: string;
+          link?: string | null;
+          is_read?: boolean;
+          created_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "notifications_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
     };
     Views: {
       [_ in never]: never;
@@ -1160,6 +1201,7 @@ export type FabricType = Tables["fabric_types"]["Row"];
 export type InstagramPost = Tables["instagram_posts"]["Row"];
 export type SiteSetting = Tables["site_settings"]["Row"];
 export type VerificationCode = Tables["verification_codes"]["Row"];
+export type Notification = Tables["notifications"]["Row"];
 // ── Composite types (with joins) ────────────────────────────────────
 
 export interface ProductWithImages extends Product {

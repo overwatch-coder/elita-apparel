@@ -24,14 +24,13 @@ import {
   ChevronRight,
   ChevronDown,
   Settings,
+  Bell,
 } from "lucide-react";
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { logoutAction } from "@/lib/actions/auth";
 import { cn } from "@/lib/utils";
-import { ModeToggle } from "@/components/layout/mode-toggle";
 import {
   Collapsible,
   CollapsibleContent,
@@ -101,9 +100,11 @@ const NAV_GROUPS: (NavGroup | NavItem)[] = [
     icon: Users,
     items: [
       { label: "Audience", href: "/admin/audience", icon: Users },
+      { label: "Inquiries", href: "/admin/contacts", icon: MessageCircle },
       { label: "Reviews", href: "/admin/reviews", icon: Star },
     ],
   },
+  { label: "Notifications", href: "/admin/notifications", icon: Bell },
   { label: "Settings", href: "/admin/settings", icon: Settings },
 ];
 
@@ -227,20 +228,6 @@ export function AdminSidebar({
 
         {/* Footer */}
         <div className="border-t border-border/50 p-4 space-y-4">
-          <div
-            className={cn(
-              "flex items-center gap-2 px-2",
-              isCollapsed && "flex-col",
-            )}
-          >
-            <ModeToggle />
-            {!isCollapsed && (
-              <span className="text-xs text-muted-foreground">Appearance</span>
-            )}
-          </div>
-
-          <Separator className="bg-border/50" />
-
           {/* User Profile Info */}
           <div
             className={cn(

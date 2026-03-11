@@ -13,6 +13,8 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { NAV_LINKS, BRAND, SOCIALS } from "@/lib/constants";
 import { BsWhatsapp as Whatsapp } from "react-icons/bs";
+import { ThemeToggle } from "@/components/theme-toggle";
+import { CustomerNotificationWrapper } from "@/components/notifications/customer-notification-wrapper";
 
 interface MobileNavProps {
   open: boolean;
@@ -33,6 +35,10 @@ export function MobileNav({ open, onOpenChange }: MobileNavProps) {
               height={40}
               className="h-10 w-auto object-contain"
             />
+            <div className="flex items-center gap-1">
+              <CustomerNotificationWrapper />
+              <ThemeToggle />
+            </div>
           </div>
         </SheetHeader>
 

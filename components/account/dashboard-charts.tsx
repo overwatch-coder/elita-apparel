@@ -35,10 +35,10 @@ export function CustomerDashboardCharts({
   return (
     <Card className="border-border/50 shadow-sm">
       <CardHeader>
-        <CardTitle className="font-serif text-xl font-medium">
+        <CardTitle className="font-serif text-xl font-medium sr-only">
           Spending Overview
         </CardTitle>
-        <CardDescription className="text-xs">
+        <CardDescription className="text-xs sr-only">
           Your order spending over time
         </CardDescription>
       </CardHeader>

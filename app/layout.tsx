@@ -4,6 +4,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { CartProvider } from "@/components/cart/cart-provider";
 import { WishlistProvider } from "@/components/wishlist/wishlist-provider";
 import { ThemeProvider } from "@/components/theme-provider";
+import { AuthToaster } from "@/components/auth/auth-toaster";
 import { Suspense } from "react";
 import "./globals.css";
 
@@ -80,6 +81,7 @@ export default function RootLayout({
             <CartProvider>
               <WishlistProvider>
                 {children}
+                <AuthToaster />
                 <Toaster position="bottom-right" />
               </WishlistProvider>
             </CartProvider>

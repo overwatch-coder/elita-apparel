@@ -72,7 +72,7 @@ export function WishlistPageClient({ items }: { items: WishlistItem[] }) {
           asChild
           className="bg-gold hover:bg-gold-dark text-white tracking-wider uppercase"
         >
-          <Link href="/shop">Explore Collection</Link>
+          <Link href="/collections">Explore Collection</Link>
         </Button>
       </div>
     );

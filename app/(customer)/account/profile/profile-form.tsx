@@ -20,7 +20,7 @@ interface ProfileFormProps {
 export function ProfileForm({ initialData }: ProfileFormProps) {
   const [isPending, setIsPending] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsPending(true);
 
@@ -69,7 +69,8 @@ export function ProfileForm({ initialData }: ProfileFormProps) {
           id="email"
           name="email"
           type="email"
-          defaultValue={initialData.email}
+          value={initialData.email}
+          readOnly
           className="h-12 bg-muted/30 border-border text-muted-foreground cursor-not-allowed"
         />
         <p className="text-[10px] text-muted-foreground/60 uppercase tracking-wider">

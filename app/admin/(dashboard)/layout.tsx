@@ -6,6 +6,8 @@ import { AdminMobileNav } from "@/components/admin/mobile-nav";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import { AdminBreadcrumbs } from "@/components/admin/admin-breadcrumbs";
+import { ThemeToggle } from "@/components/theme-toggle";
+import { NotificationDropdown } from "@/components/notifications/notification-dropdown";
 
 export default function AdminDashboardLayout({
   children,
@@ -13,7 +15,7 @@ export default function AdminDashboardLayout({
   children: React.ReactNode;
 }) {
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const [user, setUser] = useState<{ name: string; role: string } | null>(null);
+  const [user, setUser] = useState<{ id: string; name: string; role: string } | null>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -35,6 +37,7 @@ export default function AdminDashboardLayout({
         }
 
         setUser({
+          id: authUser.id,
           name: profile?.full_name || authUser.email?.split("@")[0] || "Admin",
           role: profile?.role || "admin",
         });
@@ -59,7 +62,17 @@ export default function AdminDashboardLayout({
         <AdminMobileNav />
         <main className="overflow-y-auto scroll-smooth">
           <div className="p-4 sm:p-6 lg:p-10">
-            <AdminBreadcrumbs />
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex-1">
+                <AdminBreadcrumbs />
+              </div>
+              <div className="hidden lg:flex items-center gap-2">
+                {user?.id ? (
+                  <NotificationDropdown isAdminView={true} userId={user.id} />
+                ) : null}
+                <ThemeToggle />
+              </div>
+            </div>
             {children}
           </div>
         </main>

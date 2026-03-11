@@ -11,6 +11,7 @@ import { NAV_LINKS } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import { MobileNav } from "./mobile-nav";
 import { ModeToggle } from "./mode-toggle";
+import { CustomerNotificationWrapper } from "@/components/notifications/customer-notification-wrapper";
 
 export function Navbar() {
   const pathname = usePathname();
@@ -75,12 +76,14 @@ export function Navbar() {
           <div className="w-px h-5 bg-border/60 mx-1" />
           <div className="flex items-center gap-4">
             <ModeToggle />
+            <CustomerNotificationWrapper />
             <CartSheet />
           </div>
         </div>
 
         {/* Mobile: cart + hamburger — right side */}
         <div className="flex items-center gap-2 lg:hidden">
+          <CustomerNotificationWrapper />
           <ModeToggle />
           <CartSheet />
           <Button

@@ -24,8 +24,9 @@ export function ChangeEmailDialog() {
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
 
-  const handleInitiate = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleInitiate = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
+    e.stopPropagation();
     setIsPending(true);
 
     const formData = new FormData(e.currentTarget);
@@ -41,8 +42,9 @@ export function ChangeEmailDialog() {
     setIsPending(false);
   };
 
-  const handleConfirm = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleConfirm = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
+    e.stopPropagation();
     setIsPending(true);
 
     const formData = new FormData(e.currentTarget);

@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Package, Truck, CheckCircle2, Clock } from "lucide-react";
+import { ArrowLeft, Package, Truck, CheckCircle2, Clock, Ship } from "lucide-react";
 
 export default async function OrderDetailPage({
   params,
@@ -34,7 +34,8 @@ export default async function OrderDetailPage({
   const statuses = [
     { id: "pending", label: "Order Placed", icon: Clock },
     { id: "processing", label: "Processing", icon: Package },
-    { id: "shipped", label: "Shipped", icon: Truck },
+    { id: "shipped", label: "Shipped", icon: Ship },
+    { id: "out_for_delivery", label: "Out for Delivery", icon: Truck },
     { id: "delivered", label: "Delivered", icon: CheckCircle2 },
   ];
 
@@ -47,10 +48,11 @@ export default async function OrderDetailPage({
       case "processing":
         return 1;
       case "shipped":
-      case "out for delivery":
         return 2;
-      case "delivered":
+      case "out_for_delivery":
         return 3;
+      case "delivered":
+        return 4;
       case "cancelled":
       case "refunded":
       case "failed":
@@ -97,7 +99,9 @@ export default async function OrderDetailPage({
                 : "bg-gold/10 text-gold border-gold/20"
             }`}
           >
-            {order.status}
+            {order.status?.includes("out_for_delivery")
+              ? order.status.replace("out_for_delivery", "out for delivery")
+              : order.status}
           </span>
         </div>
       </div>

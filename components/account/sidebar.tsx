@@ -12,15 +12,13 @@ import {
   ChevronLeft,
   ChevronRight,
   LayoutDashboard,
-  ShoppingCart,
   Users,
+  Bell,
 } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { logoutAction } from "@/lib/actions/auth";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Separator } from "@/components/ui/separator";
-import { ModeToggle } from "@/components/layout/mode-toggle";
 import { Button } from "@/components/ui/button";
 
 const menuGroups = [
@@ -36,6 +34,11 @@ const menuGroups = [
         title: "Order History",
         href: "/account/orders",
         icon: ShoppingBag,
+      },
+      {
+        title: "Notifications",
+        href: "/account/notifications",
+        icon: Bell,
       },
     ],
   },
@@ -179,22 +182,6 @@ export function AccountSidebar({
 
       {/* Footer - Fixed at bottom */}
       <div className="border-t border-border/50 p-4 space-y-4 bg-muted/5 shrink-0">
-        <div
-          className={cn(
-            "flex items-center gap-2 px-2",
-            isCollapsed && "flex-col",
-          )}
-        >
-          <ModeToggle />
-          {!isCollapsed && (
-            <span className="text-[10px] uppercase font-bold tracking-widest text-muted-foreground">
-              Appearance
-            </span>
-          )}
-        </div>
-
-        <Separator className="bg-border/30" />
-
         {/* User Profile Info */}
         <Link
           href="/account/profile"
@@ -220,27 +207,6 @@ export function AccountSidebar({
 
         {/* View Store & Logout Group */}
         <div className="space-y-1">
-          <Button
-            asChild
-            variant="ghost"
-            size="sm"
-            className={cn(
-              "w-full justify-start text-muted-foreground hover:bg-gold/5 hover:text-gold hidden",
-              isCollapsed && "justify-center px-0",
-            )}
-          >
-            <Link href="/" title={isCollapsed ? "View Store" : undefined}>
-              {!isCollapsed ? (
-                <span className="flex items-center gap-2 text-[10px] uppercase tracking-widest font-bold">
-                  <ShoppingCart className="h-4 w-4" />
-                  View Store
-                </span>
-              ) : (
-                <ShoppingCart className="h-4 w-4" />
-              )}
-            </Link>
-          </Button>
-
           <form action={() => logoutAction("/login")} className="w-full">
             <Button
               type="submit"
