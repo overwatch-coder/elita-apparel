@@ -288,7 +288,7 @@ export function ProductInfo({
           <Button
             onClick={handleAddToCart}
             disabled={!selectedSize || !isInStock}
-            className="flex-1 bg-gold hover:bg-gold-dark text-white font-medium tracking-wider uppercase h-14 text-base"
+            className="flex-1 bg-gold hover:bg-gold-dark text-white font-medium tracking-wider uppercase h-14 text-base py-2"
             size="lg"
           >
             <ShoppingBag className="mr-2 h-5 w-5" />
