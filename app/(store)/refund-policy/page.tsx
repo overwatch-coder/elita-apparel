@@ -54,10 +54,10 @@ export default function RefundPolicyPage() {
             If you wish to exchange an item for a different size or color,
             please contact us at{" "}
             <a
-              href="mailto:bellamoner98@gmail.com"
+              href="mailto:opatadedoemmanuella@gmail.com"
               className="text-gold hover:text-gold-dark transition-colors"
             >
-              bellamoner98@gmail.com
+              opatadedoemmanuella@gmail.com
             </a>{" "}
             to initiate the exchange.
           </p>
@@ -69,10 +69,10 @@ export default function RefundPolicyPage() {
             <li>
               Contact us at{" "}
               <a
-                href="mailto:bellamoner98@gmail.com"
+                href="mailto:opatadedoemmanuella@gmail.com"
                 className="text-gold hover:text-gold-dark transition-colors"
               >
-                bellamoner98@gmail.com
+                opatadedoemmanuella@gmail.com
               </a>{" "}
               with your order number and reason for return.
             </li>

@@ -65,7 +65,7 @@ export const SOCIALS = {
     number: "+233553663183",
     url: "https://wa.me/2330553663183",
   },
-  email: "bellamoner98@gmail.com",
+  email: "opatadedoemmanuella@gmail.com",
   phone: "0553663183",
 } as const;
 

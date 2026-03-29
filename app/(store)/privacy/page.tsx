@@ -120,7 +120,7 @@ export default function PrivacyPage() {
             If you have any questions about this policy or wish to exercise your
             data rights, please contact our Data Protection Officer at:
             <br />
-            <strong>Email:</strong> bellamoner98@gmail.com
+            <strong>Email:</strong> opatadedoemmanuella@gmail.com
             <br />
             <strong>Phone:</strong> 0553663183
           </p>

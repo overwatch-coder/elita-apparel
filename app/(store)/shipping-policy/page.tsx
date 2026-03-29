@@ -83,10 +83,10 @@ export default function ShippingPolicyPage() {
           <p>
             If your order is lost or delayed, please contact us at{" "}
             <a
-              href="mailto:bellamoner98@gmail.com"
+              href="mailto:opatadedoemmanuella@gmail.com"
               className="text-gold hover:text-gold-dark transition-colors"
             >
-              bellamoner98@gmail.com
+              opatadedoemmanuella@gmail.com
             </a>{" "}
             and we&apos;ll help resolve the issue.
           </p>
