@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, CheckCircle, Loader2 } from "lucide-react";
+import { ArrowLeft, ArrowRight, CheckCircle, Loader2 } from "lucide-react";
 import Link from "next/link";
+import { motion, AnimatePresence } from "motion/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -72,8 +73,33 @@ export default function CheckoutPage() {
   const [localDiscountCode, setLocalDiscountCode] = useState("");
   const [isApplyingDiscount, setIsApplyingDiscount] = useState(false);
 
+  // Two-stage checkout: 1 = shipping info, 2 = payment
+  const [step, setStep] = useState(1);
+  const [[slideDirection, slideKey], setSlide] = useState([0, 0]);
+
   const discountAmount = totalPrice * (discountPercentage / 100);
   const finalTotal = totalPrice - discountAmount;
+
+  const validateStep1 = (): boolean => {
+    if (!form.name.trim()) { toast.error("Please enter your full name."); return false; }
+    if (!form.email.trim()) { toast.error("Please enter your email address."); return false; }
+    if (!form.phone.trim()) { toast.error("Please enter your phone number."); return false; }
+    if (!form.address.trim()) { toast.error("Please enter your street address."); return false; }
+    if (!form.city.trim()) { toast.error("Please select your city."); return false; }
+    if (!form.state.trim()) { toast.error("Please select your state/region."); return false; }
+    return true;
+  };
+
+  const goToStep2 = () => {
+    if (!validateStep1()) return;
+    setSlide([1, slideKey + 1]);
+    setStep(2);
+  };
+
+  const goToStep1 = () => {
+    setSlide([-1, slideKey + 1]);
+    setStep(1);
+  };
 
   // Load user data and pre-fill default address
   useEffect(() => {
@@ -370,7 +396,7 @@ export default function CheckoutPage() {
         trackingNumber={trackingNumber}
         onClose={() => {
           if (processingStatus === "manual_payment") {
-            clearCart(); // Clear cart now — after user has seen the account details
+            clearCart();
             setProcessingStatus("upload_proof");
           } else if (processingStatus === "upload_proof") {
             setIsComplete(true);
@@ -385,135 +411,165 @@ export default function CheckoutPage() {
 
       <div className="container mx-auto px-4 lg:px-8">
         {/* Page header */}
-        <div className="text-center mb-12">
+        <div className="text-center mb-8">
           <h1 className="font-serif text-3xl sm:text-4xl mb-2">Checkout</h1>
           <div className="w-12 h-px bg-gold mx-auto mt-4" />
         </div>
 
-        <form onSubmit={handleSubmit}>
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-            {/* Shipping form */}
-            <div className="lg:col-span-2 space-y-8">
-              <div className="bg-card p-6 sm:p-8 rounded-xl border border-border">
-                <div className="flex items-center justify-between mb-6">
-                  <h2 className="font-serif text-xl">Shipping Information</h2>
-                  {!user && (
-                    <Link
-                      href="/login"
-                      className="text-sm text-gold hover:text-gold-light transition-colors"
-                    >
-                      Have an account? Log in
-                    </Link>
-                  )}
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                  <div className="sm:col-span-2">
-                    <Label htmlFor="name" className="text-muted-foreground">
-                      Full Name *
-                    </Label>
-                    <Input
-                      id="name"
-                      name="name"
-                      value={form.name}
-                      onChange={handleChange}
-                      required
-                      className="mt-1.5 bg-background border-border text-foreground focus-visible:ring-gold/50 h-12"
-                      placeholder="Kwame Mensah"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="email" className="text-muted-foreground">
-                      Email Address *
-                    </Label>
-                    <Input
-                      id="email"
-                      name="email"
-                      type="email"
-                      value={form.email}
-                      onChange={handleChange}
-                      required
-                      className="mt-1.5 bg-background border-border text-foreground focus-visible:ring-gold/50 h-12"
-                      placeholder="kwame@example.com"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="phone" className="text-muted-foreground">
-                      Phone Number *
-                    </Label>
-                    <Input
-                      id="phone"
-                      name="phone"
-                      type="tel"
-                      value={form.phone}
-                      onChange={handleChange}
-                      required
-                      className="mt-1.5 bg-background border-border text-foreground focus-visible:ring-gold/50 h-12"
-                      placeholder="+233 XX XXX XXXX"
-                    />
-                  </div>
-                  <div className="sm:col-span-2">
-                    <Label htmlFor="address" className="text-muted-foreground">
-                      Street Address *
-                    </Label>
-                    <Input
-                      id="address"
-                      name="address"
-                      value={form.address}
-                      onChange={handleChange}
-                      required
-                      className="mt-1.5 bg-background border-border text-foreground focus-visible:ring-gold/50 h-12"
-                      placeholder="12 Independence Avenue"
-                    />
-                  </div>
-                  <LocationSelector
-                    country={form.country}
-                    state={form.state}
-                    city={form.city}
-                    onLocationChange={handleLocationChange}
-                  />
-                  <div className="sm:col-span-2">
-                    <Label htmlFor="notes" className="text-muted-foreground">
-                      Order Notes (Optional)
-                    </Label>
-                    <Textarea
-                      id="notes"
-                      name="notes"
-                      value={form.notes}
-                      onChange={handleChange}
-                      className="mt-1.5 bg-background border-border text-foreground focus-visible:ring-gold/50 min-h-[100px]"
-                      placeholder="Any special instructions for delivery..."
-                    />
-                  </div>
-                </div>
-
-                <div className="mt-6 flex items-center space-x-2">
-                  <Checkbox
-                    id="subscribe-checkout"
-                    checked={subscribeOptIn}
-                    onCheckedChange={(checked) =>
-                      setSubscribeOptIn(checked as boolean)
-                    }
-                  />
-                  <label
-                    htmlFor="subscribe-checkout"
-                    className="text-sm font-medium leading-none text-foreground peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                  >
-                    Keep me updated on news and exclusive offers
-                  </label>
-                </div>
+        {/* Step indicator */}
+        <div className="max-w-2xl mx-auto mb-10">
+          <div className="flex items-center gap-0">
+            <div className="flex items-center gap-2 flex-1">
+              <div
+                className={`h-8 w-8 rounded-full flex items-center justify-center text-sm font-medium shrink-0 transition-colors ${
+                  step >= 1 ? "bg-gold text-white" : "bg-muted text-muted-foreground"
+                }`}
+              >
+                {step > 1 ? <CheckCircle className="h-4 w-4" /> : "1"}
               </div>
-
-              {/* Payment Method Selector */}
-              <div className="bg-card p-6 sm:p-8 rounded-xl border border-border">
-                <PaymentMethodSelector
-                  value={paymentMethod}
-                  onChange={setPaymentMethod}
-                />
+              <span className={`text-sm font-medium transition-colors ${step >= 1 ? "text-foreground" : "text-muted-foreground"}`}>
+                Shipping Info
+              </span>
+            </div>
+            <div className={`flex-1 h-px mx-2 transition-colors ${step >= 2 ? "bg-gold" : "bg-border"}`} />
+            <div className="flex items-center gap-2 flex-1 justify-end">
+              <span className={`text-sm font-medium transition-colors ${step >= 2 ? "text-foreground" : "text-muted-foreground"}`}>
+                Payment
+              </span>
+              <div
+                className={`h-8 w-8 rounded-full flex items-center justify-center text-sm font-medium shrink-0 transition-colors ${
+                  step >= 2 ? "bg-gold text-white" : "bg-muted text-muted-foreground"
+                }`}
+              >
+                2
               </div>
             </div>
+          </div>
+        </div>
 
-            {/* Order summary */}
+        <form onSubmit={handleSubmit}>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+            {/* Main content area with slide transitions */}
+            <div className="lg:col-span-2 overflow-hidden">
+              <AnimatePresence mode="wait" custom={slideDirection}>
+                {step === 1 && (
+                  <motion.div
+                    key="step-1"
+                    custom={slideDirection}
+                    initial={{ x: slideDirection < 0 ? "-100%" : slideKey === 0 ? 0 : "100%", opacity: slideKey === 0 ? 1 : 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    exit={{ x: "-100%", opacity: 0 }}
+                    transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                    className="space-y-8"
+                  >
+                    <div className="bg-card p-6 sm:p-8 rounded-xl border border-border">
+                      <div className="flex items-center justify-between mb-6">
+                        <h2 className="font-serif text-xl">Shipping Information</h2>
+                        {!user && (
+                          <Link
+                            href="/login"
+                            className="text-sm text-gold hover:text-gold-light transition-colors"
+                          >
+                            Have an account? Log in
+                          </Link>
+                        )}
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                        <div className="sm:col-span-2">
+                          <Label htmlFor="name" className="text-muted-foreground">Full Name *</Label>
+                          <Input id="name" name="name" value={form.name} onChange={handleChange} required className="mt-1.5 bg-background border-border text-foreground focus-visible:ring-gold/50 h-12" placeholder="Kwame Mensah" />
+                        </div>
+                        <div>
+                          <Label htmlFor="email" className="text-muted-foreground">Email Address *</Label>
+                          <Input id="email" name="email" type="email" value={form.email} onChange={handleChange} required className="mt-1.5 bg-background border-border text-foreground focus-visible:ring-gold/50 h-12" placeholder="kwame@example.com" />
+                        </div>
+                        <div>
+                          <Label htmlFor="phone" className="text-muted-foreground">Phone Number *</Label>
+                          <Input id="phone" name="phone" type="tel" value={form.phone} onChange={handleChange} required className="mt-1.5 bg-background border-border text-foreground focus-visible:ring-gold/50 h-12" placeholder="+233 XX XXX XXXX" />
+                        </div>
+                        <div className="sm:col-span-2">
+                          <Label htmlFor="address" className="text-muted-foreground">Street Address *</Label>
+                          <Input id="address" name="address" value={form.address} onChange={handleChange} required className="mt-1.5 bg-background border-border text-foreground focus-visible:ring-gold/50 h-12" placeholder="12 Independence Avenue" />
+                        </div>
+                        <LocationSelector country={form.country} state={form.state} city={form.city} onLocationChange={handleLocationChange} />
+                        <div className="sm:col-span-2">
+                          <Label htmlFor="notes" className="text-muted-foreground">Order Notes (Optional)</Label>
+                          <Textarea id="notes" name="notes" value={form.notes} onChange={handleChange} className="mt-1.5 bg-background border-border text-foreground focus-visible:ring-gold/50 min-h-25" placeholder="Any special instructions for delivery..." />
+                        </div>
+                      </div>
+
+                      <div className="mt-6 flex items-center space-x-2">
+                        <Checkbox id="subscribe-checkout" checked={subscribeOptIn} onCheckedChange={(checked) => setSubscribeOptIn(checked as boolean)} />
+                        <label htmlFor="subscribe-checkout" className="text-sm font-medium leading-none text-foreground peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                          Keep me updated on news and exclusive offers
+                        </label>
+                      </div>
+                    </div>
+
+                    <Button type="button" onClick={goToStep2} className="w-full bg-gold hover:bg-gold-dark text-white font-medium tracking-wider uppercase h-14 text-base">
+                      Continue to Payment
+                      <ArrowRight className="ml-2 h-5 w-5" />
+                    </Button>
+                  </motion.div>
+                )}
+
+                {step === 2 && (
+                  <motion.div
+                    key="step-2"
+                    custom={slideDirection}
+                    initial={{ x: "100%", opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    exit={{ x: "100%", opacity: 0 }}
+                    transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                    className="space-y-8"
+                  >
+                    <button type="button" onClick={goToStep1} className="flex items-center gap-2 text-sm text-muted-foreground hover:text-gold transition-colors">
+                      <ArrowLeft className="h-4 w-4" />
+                      Back to Shipping Info
+                    </button>
+
+                    {/* Shipping summary card */}
+                    <div className="bg-card p-5 rounded-xl border border-border">
+                      <div className="flex items-center justify-between mb-3">
+                        <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Delivering to</h3>
+                        <button type="button" onClick={goToStep1} className="text-xs text-gold hover:text-gold-light transition-colors">Edit</button>
+                      </div>
+                      <div className="text-sm text-foreground space-y-0.5">
+                        <p className="font-medium">{form.name}</p>
+                        <p className="text-muted-foreground">{form.address}, {form.city}</p>
+                        <p className="text-muted-foreground">{form.state}, {form.country}</p>
+                        <p className="text-muted-foreground">{form.phone} &middot; {form.email}</p>
+                      </div>
+                    </div>
+
+                    {/* Payment Method Selector */}
+                    <div className="bg-card p-6 sm:p-8 rounded-xl border border-border">
+                      <PaymentMethodSelector value={paymentMethod} onChange={setPaymentMethod} />
+                    </div>
+
+                    <Button type="submit" disabled={isSubmitting} className="w-full bg-gold hover:bg-gold-dark text-white font-medium tracking-wider uppercase h-14 text-base">
+                      {isSubmitting ? (
+                        <>
+                          <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                          Placing Order...
+                        </>
+                      ) : (
+                        "Place Order"
+                      )}
+                    </Button>
+
+                    <TrustBadges />
+
+                    <p className="text-xs text-muted-foreground text-center leading-relaxed">
+                      By placing your order, you agree to our terms of service and policies. A representative will contact you shortly to confirm arrangements.
+                    </p>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+
+            {/* Order summary — always visible sidebar */}
             <div className="lg:col-span-1">
               <div className="sticky top-28 space-y-6 p-6 sm:p-8 rounded-xl bg-card border border-border">
                 <h2 className="font-serif text-xl">Order Summary</h2>
@@ -522,26 +578,14 @@ export default function CheckoutPage() {
 
                 <div className="space-y-4">
                   {items.map((item) => {
-                    const discountedPrice = calculateDiscountedPrice(
-                      item.price,
-                      item.discount_percentage,
-                    );
+                    const discountedPrice = calculateDiscountedPrice(item.price, item.discount_percentage);
                     return (
-                      <div
-                        key={`${item.product_id}-${item.size}`}
-                        className="flex justify-between text-sm"
-                      >
+                      <div key={`${item.product_id}-${item.size}`} className="flex justify-between text-sm">
                         <div>
-                          <p className="font-medium text-foreground">
-                            {item.name}
-                          </p>
-                          <p className="text-xs text-foreground/60">
-                            Size: {item.size} × {item.quantity}
-                          </p>
+                          <p className="font-medium text-foreground">{item.name}</p>
+                          <p className="text-xs text-foreground/60">Size: {item.size} × {item.quantity}</p>
                         </div>
-                        <span className="text-foreground">
-                          {formatPrice(discountedPrice * item.quantity)}
-                        </span>
+                        <span className="text-foreground">{formatPrice(discountedPrice * item.quantity)}</span>
                       </div>
                     );
                   })}
@@ -549,35 +593,10 @@ export default function CheckoutPage() {
 
                 <Separator className="bg-border/20" />
 
-                {/* Discount Code Section */}
                 <div className="flex gap-2">
-                  <Input
-                    placeholder="Gift card or discount code"
-                    value={localDiscountCode}
-                    onChange={(e) => setLocalDiscountCode(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        e.preventDefault();
-                        handleApplyDiscount();
-                      }
-                    }}
-                    className="bg-background border-border h-12"
-                  />
-                  <Button
-                    type="button"
-                    variant="outline"
-                    className="h-12 border-border"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      handleApplyDiscount();
-                    }}
-                    disabled={isApplyingDiscount || !localDiscountCode.trim()}
-                  >
-                    {isApplyingDiscount ? (
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                    ) : (
-                      "Apply"
-                    )}
+                  <Input placeholder="Gift card or discount code" value={localDiscountCode} onChange={(e) => setLocalDiscountCode(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); handleApplyDiscount(); } }} className="bg-background border-border h-12" />
+                  <Button type="button" variant="outline" className="h-12 border-border" onClick={(e) => { e.preventDefault(); handleApplyDiscount(); }} disabled={isApplyingDiscount || !localDiscountCode.trim()}>
+                    {isApplyingDiscount ? <Loader2 className="h-4 w-4 animate-spin" /> : "Apply"}
                   </Button>
                 </div>
 
@@ -586,68 +605,50 @@ export default function CheckoutPage() {
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">Subtotal</span>
-                    <span className="text-foreground">
-                      {formatPrice(totalPrice)}
-                    </span>
+                    <span className="text-foreground">{formatPrice(totalPrice)}</span>
                   </div>
                   {discountPercentage > 0 && (
                     <div className="flex justify-between text-sm">
                       <span className="text-ghana-green font-medium">
                         Discount ({discountCode})
-                        <button
-                          type="button"
-                          className="ml-2 text-xs text-muted-foreground hover:text-destructive underline"
-                          onClick={() => useCart().setDiscount("", 0)}
-                        >
-                          Remove
-                        </button>
+                        <button type="button" className="ml-2 text-xs text-muted-foreground hover:text-destructive underline" onClick={() => setDiscount("", 0)}>Remove</button>
                       </span>
-                      <span className="text-ghana-green font-medium">
-                        -{formatPrice(discountAmount)}
-                      </span>
+                      <span className="text-ghana-green font-medium">-{formatPrice(discountAmount)}</span>
                     </div>
                   )}
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">Shipping</span>
-                    <span className="text-muted-foreground">
-                      Calculated later
-                    </span>
+                    <span className="text-muted-foreground">Calculated later</span>
                   </div>
                 </div>
 
                 <Separator className="bg-border/20" />
 
                 <div className="flex justify-between">
-                  <span className="text-lg font-medium text-foreground">
-                    Total
-                  </span>
-                  <span className="text-xl font-bold text-gold">
-                    {formatPrice(finalTotal)}
-                  </span>
+                  <span className="text-lg font-medium text-foreground">Total</span>
+                  <span className="text-xl font-bold text-gold">{formatPrice(finalTotal)}</span>
                 </div>
 
-                <Button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="w-full bg-gold hover:bg-gold-dark text-white font-medium tracking-wider uppercase h-14 text-base mt-4"
-                >
-                  {isSubmitting ? (
-                    <>
-                      <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                      Placing Order...
-                    </>
+                {/* Mobile-only action buttons under summary */}
+                <div className="lg:hidden">
+                  {step === 1 ? (
+                    <Button type="button" onClick={goToStep2} className="w-full bg-gold hover:bg-gold-dark text-white font-medium tracking-wider uppercase h-14 text-base">
+                      Continue to Payment
+                      <ArrowRight className="ml-2 h-5 w-5" />
+                    </Button>
                   ) : (
-                    "Place Order"
+                    <Button type="submit" disabled={isSubmitting} className="w-full bg-gold hover:bg-gold-dark text-white font-medium tracking-wider uppercase h-14 text-base">
+                      {isSubmitting ? (
+                        <>
+                          <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                          Placing Order...
+                        </>
+                      ) : (
+                        "Place Order"
+                      )}
+                    </Button>
                   )}
-                </Button>
-
-                <TrustBadges />
-
-                <p className="text-xs text-muted-foreground text-center leading-relaxed">
-                  By placing your order, you agree to our terms of service and
-                  policies. A representative will contact you shortly to confirm
-                  arrangements.
-                </p>
+                </div>
               </div>
             </div>
           </div>

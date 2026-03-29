@@ -1,0 +1,147 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1100" fill="none">
+  <defs>
+    <linearGradient id="mbg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fdfaf5"/>
+      <stop offset="100%" stop-color="#f5efe6"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="900" height="1100" rx="20" fill="url(#mbg)"/>
+  <rect x="1" y="1" width="898" height="1098" rx="19" stroke="#c9a96e" stroke-width="2" fill="none" opacity="0.3"/>
+
+  <!-- Title -->
+  <text x="450" y="60" text-anchor="middle" font-family="Georgia, serif" font-size="32" fill="#c9a96e" font-weight="bold">ELITA APPAREL</text>
+  <text x="450" y="95" text-anchor="middle" font-family="Georgia, serif" font-size="22" fill="#4a4a4a">Men's Size Chart</text>
+  <line x1="350" y1="110" x2="550" y2="110" stroke="#c9a96e" stroke-width="1.5" opacity="0.5"/>
+
+  <!-- Male body silhouette -->
+  <g transform="translate(140, 130)" opacity="0.85">
+    <!-- Head -->
+    <ellipse cx="110" cy="28" rx="21" ry="26" fill="#d4c4a8" stroke="#b8944a" stroke-width="1.5"/>
+    <!-- Neck -->
+    <rect x="98" y="52" width="24" height="22" rx="4" fill="#d4c4a8" stroke="#b8944a" stroke-width="1"/>
+    <!-- Shoulders and torso (broader, straighter) -->
+    <path d="M35 78 Q50 70 98 70 L122 70 Q170 70 185 78 L190 100 Q192 130 190 155 Q188 175 185 190 Q183 200 183 215 Q183 240 182 270 Q180 300 178 340 L170 380 Q165 400 145 420 L135 440 Q130 455 125 480 L115 540 L105 480 Q100 455 95 440 L85 420 Q65 400 50 380 L42 340 Q40 300 38 270 Q37 240 37 215 Q37 200 35 190 Q32 175 30 155 Q28 130 30 100 Z" fill="#d4c4a8" stroke="#b8944a" stroke-width="1.5"/>
+    <!-- Arms (slightly more muscular) -->
+    <path d="M35 78 Q15 95 10 140 Q7 170 5 210 Q3 242 8 258" fill="none" stroke="#b8944a" stroke-width="1.5"/>
+    <path d="M185 78 Q205 95 210 140 Q213 170 215 210 Q217 242 212 258" fill="none" stroke="#b8944a" stroke-width="1.5"/>
+    <!-- Legs -->
+    <path d="M85 420 Q80 460 77 500 Q75 540 73 580 Q71 620 73 660" fill="none" stroke="#b8944a" stroke-width="1.5"/>
+    <path d="M145 420 Q150 460 153 500 Q155 540 157 580 Q159 620 157 660" fill="none" stroke="#b8944a" stroke-width="1.5"/>
+
+    <!-- Measurement lines -->
+    <!-- Chest line -->
+    <line x1="-25" y1="130" x2="245" y2="130" stroke="#c9a96e" stroke-width="1" stroke-dasharray="6,4" opacity="0.7"/>
+    <circle cx="-25" cy="130" r="3" fill="#c9a96e"/>
+    <circle cx="245" cy="130" r="3" fill="#c9a96e"/>
+
+    <!-- Waist line -->
+    <line x1="-25" y1="195" x2="245" y2="195" stroke="#c9a96e" stroke-width="1" stroke-dasharray="6,4" opacity="0.7"/>
+    <circle cx="-25" cy="195" r="3" fill="#c9a96e"/>
+    <circle cx="245" cy="195" r="3" fill="#c9a96e"/>
+
+    <!-- Hip line -->
+    <line x1="-25" y1="280" x2="245" y2="280" stroke="#c9a96e" stroke-width="1" stroke-dasharray="6,4" opacity="0.7"/>
+    <circle cx="-25" cy="280" r="3" fill="#c9a96e"/>
+    <circle cx="245" cy="280" r="3" fill="#c9a96e"/>
+
+    <!-- Length line (vertical) -->
+    <line x1="240" y1="70" x2="240" y2="440" stroke="#c9a96e" stroke-width="1" stroke-dasharray="6,4" opacity="0.7"/>
+    <polygon points="240,70 236,80 244,80" fill="#c9a96e"/>
+    <polygon points="240,440 236,430 244,430" fill="#c9a96e"/>
+  </g>
+
+  <!-- Measurement labels -->
+  <text x="530" y="273" font-family="Arial, sans-serif" font-size="16" fill="#c9a96e" font-weight="bold">CHEST</text>
+  <text x="530" y="338" font-family="Arial, sans-serif" font-size="16" fill="#c9a96e" font-weight="bold">WAIST</text>
+  <text x="530" y="423" font-family="Arial, sans-serif" font-size="16" fill="#c9a96e" font-weight="bold">HIPS</text>
+  <text x="430" y="438" font-family="Arial, sans-serif" font-size="14" fill="#c9a96e" font-weight="bold" transform="rotate(-90, 430, 438)">LENGTH</text>
+
+  <!-- Size table -->
+  <g transform="translate(60, 720)">
+    <!-- Table header background -->
+    <rect x="0" y="0" width="780" height="40" rx="8" fill="#c9a96e"/>
+    <!-- Header text -->
+    <text x="55" y="26" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="white" font-weight="bold">SIZE</text>
+    <text x="165" y="26" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="white" font-weight="bold">US</text>
+    <text x="275" y="26" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="white" font-weight="bold">CHEST</text>
+    <text x="385" y="26" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="white" font-weight="bold">WAIST</text>
+    <text x="495" y="26" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="white" font-weight="bold">HIPS</text>
+    <text x="610" y="26" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="white" font-weight="bold">CHEST (cm)</text>
+    <text x="720" y="26" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="white" font-weight="bold">WAIST (cm)</text>
+
+    <!-- Row backgrounds -->
+    <rect x="0" y="42" width="780" height="36" rx="0" fill="#faf7f0"/>
+    <rect x="0" y="78" width="780" height="36" rx="0" fill="#f5efe6"/>
+    <rect x="0" y="114" width="780" height="36" rx="0" fill="#faf7f0"/>
+    <rect x="0" y="150" width="780" height="36" rx="0" fill="#f5efe6"/>
+    <rect x="0" y="186" width="780" height="36" rx="0" fill="#faf7f0"/>
+    <rect x="0" y="222" width="780" height="36" rx="0" fill="#f5efe6"/>
+
+    <!-- Table border -->
+    <rect x="0" y="0" width="780" height="258" rx="8" stroke="#c9a96e" stroke-width="1" fill="none" opacity="0.4"/>
+
+    <!-- XS row -->
+    <text x="55" y="66" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#c9a96e" font-weight="bold">XS</text>
+    <text x="165" y="66" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#4a4a4a">34</text>
+    <text x="275" y="66" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#4a4a4a">34–35"</text>
+    <text x="385" y="66" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#4a4a4a">28–29"</text>
+    <text x="495" y="66" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#4a4a4a">35–36"</text>
+    <text x="610" y="66" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#4a4a4a">86–89</text>
+    <text x="720" y="66" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#4a4a4a">71–74</text>
+
+    <!-- S row -->
+    <text x="55" y="102" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#c9a96e" font-weight="bold">S</text>
+    <text x="165" y="102" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#4a4a4a">36</text>
+    <text x="275" y="102" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#4a4a4a">36–37"</text>
+    <text x="385" y="102" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#4a4a4a">30–31"</text>
+    <text x="495" y="102" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#4a4a4a">37–38"</text>
+    <text x="610" y="102" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#4a4a4a">91–94</text>
+    <text x="720" y="102" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#4a4a4a">76–79</text>
+
+    <!-- M row -->
+    <text x="55" y="138" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#c9a96e" font-weight="bold">M</text>
+    <text x="165" y="138" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#4a4a4a">38–40</text>
+    <text x="275" y="138" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#4a4a4a">38–40"</text>
+    <text x="385" y="138" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#4a4a4a">32–33"</text>
+    <text x="495" y="138" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#4a4a4a">39–40"</text>
+    <text x="610" y="138" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#4a4a4a">97–102</text>
+    <text x="720" y="138" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#4a4a4a">81–84</text>
+
+    <!-- L row -->
+    <text x="55" y="174" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#c9a96e" font-weight="bold">L</text>
+    <text x="165" y="174" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#4a4a4a">42–44</text>
+    <text x="275" y="174" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#4a4a4a">41–43"</text>
+    <text x="385" y="174" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#4a4a4a">34–36"</text>
+    <text x="495" y="174" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#4a4a4a">41–43"</text>
+    <text x="610" y="174" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#4a4a4a">104–109</text>
+    <text x="720" y="174" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#4a4a4a">86–91</text>
+
+    <!-- XL row -->
+    <text x="55" y="210" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#c9a96e" font-weight="bold">XL</text>
+    <text x="165" y="210" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#4a4a4a">46–48</text>
+    <text x="275" y="210" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#4a4a4a">44–46"</text>
+    <text x="385" y="210" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#4a4a4a">37–39"</text>
+    <text x="495" y="210" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#4a4a4a">44–46"</text>
+    <text x="610" y="210" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#4a4a4a">112–117</text>
+    <text x="720" y="210" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#4a4a4a">94–99</text>
+
+    <!-- XXL row -->
+    <text x="55" y="246" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#c9a96e" font-weight="bold">XXL</text>
+    <text x="165" y="246" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#4a4a4a">50–52</text>
+    <text x="275" y="246" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#4a4a4a">47–49"</text>
+    <text x="385" y="246" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#4a4a4a">40–42"</text>
+    <text x="495" y="246" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#4a4a4a">47–49"</text>
+    <text x="610" y="246" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#4a4a4a">119–124</text>
+    <text x="720" y="246" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#4a4a4a">102–107</text>
+  </g>
+
+  <!-- Measurement tips -->
+  <g transform="translate(60, 1010)">
+    <rect x="0" y="0" width="780" height="60" rx="10" fill="#c9a96e" opacity="0.08"/>
+    <rect x="0" y="0" width="780" height="60" rx="10" stroke="#c9a96e" stroke-width="1" fill="none" opacity="0.2"/>
+    <text x="390" y="25" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#8a7a5a">Measurements are approximate. If between sizes, we recommend sizing up.</text>
+    <text x="390" y="46" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#8a7a5a">All measurements in inches unless marked (cm). Contact us for custom sizing.</text>
+  </g>
+</svg>

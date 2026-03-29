@@ -12,12 +12,13 @@ import {
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { NAV_LINKS, BRAND, SOCIALS } from "@/lib/constants";
-import { ChevronDown } from "lucide-react";
-import { useState } from "react";
+import { ChevronDown, User } from "lucide-react";
+import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { BsWhatsapp as Whatsapp } from "react-icons/bs";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { CustomerNotificationWrapper } from "@/components/notifications/customer-notification-wrapper";
+import { createClient } from "@/lib/supabase/client";
 
 interface MobileNavProps {
   open: boolean;
@@ -74,6 +75,8 @@ export function MobileNav({ open, onOpenChange }: MobileNavProps) {
           <Separator className="my-8" />
 
           <div className="space-y-4">
+            <MobileAccountLink />
+
             <SheetClose asChild>
               <Button
                 asChild
@@ -112,6 +115,39 @@ export function MobileNav({ open, onOpenChange }: MobileNavProps) {
         </div>
       </SheetContent>
     </Sheet>
+  );
+}
+
+/* ── Auth-aware account link for mobile ───────────────────────────── */
+
+function MobileAccountLink() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const supabase = createClient();
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setIsLoggedIn(!!session?.user);
+    });
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setIsLoggedIn(!!session?.user);
+    });
+    return () => subscription.unsubscribe();
+  }, []);
+
+  return (
+    <SheetClose asChild>
+      <Button
+        asChild
+        variant="outline"
+        className="w-full border-border hover:border-gold hover:bg-gold/5 font-medium tracking-wider uppercase"
+        size="lg"
+      >
+        <Link href={isLoggedIn ? "/account" : "/login"} className="flex items-center gap-2">
+          <User className="h-5 w-5" />
+          {isLoggedIn ? "My Account" : "Sign In"}
+        </Link>
+      </Button>
+    </SheetClose>
   );
 }
 

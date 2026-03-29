@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
-import { Menu, ChevronDown } from "lucide-react";
+import { Menu, ChevronDown, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CartSheet } from "@/components/cart/cart-sheet";
 import { NAV_LINKS } from "@/lib/constants";
@@ -13,6 +13,7 @@ import { cn } from "@/lib/utils";
 import { MobileNav } from "./mobile-nav";
 import { ModeToggle } from "./mode-toggle";
 import { CustomerNotificationWrapper } from "@/components/notifications/customer-notification-wrapper";
+import { createClient } from "@/lib/supabase/client";
 
 export function Navbar() {
   const pathname = usePathname();
@@ -116,6 +117,7 @@ export function Navbar() {
           <div className="flex items-center gap-4">
             <ModeToggle />
             <CustomerNotificationWrapper />
+            <NavAccountLink useHeroOverlay={useHeroOverlay} />
             <CartSheet />
           </div>
         </div>
@@ -145,6 +147,38 @@ export function Navbar() {
       {/* Mobile Nav Sheet */}
       <MobileNav open={isMobileNavOpen} onOpenChange={setIsMobileNavOpen} />
     </header>
+  );
+}
+
+/* ── Auth-aware account link ──────────────────────────────────────── */
+
+function NavAccountLink({ useHeroOverlay }: { useHeroOverlay: boolean }) {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const supabase = createClient();
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setIsLoggedIn(!!session?.user);
+    });
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setIsLoggedIn(!!session?.user);
+    });
+    return () => subscription.unsubscribe();
+  }, []);
+
+  return (
+    <Link
+      href={isLoggedIn ? "/account" : "/login"}
+      className={cn(
+        "flex items-center gap-1.5 text-sm font-medium tracking-wide transition-colors duration-300",
+        useHeroOverlay
+          ? "text-white hover:text-gold [text-shadow:0_1px_12px_rgba(0,0,0,0.45)]"
+          : "text-foreground/80 hover:text-gold",
+      )}
+      aria-label="Account"
+    >
+      <User className="h-4.5 w-4.5" />
+    </Link>
   );
 }
 

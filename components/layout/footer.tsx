@@ -175,6 +175,12 @@ export function Footer() {
                 >
                   Contact Us
                 </Link>
+                <Link
+                  href="/login"
+                  className="text-sm text-muted-foreground hover:text-gold transition-colors duration-300 w-fit"
+                >
+                  My Account
+                </Link>
                 {POLICY_LINKS.map((link) => (
                   <Link
                     key={link.href}
