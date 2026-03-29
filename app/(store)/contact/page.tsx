@@ -1,6 +1,7 @@
-import { Mail, MapPin, Phone, MessageSquare } from "lucide-react";
+import { Mail, MapPin, Phone } from "lucide-react";
 import { BRAND, SOCIALS } from "@/lib/constants";
 import { ContactForm } from "@/components/contact/contact-form";
+import { BsWhatsapp } from "react-icons/bs";
 
 export const metadata = {
   title: "Contact Us - " + BRAND.name,
@@ -93,7 +94,7 @@ export default function ContactPage() {
 
                 <div className="flex items-start gap-4">
                   <div className="mt-1 h-10 w-10 flex items-center justify-center rounded-full bg-ghana-green/10 text-ghana-green border border-ghana-green/20 shrink-0">
-                    <MessageSquare className="h-5 w-5" />
+                    <BsWhatsapp className="h-5 w-5" />
                   </div>
                   <div>
                     <h3 className="font-medium text-foreground mb-1 text-lg">

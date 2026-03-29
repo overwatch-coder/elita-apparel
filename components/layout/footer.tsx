@@ -53,7 +53,7 @@ export function Footer() {
           {/* Brand column */}
           <div className="lg:col-span-1 space-y-6">
             <div className="space-y-4">
-              <Link href="/">
+              <Link href="/" className="flex items-center gap-2 -ms-5">
                 <Image
                   src={"/logo.png"}
                   alt="Elita Apparel"
@@ -61,6 +61,7 @@ export function Footer() {
                   height={56}
                   className="h-24 w-24 object-contain transition-all"
                 />
+                <span className="text-lg font-serif -ms-4">{BRAND.name}</span>
               </Link>
               <p className="text-sm text-muted-foreground leading-relaxed">
                 Celebrating African heritage through vibrant, modern clothing
@@ -122,7 +123,7 @@ export function Footer() {
           </div>
 
           {/* Newsletter - Now in the middle slots */}
-          <div className="space-y-6">
+          <div className="space-y-6 hidden sm:block">
             <h4 className="font-serif text-lg mb-6 tracking-wide">
               Stay in the Loop
             </h4>
@@ -233,6 +234,34 @@ export function Footer() {
                 <Facebook size={14} />
               </Link>
             </div>
+          </div>
+
+          {/* Newsletter - Now in the middle slots */}
+          <div className="space-y-6 sm:hidden">
+            <h4 className="font-serif text-lg mb-6 tracking-wide">
+              Stay in the Loop
+            </h4>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              Subscribe for updates on new collections and exclusive offers.
+            </p>
+            <form className="space-y-3" onSubmit={handleSubscribe}>
+              <Input
+                type="email"
+                placeholder="Email Address"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                disabled={isSubscribing}
+                className="bg-card border-border text-foreground placeholder:text-muted-foreground h-11 focus-visible:ring-gold/50"
+              />
+              <Button
+                type="submit"
+                disabled={isSubscribing}
+                className="w-full bg-gold hover:bg-gold-dark text-white uppercase tracking-widest text-xs h-11"
+              >
+                {isSubscribing ? "Subscribing..." : "Subscribe"}
+              </Button>
+            </form>
           </div>
         </div>
 

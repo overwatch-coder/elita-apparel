@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Our Story | Elita Apparel",
   description:
-    "Discover the story behind Elita Apparel — celebrating African heritage through elite craftsmanship, from Accra, Ghana to the world.",
+    "Discover the story behind Elita Apparel - celebrating African heritage through elite craftsmanship, from Accra, Ghana to the world.",
 };
 
 const VALUES = [
@@ -83,7 +83,7 @@ export default function OurStoryPage() {
             ))}
           </div>
 
-          <div className="mt-20 pt-12 border-t border-border/50 text-center">
+          <div className="mt-10 pt-12 -mb-12 border-t border-border/50 text-center">
             <p className="text-muted-foreground/50 tracking-[0.3em] uppercase text-xs">
               {BRAND_MESSAGES[0]}
             </p>

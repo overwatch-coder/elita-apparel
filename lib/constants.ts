@@ -14,8 +14,8 @@ export const NAV_LINKS: NavLink[] = [
     label: "The Brand",
     href: "/about",
     children: [
-      { label: "Our Story", href: "/our-story" },
       { label: "About Us", href: "/about" },
+      { label: "Our Story", href: "/our-story" },
     ],
   },
   { label: "Contact", href: "/contact" },

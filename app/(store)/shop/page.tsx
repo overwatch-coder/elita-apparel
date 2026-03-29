@@ -2,7 +2,6 @@ import { Suspense } from "react";
 import { createClient } from "@/lib/supabase/server";
 import { ProductCard } from "@/components/store/product-card";
 import { ProductFilters } from "@/components/store/product-filters";
-import { ShopSidebar } from "@/components/store/shop-sidebar";
 import {
   Pagination,
   PaginationContent,
@@ -12,6 +11,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import { cn } from "@/lib/utils";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -24,6 +24,7 @@ interface ShopPageProps {
   searchParams: Promise<{
     category?: string;
     collection?: string;
+    price?: string;
     sort?: string;
     q?: string;
     page?: string;
@@ -71,6 +72,24 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
     }
   }
 
+  // Apply price filter
+  switch (params.price) {
+    case "under-250":
+      query = query.lt("price", 250);
+      break;
+    case "250-499":
+      query = query.gte("price", 250).lt("price", 500);
+      break;
+    case "500-749":
+      query = query.gte("price", 500).lt("price", 750);
+      break;
+    case "750-plus":
+      query = query.gte("price", 750);
+      break;
+    default:
+      break;
+  }
+
   // Apply search
   if (params.q) {
     query = query.or(
@@ -110,45 +129,35 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
     <>
       <div className="pt-28 pb-20">
         <div className="container mx-auto px-4 lg:px-8">
-          {/* Page header */}
-          <div className="text-center mb-12">
-            <p className="text-gold tracking-[0.3em] uppercase text-xs mb-3">
-              Premium African Fashion
-            </p>
-            <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl mb-3">
-              Shop
-            </h1>
-            <div className="w-12 h-px bg-gold mx-auto" />
-          </div>
-
-          <div className="flex flex-col lg:flex-row gap-8 lg:gap-12">
-            {/* Sidebar (Desktop only) */}
-            <div className="hidden lg:block">
-              <Suspense fallback={null}>
-                <ShopSidebar categories={categories || []} />
-              </Suspense>
+          {/* Compact shop header — product-first */}
+          <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <h1 className="font-serif text-3xl text-foreground sm:text-4xl">
+                Shop All Products
+              </h1>
+              <p className="mt-1.5 text-sm text-muted-foreground">
+                {count || 0} {count === 1 ? "piece" : "pieces"} available
+              </p>
             </div>
 
-            {/* Main content */}
-            <div className="flex-1 min-w-0">
+          </div>
+
+          {/* Full-width product area */}
+          <div>
               {/* Filters */}
               <Suspense fallback={null}>
                 <ProductFilters categories={categories || []} />
               </Suspense>
 
-              {/* Results count */}
-              <p className="text-sm text-muted-foreground mt-6 mb-8">
-                {count || 0} {count === 1 ? "product" : "products"} found
-              </p>
-
               {/* Product grid / list */}
               {products && products.length > 0 ? (
                 <div
-                  className={
+                  className={cn(
+                    "mt-8",
                     view === "list"
                       ? "flex flex-col gap-6"
-                      : "grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8"
-                  }
+                      : "grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8",
+                  )}
                 >
                   {products.map((product) => (
                     <div
@@ -157,7 +166,6 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
                         view === "list" ? "max-w-3xl mx-auto w-full" : ""
                       }
                     >
-                      {/* Assuming ProductCard handles layout switching or we just restrict its width */}
                       <ProductCard
                         product={product}
                         view={view as "grid" | "list"}
@@ -166,7 +174,7 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-20">
+                <div className="text-center py-20 mt-8">
                   <p className="font-serif text-xl text-muted-foreground mb-2">
                     No products found
                   </p>
@@ -191,6 +199,8 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
                                     p.set("category", params.category);
                                   if (params.collection)
                                     p.set("collection", params.collection);
+                                  if (params.price)
+                                    p.set("price", params.price);
                                   if (params.sort) p.set("sort", params.sort);
                                   if (params.q) p.set("q", params.q);
                                   if (params.view && params.view !== "grid")
@@ -256,6 +266,7 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
                             p.set("category", params.category);
                           if (params.collection)
                             p.set("collection", params.collection);
+                          if (params.price) p.set("price", params.price);
                           if (params.sort) p.set("sort", params.sort);
                           if (params.q) p.set("q", params.q);
                           if (params.view && params.view !== "grid")
@@ -285,6 +296,8 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
                                     p.set("category", params.category);
                                   if (params.collection)
                                     p.set("collection", params.collection);
+                                  if (params.price)
+                                    p.set("price", params.price);
                                   if (params.sort) p.set("sort", params.sort);
                                   if (params.q) p.set("q", params.q);
                                   if (params.view && params.view !== "grid")
@@ -305,7 +318,6 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
                   </Pagination>
                 </div>
               )}
-            </div>
           </div>
         </div>
       </div>

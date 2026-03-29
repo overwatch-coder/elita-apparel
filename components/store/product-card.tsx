@@ -86,19 +86,19 @@ export function ProductCard({ product, view = "grid" }: ProductCardProps) {
           <div className="absolute inset-0 bg-foreground/0 group-hover:bg-foreground/10 transition-all duration-500" />
 
           {/* Badges */}
-          <div className="absolute top-3 left-3 flex flex-col gap-1.5">
+          <div className="absolute top-4 left-4 flex flex-col gap-2">
             {product.is_new && (
-              <Badge className="bg-foreground text-background text-[10px] tracking-wider uppercase px-2.5 py-1">
-                New
+              <Badge className="bg-background/90 text-foreground border-none shadow-sm backdrop-blur-md text-[9px] tracking-[0.25em] uppercase px-3 py-1.5 font-medium">
+                New Arrival
               </Badge>
             )}
             {hasDiscount && (
-              <Badge className="bg-primary text-primary-foreground text-[10px] tracking-wider uppercase px-2.5 py-1">
+              <Badge className="bg-gold text-white border-none shadow-sm text-[9px] tracking-[0.25em] uppercase px-3 py-1.5 font-medium">
                 {product.discount_percentage}% Off
               </Badge>
             )}
             {product.early_bird_eligible && !hasDiscount && (
-              <Badge className="bg-primary/80 text-primary-foreground text-[10px] tracking-wider uppercase px-2.5 py-1">
+              <Badge className="bg-foreground/90 text-background border-none shadow-sm backdrop-blur-md text-[9px] tracking-[0.25em] uppercase px-3 py-1.5 font-medium">
                 Early Bird
               </Badge>
             )}
@@ -172,27 +172,27 @@ export function ProductCard({ product, view = "grid" }: ProductCardProps) {
         {/* Product info */}
         <div
           className={cn(
-            "space-y-4",
+            "",
             view === "list"
               ? "p-6 sm:p-10 flex flex-col justify-center flex-1"
-              : "mt-4",
+              : "mt-5",
           )}
         >
-          <div className="space-y-1.5">
+          <div className="space-y-2">
             {product.fabric_type && (
-              <p className="text-[10px] tracking-[0.2em] uppercase text-gold">
+              <p className="text-[9px] font-semibold tracking-[0.25em] uppercase text-gold">
                 {product.fabric_type}
               </p>
             )}
-            <h3 className="font-serif text-lg sm:text-xl text-foreground group-hover:text-gold transition-colors duration-300 leading-tight">
+            <h3 className="font-serif text-xl sm:text-2xl text-foreground group-hover:text-gold transition-colors duration-300 leading-tight">
               {product.name}
             </h3>
-            <div className="flex items-center gap-2">
-              <span className="font-medium text-foreground text-lg">
+            <div className="flex items-center gap-3">
+              <span className="font-medium text-muted-foreground text-[15px]">
                 {formatPrice(discountedPrice)}
               </span>
               {hasDiscount && (
-                <span className="text-sm text-muted-foreground line-through">
+                <span className="text-[13px] text-muted-foreground/60 line-through">
                   {formatPrice(product.price)}
                 </span>
               )}

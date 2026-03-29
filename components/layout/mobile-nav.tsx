@@ -31,13 +31,21 @@ export function MobileNav({ open, onOpenChange }: MobileNavProps) {
         <SheetHeader className="p-6 pb-0">
           <div className="flex items-center justify-between">
             <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
-            <Image
-              src="/logo.png"
-              alt="Elita Apparel"
-              width={100}
-              height={40}
-              className="h-10 w-auto object-contain"
-            />
+            <div className="flex items-center gap-2">
+              <Image
+                src="/logo.png"
+                alt="Elita Apparel"
+                width={100}
+                height={40}
+                className="h-10 w-auto object-contain"
+              />
+              <span
+                className={cn(
+                  "font-serif text-lg tracking-wide transition-colors duration-300 text-foreground")}
+              >
+                Elita Apparel
+              </span>
+            </div>
             <div className="flex items-center gap-1">
               <CustomerNotificationWrapper />
               <ThemeToggle />

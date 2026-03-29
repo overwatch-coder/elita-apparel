@@ -1,8 +1,6 @@
 "use client";
 
 import {
-  LineChart,
-  Line,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -31,6 +29,12 @@ interface DashboardChartsProps {
 }
 
 export function DashboardCharts({ salesData }: DashboardChartsProps) {
+  const chartAccent = "var(--chart-1)";
+  const chartGrid = "var(--border)";
+  const chartTick = "var(--muted-foreground)";
+  const chartSurface = "var(--card)";
+  const chartHover = "var(--accent)";
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
       <Card className="border-border/50 shadow-sm">
@@ -43,7 +47,7 @@ export function DashboardCharts({ salesData }: DashboardChartsProps) {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="h-[300px] w-full">
+          <div className="h-75 w-full">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart
                 data={salesData}
@@ -51,37 +55,37 @@ export function DashboardCharts({ salesData }: DashboardChartsProps) {
               >
                 <defs>
                   <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#C5A059" stopOpacity={0.1} />
-                    <stop offset="95%" stopColor="#C5A059" stopOpacity={0} />
+                    <stop offset="5%" stopColor={chartAccent} stopOpacity={0.12} />
+                    <stop offset="95%" stopColor={chartAccent} stopOpacity={0} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid
                   strokeDasharray="3 3"
                   vertical={false}
-                  stroke="#E2E8F0"
+                  stroke={chartGrid}
                   opacity={0.5}
                 />
                 <XAxis
                   dataKey="date"
                   axisLine={false}
                   tickLine={false}
-                  tick={{ fontSize: 10, fill: "#64748B" }}
+                  tick={{ fontSize: 10, fill: chartTick }}
                   interval={Math.ceil(salesData.length / 7)}
                 />
                 <YAxis
                   axisLine={false}
                   tickLine={false}
-                  tick={{ fontSize: 10, fill: "#64748B" }}
+                  tick={{ fontSize: 10, fill: chartTick }}
                   tickFormatter={(value) => `GH₵${value}`}
                 />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: "white",
+                    backgroundColor: chartSurface,
                     borderRadius: "8px",
-                    border: "1px solid #E2E8F0",
+                    border: `1px solid ${chartGrid}`,
                     boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)",
                   }}
-                  itemStyle={{ color: "#C5A059", fontWeight: "bold" }}
+                  itemStyle={{ color: chartAccent, fontWeight: "bold" }}
                   formatter={(value: any) => [
                     formatPrice(Number(value) || 0),
                     "Revenue",
@@ -90,7 +94,7 @@ export function DashboardCharts({ salesData }: DashboardChartsProps) {
                 <Area
                   type="monotone"
                   dataKey="revenue"
-                  stroke="#C5A059"
+                  stroke={chartAccent}
                   strokeWidth={2}
                   fillOpacity={1}
                   fill="url(#colorRevenue)"
@@ -111,7 +115,7 @@ export function DashboardCharts({ salesData }: DashboardChartsProps) {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="h-[300px] w-full">
+          <div className="h-75 w-full">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart
                 data={salesData}
@@ -120,33 +124,33 @@ export function DashboardCharts({ salesData }: DashboardChartsProps) {
                 <CartesianGrid
                   strokeDasharray="3 3"
                   vertical={false}
-                  stroke="#E2E8F0"
+                  stroke={chartGrid}
                   opacity={0.5}
                 />
                 <XAxis
                   dataKey="date"
                   axisLine={false}
                   tickLine={false}
-                  tick={{ fontSize: 10, fill: "#64748B" }}
+                  tick={{ fontSize: 10, fill: chartTick }}
                   interval={Math.ceil(salesData.length / 7)}
                 />
                 <YAxis
                   axisLine={false}
                   tickLine={false}
-                  tick={{ fontSize: 10, fill: "#64748B" }}
+                  tick={{ fontSize: 10, fill: chartTick }}
                 />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: "white",
+                    backgroundColor: chartSurface,
                     borderRadius: "8px",
-                    border: "1px solid #E2E8F0",
+                    border: `1px solid ${chartGrid}`,
                     boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)",
                   }}
-                  cursor={{ fill: "rgba(197, 160, 89, 0.05)" }}
+                  cursor={{ fill: chartHover }}
                 />
                 <Bar
                   dataKey="orders"
-                  fill="#C5A059"
+                  fill={chartAccent}
                   radius={[4, 4, 0, 0]}
                   maxBarSize={40}
                 />

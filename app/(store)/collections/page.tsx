@@ -67,8 +67,8 @@ export default async function CollectionsPage() {
                       ) : (
                         <div className="absolute inset-0 bg-neutral-900 flex items-center justify-center overflow-hidden">
                           {/* Decorative Background Text - Refined for mobile */}
-                          <div className="absolute inset-0 flex items-center justify-center select-none pointer-events-none opacity-5">
-                            <span className="font-serif text-[12rem] whitespace-nowrap text-gold uppercase leading-none">
+                          <div className="absolute inset-0 flex items-center justify-center select-none pointer-events-none opacity-10">
+                            <span className="font-serif text-[12rem] whitespace-nowrap text-gold/70 uppercase leading-none">
                               {collection.name}
                             </span>
                           </div>
@@ -97,7 +97,7 @@ export default async function CollectionsPage() {
                           <p className="text-gold tracking-[0.3em] uppercase text-[10px] mb-1 font-bold">
                             Collection
                           </p>
-                          <h2 className="font-serif text-2xl sm:text-3xl text-[#faf7f2] group-hover:text-gold transition-colors duration-300">
+                          <h2 className="font-serif text-2xl sm:text-3xl text-white group-hover:text-gold transition-colors duration-300">
                             {collection.name}
                           </h2>
                         </div>
@@ -108,7 +108,7 @@ export default async function CollectionsPage() {
 
                       {collection.description && (
                         <div
-                          className="text-[#faf7f2]/60 text-sm line-clamp-2 prose prose-invert prose-sm mb-2"
+                          className="text-white/65 text-sm line-clamp-2 prose prose-invert prose-sm mb-2"
                           dangerouslySetInnerHTML={{
                             __html: collection.description,
                           }}

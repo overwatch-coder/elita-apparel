@@ -78,13 +78,13 @@ export default async function CollectionPage({ params }: CollectionPageProps) {
             <p className="text-gold tracking-[0.4em] uppercase text-xs mb-6 font-bold">
               Collection
             </p>
-            <h1 className="font-serif text-4xl sm:text-6xl lg:text-8xl text-[#faf7f2] mb-8 leading-tight">
+            <h1 className="font-serif text-4xl sm:text-6xl lg:text-8xl text-cream mb-8 leading-tight">
               {collection.name}
             </h1>
 
             {collection.description && (
               <div
-                className="text-[#faf7f2]/70 leading-relaxed prose prose-invert mx-auto max-w-2xl text-sm sm:text-base mb-10 px-4"
+                className="text-cream/70 leading-relaxed prose prose-invert mx-auto max-w-2xl text-sm sm:text-base mb-10 px-4"
                 dangerouslySetInnerHTML={{ __html: collection.description }}
               />
             )}

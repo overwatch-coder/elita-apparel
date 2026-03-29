@@ -97,7 +97,7 @@ export function PopupManager() {
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
-      <DialogContent className="sm:max-w-[450px] p-0 overflow-hidden bg-card border-none shadow-2xl">
+      <DialogContent className="sm:max-w-112.5 p-0 overflow-hidden bg-card border-none shadow-2xl">
         <VisuallyHidden>
           <DialogTitle>{activePopup.title}</DialogTitle>
           <DialogDescription>{activePopup.content}</DialogDescription>
@@ -106,7 +106,7 @@ export function PopupManager() {
         <div className="relative group">
           <button
             onClick={handleClose}
-            className="absolute right-4 top-4 z-50 p-2 rounded-full bg-black/20 hover:bg-black/40 text-white transition-all backdrop-blur-sm"
+            className="absolute right-4 top-4 z-50 p-2 rounded-full bg-royal-black/35 hover:bg-royal-black/55 text-cream transition-all backdrop-blur-sm"
           >
             <X className="h-4 w-4" />
           </button>
@@ -135,7 +135,7 @@ export function PopupManager() {
               {activePopup.cta_label && (
                 <Button
                   asChild
-                  className="w-full bg-gold hover:bg-gold-dark text-white font-medium tracking-wider uppercase h-12 rounded-none transition-all duration-300"
+                  className="w-full bg-gold hover:bg-gold-dark text-primary-foreground font-medium tracking-wider uppercase h-12 rounded-none transition-all duration-300"
                   onClick={handleDismiss}
                 >
                   <a href={activePopup.cta_url || "#"}>
