@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { MessageCircle } from "lucide-react";
+import { BsWhatsapp } from "react-icons/bs";
 import { Button } from "@/components/ui/button";
 import { SOCIALS } from "@/lib/constants";
 import { useEffect, useState } from "react";
@@ -37,7 +37,7 @@ export function WhatsAppButton() {
 
   const message = productName
     ? `Hi! I'm interested in the *${productName}*. Could you tell me more about it?`
-    : "Hi! I'd like to inquire about your products.";
+    : "Please, I have a question about your products.";
 
   const whatsappUrl = `${SOCIALS.whatsapp.url}?text=${encodeURIComponent(message)}`;
 
@@ -49,7 +49,7 @@ export function WhatsAppButton() {
       aria-label="Chat on WhatsApp"
     >
       <Link href={whatsappUrl} target="_blank" rel="noopener noreferrer">
-        <MessageCircle className="h-6 w-6" />
+        <BsWhatsapp size={30} />
       </Link>
     </Button>
   );

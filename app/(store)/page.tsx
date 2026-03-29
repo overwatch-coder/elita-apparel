@@ -1,8 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { HeroSection } from "@/components/store/hero-section";
-import { BrandStory } from "@/components/store/brand-story";
 import { EarlyBirdBanner } from "@/components/store/early-bird-banner";
-import { CollectionsSection } from "@/components/store/collections-section";
 import { FeaturedSection } from "@/components/store/featured-section";
 import { InstagramSection } from "@/components/store/instagram-section";
 import { TestimonialsSection } from "@/components/store/testimonials-section";
@@ -19,14 +17,6 @@ export default async function HomePage() {
     .eq("is_featured", true)
     .order("created_at", { ascending: false })
     .limit(4);
-
-  // Fetch collections
-  const { data: collections } = await supabase
-    .from("collections")
-    .select("*")
-    .eq("is_published", true)
-    .order("created_at", { ascending: false })
-    .limit(3);
 
   // Fetch new arrivals
   const { data: newArrivals } = await supabase
@@ -58,9 +48,6 @@ export default async function HomePage() {
       <OrganizationJsonLd />
       <HeroSection />
 
-      {/* Collections Section */}
-      <CollectionsSection collections={collections || []} />
-
       {/* Featured Products */}
       <FeaturedSection
         title="Featured Pieces"
@@ -70,9 +57,6 @@ export default async function HomePage() {
 
       {/* Early Bird Banner */}
       <EarlyBirdBanner />
-
-      {/* Brand Story */}
-      <BrandStory />
 
       {/* New Arrivals */}
       <FeaturedSection

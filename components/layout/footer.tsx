@@ -7,7 +7,7 @@ import { Mail, MapPin, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
-import { NAV_LINKS, BRAND, SOCIALS } from "@/lib/constants";
+import { NAV_LINKS, BRAND, SOCIALS, POLICY_LINKS } from "@/lib/constants";
 import { subscribeToNewsletter } from "@/app/actions/marketing";
 import { toast } from "sonner";
 import {
@@ -97,15 +97,27 @@ export function Footer() {
               Quick Links
             </h4>
             <nav className="flex flex-col gap-3">
-              {NAV_LINKS.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className="text-sm text-muted-foreground hover:text-gold transition-colors duration-300 w-fit"
-                >
-                  {link.label}
-                </Link>
-              ))}
+              {NAV_LINKS.flatMap((link) =>
+                link.children
+                  ? link.children.map((child) => (
+                      <Link
+                        key={child.href}
+                        href={child.href}
+                        className="text-sm text-muted-foreground hover:text-gold transition-colors duration-300 w-fit"
+                      >
+                        {child.label}
+                      </Link>
+                    ))
+                  : [
+                      <Link
+                        key={link.href}
+                        href={link.href}
+                        className="text-sm text-muted-foreground hover:text-gold transition-colors duration-300 w-fit"
+                      >
+                        {link.label}
+                      </Link>,
+                    ],
+              )}
             </nav>
           </div>
 
@@ -162,18 +174,15 @@ export function Footer() {
                 >
                   Contact Us
                 </Link>
-                <Link
-                  href="/privacy"
-                  className="text-sm text-muted-foreground hover:text-gold transition-colors duration-300 w-fit"
-                >
-                  Privacy Policy
-                </Link>
-                <Link
-                  href="/terms"
-                  className="text-sm text-muted-foreground hover:text-gold transition-colors duration-300 w-fit"
-                >
-                  Terms & Conditions
-                </Link>
+                {POLICY_LINKS.map((link) => (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className="text-sm text-muted-foreground hover:text-gold transition-colors duration-300 w-fit"
+                  >
+                    {link.label}
+                  </Link>
+                ))}
               </nav>
             </div>
 
@@ -234,6 +243,12 @@ export function Footer() {
           <p className="text-xs text-muted-foreground/50">
             © {currentYear} {BRAND.name}. All rights reserved. {BRAND.tagline}
           </p>
+          <Link
+            href="/privacy"
+            className="text-xs text-muted-foreground/50 hover:text-gold transition-colors"
+          >
+            Privacy Policy
+          </Link>
         </div>
       </div>
     </footer>

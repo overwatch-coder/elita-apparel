@@ -1,12 +1,34 @@
 // ── Navigation ──────────────────────────────────────────────────────
 
-export const NAV_LINKS = [
+export type NavLink = {
+  label: string;
+  href: string;
+  children?: { label: string; href: string }[];
+};
+
+export const NAV_LINKS: NavLink[] = [
   { label: "Home", href: "/" },
   { label: "Shop", href: "/shop" },
   { label: "Collections", href: "/collections" },
-  { label: "About", href: "/about" },
+  {
+    label: "The Brand",
+    href: "/about",
+    children: [
+      { label: "Our Story", href: "/our-story" },
+      { label: "About Us", href: "/about" },
+    ],
+  },
   { label: "Contact", href: "/contact" },
-  { label: "Account", href: "/account" },
+];
+
+// ── Footer policy / support links ───────────────────────────────────
+
+export const POLICY_LINKS = [
+  { label: "Shipping Policy", href: "/shipping-policy" },
+  { label: "Refund Policy", href: "/refund-policy" },
+  { label: "Privacy Policy", href: "/privacy" },
+  { label: "Terms & Conditions", href: "/terms" },
+  { label: "Size Chart", href: "/size-chart" },
 ] as const;
 
 // ── Brand messaging ─────────────────────────────────────────────────

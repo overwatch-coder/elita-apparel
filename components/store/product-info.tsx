@@ -31,6 +31,7 @@ import {
 } from "@/lib/whatsapp";
 import { cn } from "@/lib/utils";
 import type { ColorVariant } from "./product-detail-wrapper";
+import { BsWhatsapp } from "react-icons/bs";
 
 interface ProductInfoProps {
   product: ProductWithImages;
@@ -310,10 +311,10 @@ export function ProductInfo({
         <Button
           onClick={handleWhatsAppOrder}
           disabled={!selectedSize || !isInStock}
-          className="w-full bg-[#25D366] hover:bg-[#1DA851] text-white font-medium tracking-wider uppercase h-14 text-base shadow-sm"
+          className="w-full hidden bg-[#25D366] hover:bg-[#1DA851] text-white font-medium tracking-wider uppercase h-14 text-base shadow-sm"
           size="lg"
         >
-          <MessageCircle className="mr-2 h-5 w-5 fill-current" />
+          <BsWhatsapp className="mr-2 h-5 w-5 fill-current" />
           {!selectedSize ? "Select a Size" : "Order via WhatsApp"}
         </Button>
       </div>
